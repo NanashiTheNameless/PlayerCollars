@@ -3,9 +3,7 @@
   "category": "misc",
   "group": "dog_bed",
   "key": {
-    "w": {
-      "item": "minecraft:purple_wool"
-    }
+    "w": "minecraft:purple_wool"
   },
   "pattern": [
     "w w",

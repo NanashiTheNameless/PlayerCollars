@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "playercollars:item/orange_dog_bed",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -1341372
+      }
+    ]
+  }
+}

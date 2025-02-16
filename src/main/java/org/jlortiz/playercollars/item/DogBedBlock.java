@@ -1,20 +1,25 @@
 package org.jlortiz.playercollars.item;
 
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
+import org.jlortiz.playercollars.PlayerCollarsMod;
 
 public class DogBedBlock extends BedBlock {
     private static final VoxelShape SHAPE = createCuboidShape(0, 0, 0, 16, 6, 16);
 
-    public DogBedBlock(DyeColor color, Settings settings) {
-        super(color, settings);
+    public DogBedBlock(DyeColor color, RegistryKey<Block> key) {
+        super(color, AbstractBlock.Settings.create()
+                .sounds(BlockSoundGroup.WOOD).strength(0.2F).nonOpaque().burnable()
+                .pistonBehavior(PistonBehavior.DESTROY).registryKey(key));
     }
 
     @Override
@@ -30,5 +35,9 @@ public class DogBedBlock extends BedBlock {
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return null;
+    }
+
+    public static RegistryKey<Block> getRegistryKey(DyeColor c) {
+        return RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(PlayerCollarsMod.MOD_ID, c.getName() + "_dog_bed"));
     }
 }

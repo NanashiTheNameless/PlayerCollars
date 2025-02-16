@@ -1,6 +1,6 @@
 package org.jlortiz.playercollars.datagen;
 
-import dev.emi.trinkets.TrinketsMain;
+import io.wispforest.accessories.Accessories;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -59,7 +59,7 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
         @Override
         protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
             getOrCreateTagBuilder(ItemTags.DYEABLE).add(PlayerCollarsMod.COLLAR_ITEM).add(PlayerCollarsMod.CLICKER_ITEM);
-            getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(TrinketsMain.MOD_ID, "chest/necklace"))).add(PlayerCollarsMod.COLLAR_ITEM);
+            getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(Accessories.MODID, "necklace"))).add(PlayerCollarsMod.COLLAR_ITEM);
         }
     }
 
@@ -70,7 +70,8 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
 
         @Override
         public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
-            for (DogBedBlock bed : PlayerCollarsMod.DOG_BEDS) {
+            for (int j = 0; j < PlayerCollarsMod.DOG_BEDS.length; j++) {
+                DogBedBlock bed = PlayerCollarsMod.DOG_BEDS[j];
                 String pre = bed.getColor().getName();
                 char[] buf = new char[pre.length() + " Human-Sized Dog Bed".length()];
                 boolean newWord = true;
@@ -86,7 +87,8 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
                     buf[i] = c;
                 }
                 " Human-Sized Dog Bed".getChars(0, buf.length - pre.length(), buf, pre.length());
-                translationBuilder.add(bed,  String.valueOf(buf));
+                translationBuilder.add(bed, String.valueOf(buf));
+                translationBuilder.add(PlayerCollarsMod.DOG_BED_ITEMS[j], String.valueOf(buf));
             }
 
             try {

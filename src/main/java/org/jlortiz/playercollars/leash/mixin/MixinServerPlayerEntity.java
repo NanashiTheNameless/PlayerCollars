@@ -1,10 +1,9 @@
 package org.jlortiz.playercollars.leash.mixin;
 
-import dev.emi.trinkets.api.SlotReference;
-import dev.emi.trinkets.api.TrinketsApi;
+import io.wispforest.accessories.api.AccessoriesCapability;
+import io.wispforest.accessories.api.slot.SlotEntryReference;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -14,7 +13,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Pair;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.leash.LeashImpl;
 import org.jlortiz.playercollars.leash.LeashProxyEntity;
@@ -24,8 +22,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class MixinServerPlayerEntity implements LeashImpl {
@@ -155,14 +151,11 @@ public abstract class MixinServerPlayerEntity implements LeashImpl {
     public ActionResult leashplayers$interact(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() == Items.LEAD && leashplayers$holder == null) {
-            AtomicBoolean found = new AtomicBoolean(false);
-            TrinketsApi.getTrinketComponent((PlayerEntity) (Object) this).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
-                    .map((x) -> PlayerCollarsMod.filterStacksByOwner(x, player.getUuid()))
-                    .ifPresent((stack1) -> {
-                        found.set(true);
-                        leashplayer$loyalty = ((PlayerEntity) (Object) this).getAttributeValue(PlayerCollarsMod.ATTR_LEASH_DISTANCE);
-                    });
-            if (!found.get()) return ActionResult.PASS;
+            AccessoriesCapability cap = AccessoriesCapability.get((PlayerEntity) (Object) this);
+            if (cap == null) return ActionResult.PASS;
+            ItemStack is = PlayerCollarsMod.filterStacksByOwner(cap.getEquipped(PlayerCollarsMod.COLLAR_ITEM), player.getUuid());
+            if (is == null) return ActionResult.PASS;
+            leashplayer$loyalty = ((PlayerEntity) (Object) this).getAttributeValue(PlayerCollarsMod.ATTR_LEASH_DISTANCE);
             if (!player.isCreative()) {
                 stack.decrement(1);
             }
@@ -182,15 +175,12 @@ public abstract class MixinServerPlayerEntity implements LeashImpl {
     }
 
     @Inject(at=@At("TAIL"), method="damage")
-    private void checkCollarThorns(DamageSource p_9037_, float p_9038_, CallbackInfoReturnable<Boolean> cir) {
-        if (p_9037_.getAttacker() != null) {
-            LivingEntity self = ((LivingEntity) (Object) this);
-            TrinketsApi.getTrinketComponent(self).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
-                .ifPresent((ls) -> {
-                    for (Pair<SlotReference, ItemStack> p : ls) {
-                        EnchantmentHelper.onTargetDamaged((ServerWorld) self.getWorld(), p_9037_.getAttacker(), p_9037_, p.getRight());
-                    }
-                });
+    private void checkCollarThorns(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (source.getAttacker() != null) {
+            AccessoriesCapability cap = AccessoriesCapability.get((PlayerEntity) (Object) this);
+            if (cap == null) return;
+            for (SlotEntryReference ser : cap.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
+                EnchantmentHelper.onTargetDamaged(world, source.getAttacker(), source, ser.stack());
         }
     }
 }

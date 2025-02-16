@@ -1,10 +1,12 @@
 package org.jlortiz.playercollars.datagen;
 
+import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.enums.BedPart;
-import net.minecraft.data.client.*;
+import net.minecraft.client.data.*;
+import net.minecraft.client.render.item.model.ItemModel;
+import net.minecraft.client.render.item.tint.ConstantTintSource;
 import net.minecraft.item.Item;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -28,7 +30,7 @@ public class ModelDataGenerator extends FabricModelProvider {
                                 if (part == BedPart.HEAD)
                                     dir = dir.getOpposite();
                                 return BlockStateVariant.create()
-                                        .put(VariantSettings.Y, VariantSettings.Rotation.values()[dir.getHorizontal()])
+                                        .put(VariantSettings.Y, VariantSettings.Rotation.values()[dir.getHorizontalQuarterTurns()])
                                         .put(VariantSettings.X, VariantSettings.Rotation.R0)
                                         .put(VariantSettings.MODEL, Identifier.of(PlayerCollarsMod.MOD_ID, "block/" + bed.getColor().getName() + "_dog_bed"));
                             }
@@ -41,7 +43,12 @@ public class ModelDataGenerator extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         Item whiteBed = PlayerCollarsMod.DOG_BED_ITEMS[DyeColor.WHITE.ordinal()];
-        for (Item i : PlayerCollarsMod.DOG_BED_ITEMS)
-            itemModelGenerator.register(i, whiteBed, Models.GENERATED);
+        for (int i = 0; i < DyeColor.values().length; i++) {
+            ItemModel.Unbaked m = ItemModels.tinted(
+                    itemModelGenerator.uploadWithTextureSource(PlayerCollarsMod.DOG_BED_ITEMS[i], whiteBed, Models.GENERATED),
+                    new ConstantTintSource(DyeColor.values()[i].getFireworkColor())
+            );
+            itemModelGenerator.output.accept(PlayerCollarsMod.DOG_BED_ITEMS[i], m);
+        }
     }
 }

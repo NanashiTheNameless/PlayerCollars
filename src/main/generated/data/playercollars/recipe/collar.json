@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "d": {
-      "tag": "c:dyes"
-    },
-    "i": {
-      "tag": "c:ingots/gold"
-    },
-    "l": {
-      "item": "minecraft:leather"
-    }
+    "d": "#c:dyes",
+    "i": "#c:ingots/gold",
+    "l": "minecraft:leather"
   },
   "pattern": [
     " l ",
