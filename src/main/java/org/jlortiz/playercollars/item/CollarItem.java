@@ -1,7 +1,8 @@
 package org.jlortiz.playercollars.item;
 
 import dev.emi.trinkets.api.SlotReference;
-import dev.emi.trinkets.api.TrinketItem;
+import dev.emi.trinkets.api.Trinket;
+import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.MapColor;
@@ -28,10 +29,11 @@ import org.jlortiz.playercollars.client.CollarDyeScreen;
 import java.util.List;
 import java.util.UUID;
 
-public class CollarItem extends TrinketItem implements DyeableItem {
+public class CollarItem extends Item implements DyeableItem, Trinket {
 
     public CollarItem() {
         super(new Item.Settings().maxCount(1));
+        TrinketsApi.registerTrinket(this, this);
     }
 
     @Override

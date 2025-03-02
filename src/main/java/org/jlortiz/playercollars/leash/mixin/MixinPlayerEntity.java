@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(PlayerEntity.class)
+@Mixin(value = PlayerEntity.class, priority = 500)
 public abstract class MixinPlayerEntity {
     @Inject(method = "interact", at = @At("RETURN"), cancellable = true)
     private void leashplayers$onInteract(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> info) {
