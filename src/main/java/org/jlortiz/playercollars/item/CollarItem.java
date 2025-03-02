@@ -3,7 +3,8 @@ package org.jlortiz.playercollars.item;
 import com.google.common.collect.Multimap;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketEnums;
-import dev.emi.trinkets.api.TrinketItem;
+import dev.emi.trinkets.api.Trinket;
+import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.MapColor;
@@ -35,10 +36,11 @@ import org.jlortiz.playercollars.client.CollarDyeScreen;
 
 import java.util.List;
 
-public class CollarItem extends TrinketItem {
+public class CollarItem extends Item implements Trinket {
 
     public CollarItem() {
         super(new Item.Settings().maxCount(1));
+        TrinketsApi.registerTrinket(this, this);
     }
 
     @Override
@@ -98,7 +100,7 @@ public class CollarItem extends TrinketItem {
 
     @Override
     public Multimap<RegistryEntry<EntityAttribute>, EntityAttributeModifier> getModifiers(ItemStack stack, SlotReference slot, LivingEntity entity, Identifier slotIdentifier) {
-        Multimap<RegistryEntry<EntityAttribute>, EntityAttributeModifier> modifiers = super.getModifiers(stack, slot, entity, slotIdentifier);
+        Multimap<RegistryEntry<EntityAttribute>, EntityAttributeModifier> modifiers = Trinket.super.getModifiers(stack, slot, entity, slotIdentifier);
         EnchantmentHelper.applyAttributeModifiers(stack, AttributeModifierSlot.ANY, modifiers::put);
         return modifiers;
     }
