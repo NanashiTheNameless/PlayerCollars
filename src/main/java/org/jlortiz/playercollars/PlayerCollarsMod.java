@@ -30,6 +30,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
@@ -38,10 +39,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.jlortiz.playercollars.item.ClickerItem;
-import org.jlortiz.playercollars.item.CollarItem;
-import org.jlortiz.playercollars.item.DogBedBlock;
-import org.jlortiz.playercollars.item.RegenerationEnchantmentEffect;
+import org.jlortiz.playercollars.item.*;
 import org.jlortiz.playercollars.leash.LeashImpl;
 
 import java.util.UUID;
@@ -50,6 +48,7 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final String MOD_ID = "playercollars";
 	public static final CollarItem COLLAR_ITEM = Registry.register(Registries.ITEM, CollarItem.REGISTRY_KEY, new CollarItem());
 	public static final ClickerItem CLICKER_ITEM = Registry.register(Registries.ITEM, ClickerItem.REGISTRY_KEY, new ClickerItem());
+	public static final PawsItem PAWS_ITEM = Registry.register(Registries.ITEM, PawsItem.REGISTRY_KEY, new PawsItem());
 	public static final SoundEvent CLICKER_ON = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_on"),
 			SoundEvent.of(Identifier.of(MOD_ID, "clicker_on")));
 	public static final SoundEvent CLICKER_OFF = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_off"),
@@ -72,6 +71,7 @@ public class PlayerCollarsMod implements ModInitializer {
 
 	public static final DogBedBlock[] DOG_BEDS = new DogBedBlock[DyeColor.values().length];
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
+	public static final TagKey<Block> PAWS_ALLOW_INTERACT = TagKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "paws_allow_interact"));
 
 	public static ItemStack filterStacksByOwner(Iterable<SlotEntryReference> stacks, UUID plr) {
 		for (SlotEntryReference p : stacks) {

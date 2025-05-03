@@ -10,6 +10,10 @@
   "mixins": [
     "BoneItemMixin",
     "LivingEntityMixin",
+    "PlayerEntityMixin",
     "ServerPlayerEntityMixin"
+  ],
+  "client": [
+    "ClientPlayerInteractionManagerMixin"
   ]
 }
