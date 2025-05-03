@@ -13,6 +13,7 @@
   "attribute.playercollars.clicker_distance": "Clicker Distance",
   "attribute.playercollars.leash_distance": "Leash Distance",
   "tag.item.trinkets.chest.necklace": "Necklace",
+  "tag.item.trinkets.hand.glove": "Glove",
   "message.playercollars.no_break_fence": "Can't unleash yourself!",
   "message.playercollars.no_attack_owner": "Don't attack your owner!"
 }

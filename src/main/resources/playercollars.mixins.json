@@ -8,8 +8,12 @@
   },
   "refmap": "PlayerCollars-refmap.json",
   "mixins": [
+    "BoneItemMixin",
     "LivingEntityMixin",
-    "ServerPlayerEntityMixin",
-    "BoneItemMixin"
+    "PlayerEntityMixin",
+    "ServerPlayerEntityMixin"
+  ],
+  "client": [
+    "ClientPlayerInteractionManagerMixin"
   ]
 }

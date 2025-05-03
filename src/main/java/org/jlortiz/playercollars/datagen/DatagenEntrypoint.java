@@ -63,6 +63,7 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
         protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
             getOrCreateTagBuilder(ItemTags.DYEABLE).add(PlayerCollarsMod.COLLAR_ITEM).add(PlayerCollarsMod.CLICKER_ITEM);
             getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(TrinketsMain.MOD_ID, "chest/necklace"))).add(PlayerCollarsMod.COLLAR_ITEM);
+            getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(TrinketsMain.MOD_ID, "hand/glove"))).add(PlayerCollarsMod.PAWS_ITEM);
         }
     }
 
@@ -74,6 +75,9 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
         @Override
         protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
             getOrCreateTagBuilder(BlockTags.BEDS).add(PlayerCollarsMod.DOG_BEDS);
+//            getOrCreateTagBuilder(PlayerCollarsMod.PAWS_ALLOW_INTERACT).addTag(BlockTags.BUTTONS)
+//                    .add(Blocks.LEVER).addTag(BlockTags.CROPS).addTag(BlockTags.BEDS)
+//                    .addTag(BlockTags.GEODE_INVALID_BLOCKS).addTag(BlockTags.CAULDRONS);
         }
     }
 
@@ -100,7 +104,7 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
                     buf[i] = c;
                 }
                 " Human-Sized Dog Bed".getChars(0, buf.length - pre.length(), buf, pre.length());
-                translationBuilder.add(bed,  String.valueOf(buf));
+                translationBuilder.add(bed, String.valueOf(buf));
             }
 
             try {

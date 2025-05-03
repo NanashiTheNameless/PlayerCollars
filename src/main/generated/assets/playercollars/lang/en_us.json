@@ -30,5 +30,7 @@
   "item.playercollars.collar.remove_owner": "Remove Owner",
   "message.playercollars.no_attack_owner": "Don't attack your owner!",
   "message.playercollars.no_break_fence": "Can't unleash yourself!",
+  "tag.block.playercollars.paws_allow_interact": "Usable with Paws",
+  "tag.item.trinkets.chest.hand": "Hand",
   "tag.item.trinkets.chest.necklace": "Necklace"
 }
