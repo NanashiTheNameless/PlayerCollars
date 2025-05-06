@@ -2,6 +2,7 @@ package org.jlortiz.playercollars.mixin;
 
 import io.wispforest.accessories.api.AccessoriesCapability;
 import io.wispforest.accessories.api.slot.SlotEntryReference;
+import net.fabricmc.fabric.api.tag.convention.v2.TagUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
@@ -11,7 +12,9 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ToolMaterial;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.jlortiz.playercollars.PlayerCollarsMod;
@@ -38,10 +41,12 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Redirect(method = "getBlockBreakingSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;getBlockBreakingSpeed(Lnet/minecraft/block/BlockState;)F"))
     private float getBlockBreakingSpeed(PlayerInventory instance, BlockState block) {
         float ret = instance.getBlockBreakingSpeed(block);
-        if (ret == 1) return ret;
         AccessoriesCapability cap = AccessoriesCapability.get(this);
         if (cap == null) return ret;
         if (cap.getEquipped(PlayerCollarsMod.PAWS_ITEM).isEmpty()) return ret;
+        if (TagUtil.isIn(BlockTags.SHOVEL_MINEABLE, block.getBlock())) {
+            return ToolMaterial.IRON.speed();
+        }
         return (ret - 1) * 0.125f + 1;
     }
 

@@ -2,6 +2,7 @@ package org.jlortiz.playercollars.mixin;
 
 import io.wispforest.accessories.api.AccessoriesCapability;
 import io.wispforest.accessories.api.slot.SlotEntryReference;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.pattern.CachedBlockPosition;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
@@ -19,9 +20,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ClientPlayerInteractionManagerMixin {
     @Inject(method = "interactBlock", at=@At("HEAD"), cancellable = true)
     private void playercollars$cancelPawInteractions(ClientPlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
+        if (hand == Hand.OFF_HAND || player.isSpectator()) return;
+        if (player.isSneaking() && !player.getStackInHand(hand).isEmpty()) return;
         AccessoriesCapability cap = AccessoriesCapability.get(player);
         if (cap == null) return;
-        CachedBlockPosition block = new CachedBlockPosition(player.getWorld(), hitResult.getBlockPos(), false);
+        BlockState block = (new CachedBlockPosition(player.getWorld(), hitResult.getBlockPos(), false)).getBlockState();
+        if (block == null) return;
         for (SlotEntryReference sr : cap.getEquipped(PlayerCollarsMod.PAWS_ITEM)) {
             if (PawsItem.shouldPreventBlockInteraction(sr.stack(), block)) {
                 cir.setReturnValue(ActionResult.PASS);
