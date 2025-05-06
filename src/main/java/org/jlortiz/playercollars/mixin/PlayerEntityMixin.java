@@ -2,6 +2,7 @@ package org.jlortiz.playercollars.mixin;
 
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;
+import net.fabricmc.fabric.api.tag.convention.v2.TagUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
@@ -11,7 +12,9 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ToolMaterials;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Pair;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +44,12 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         float ret = instance.getBlockBreakingSpeed(block);
         if (ret == 1) return ret;
         return TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped(PlayerCollarsMod.PAWS_ITEM))
-                .filter((x) -> !x.isEmpty()).map((x) -> (ret - 1) * 0.125f + 1).orElse(ret);
+                .filter((x) -> !x.isEmpty()).map((x) -> {
+                    if (TagUtil.isIn(BlockTags.SHOVEL_MINEABLE, block.getBlock())) {
+                        return ToolMaterials.IRON.getMiningSpeedMultiplier();
+                    }
+                    return (ret - 1) * 0.125f + 1;
+                }).orElse(ret);
     }
 
     @Redirect(method="attack", at= @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getAttributeValue(Lnet/minecraft/registry/entry/RegistryEntry;)D", ordinal=0))

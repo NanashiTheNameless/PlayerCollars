@@ -28,9 +28,15 @@
   "item.playercollars.collar.paw": "Paw",
   "item.playercollars.collar.paw_color": "Paw: #%s",
   "item.playercollars.collar.remove_owner": "Remove Owner",
+  "item.playercollars.paw_configurator": "Paw Patroller",
+  "item.playercollars.paw_configurator.added": "Paws can now interact with %s",
+  "item.playercollars.paw_configurator.no_remove": "%s does not require hands to use",
+  "item.playercollars.paw_configurator.removed": "Paws can no longer interact with %s",
+  "item.playercollars.paws": "Paws",
+  "item.playercollars.paws.slippery": "Slippery - cannot hold items",
   "message.playercollars.no_attack_owner": "Don't attack your owner!",
   "message.playercollars.no_break_fence": "Can't unleash yourself!",
   "tag.block.playercollars.paws_allow_interact": "Usable with Paws",
-  "tag.item.trinkets.chest.hand": "Hand",
-  "tag.item.trinkets.chest.necklace": "Necklace"
+  "tag.item.trinkets.chest.necklace": "Necklace",
+  "tag.item.trinkets.hand.glove": "Glove"
 }

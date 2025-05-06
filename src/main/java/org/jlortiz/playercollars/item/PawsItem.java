@@ -1,28 +1,32 @@
 package org.jlortiz.playercollars.item;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import dev.emi.trinkets.api.Trinket;
-import net.fabricmc.fabric.api.tag.convention.v2.TagUtil;
-import net.minecraft.block.pattern.CachedBlockPosition;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.item.BlockPredicatesChecker;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public class PawsItem extends Item implements Trinket {
     public PawsItem() {
         super(new Item.Settings().maxCount(1));
     }
 
-    public static boolean shouldPreventBlockInteraction(ItemStack stack, CachedBlockPosition block) {
-        if (block.getBlockState() == null) return false;
-        if(TagUtil.isIn(PlayerCollarsMod.PAWS_ALLOW_INTERACT, block.getBlockState().getBlock())) return false;
-        BlockPredicatesChecker allowed = stack.get(DataComponentTypes.CAN_BREAK);
-        return allowed == null || !allowed.check(block);
+    public static boolean shouldPreventBlockInteraction(ItemStack stack, @NotNull BlockState block) {
+        if (block.isIn(PlayerCollarsMod.PAWS_ALLOW_INTERACT)) return false;
+        Set<Identifier> allowed = stack.get(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE);
+        Optional<RegistryKey<Block>> key = block.getRegistryEntry().getKey();
+        return allowed != null && key.isPresent() && allowed.contains(key.get().getValue());
     }
 
     public static boolean isSlippery(ItemStack stack) {

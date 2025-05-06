@@ -1,6 +1,7 @@
 package org.jlortiz.playercollars;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.ListCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;
@@ -43,6 +44,7 @@ import org.jlortiz.playercollars.item.*;
 import org.jlortiz.playercollars.leash.LeashImpl;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class PlayerCollarsMod implements ModInitializer {
@@ -50,6 +52,7 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final CollarItem COLLAR_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "collar"), new CollarItem());
 	public static final ClickerItem CLICKER_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "clicker"), new ClickerItem());
     public static final PawsItem PAWS_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "paws"), new PawsItem());
+    public static final PawSetupItem PAW_CONFIGURATION_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "paw_configurator"), new PawSetupItem());
 	public static final SoundEvent CLICKER_ON = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_on"),
 			SoundEvent.of(Identifier.of(MOD_ID, "clicker_on")));
 	public static final SoundEvent CLICKER_OFF = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_off"),
@@ -63,6 +66,14 @@ public class PlayerCollarsMod implements ModInitializer {
 			Registries.DATA_COMPONENT_TYPE,
 			Identifier.of(MOD_ID, "owner_component"),
 			ComponentType.<OwnerComponent>builder().codec(OWNER_COMPONENT_CODEC).build());
+
+	private static final Codec<Set<Identifier>> CAN_INTERACT_COMPONENT_CODEC = new ListCodec<>(
+			Identifier.CODEC, 0, 65535).xmap(Set::copyOf, List::copyOf);
+	public static final ComponentType<Set<Identifier>> CAN_INTERACT_COMPONENT_TYPE = Registry.register(
+			Registries.DATA_COMPONENT_TYPE,
+			Identifier.of(MOD_ID, "can_interact_component_component"),
+			ComponentType.<Set<Identifier>>builder().codec(CAN_INTERACT_COMPONENT_CODEC).build());
+
 	public static final RegistryEntry<EntityAttribute> ATTR_CLICKER_DISTANCE = Registry.registerReference(
 			Registries.ATTRIBUTE, Identifier.of(PlayerCollarsMod.MOD_ID, "clicker_distance"),
 			new ClampedEntityAttribute("attribute.playercollars.clicker_distance", 4, 0, 32));
@@ -96,6 +107,8 @@ public class PlayerCollarsMod implements ModInitializer {
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(itemGroup -> {
 			itemGroup.add(COLLAR_ITEM);
 			itemGroup.add(CLICKER_ITEM);
+			itemGroup.add(PAWS_ITEM);
+			itemGroup.add(PAW_CONFIGURATION_ITEM);
 		});
 
 		for (DyeColor c : DyeColor.values()) {
