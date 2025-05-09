@@ -36,7 +36,18 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                         .input('b', ItemTags.BUTTONS)
                         .input('i', ConventionalItemTags.IRON_INGOTS)
                         .input('p', ItemTags.PLANKS)
+                        .criterion(hasItem(Items.IRON_INGOT), conditionsFromTag(ConventionalItemTags.IRON_INGOTS))
+                        .offerTo(exporter);
+                createShaped(RecipeCategory.MISC, PlayerCollarsMod.PAWS_ITEM).pattern(" w ").pattern("wlw").pattern(" w ")
+                        .input('w', ItemTags.WOOL)
+                        .input('l', Items.LEATHER)
                         .criterion(hasItem(Items.LEATHER), conditionsFromItem(Items.LEATHER))
+                        .offerTo(exporter);
+                createShapeless(RecipeCategory.TOOLS, PlayerCollarsMod.PAW_CONFIGURATION_ITEM)
+                        .input(ConventionalItemTags.REDSTONE_DUSTS)
+                        .input(ConventionalItemTags.COPPER_INGOTS)
+                        .input(PlayerCollarsMod.PAWS_ITEM)
+                        .criterion(hasItem(PlayerCollarsMod.PAWS_ITEM), conditionsFromItem(PlayerCollarsMod.PAWS_ITEM))
                         .offerTo(exporter);
                 for (DyeColor c : DyeColor.values())
                     generateBed(exporter, PlayerCollarsMod.DOG_BED_ITEMS[c.ordinal()], DatagenEntrypoint.WOOLS[c.ordinal()]);

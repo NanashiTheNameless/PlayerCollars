@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "l": "minecraft:leather",
+    "w": "#minecraft:wool"
+  },
+  "pattern": [
+    " w ",
+    "wlw",
+    " w "
+  ],
+  "result": {
+    "count": 1,
+    "id": "playercollars:paws"
+  }
+}

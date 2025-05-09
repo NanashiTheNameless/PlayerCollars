@@ -1,15 +1,21 @@
 package org.jlortiz.playercollars.item;
 
+import io.wispforest.accessories.api.AccessoriesCapability;
+import io.wispforest.accessories.api.slot.SlotEntryReference;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.pattern.CachedBlockPosition;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 
@@ -59,6 +65,35 @@ public class PawSetupItem extends Item {
 
         checked = Set.of(output.toArray(Identifier[]::new));
         context.getStack().set(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE, checked);
+        return ActionResult.SUCCESS;
+    }
+
+    @Override
+    public ItemStack getRecipeRemainder(ItemStack stack) {
+        return stack;
+    }
+
+    @Override
+    public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
+        if (!user.isSneaking()) return ActionResult.PASS;
+        if (!(entity instanceof PlayerEntity player)) return ActionResult.PASS;
+        AccessoriesCapability cap = AccessoriesCapability.get(player);
+        if (cap == null) return ActionResult.PASS;
+
+        ItemStack collarStack = PlayerCollarsMod.filterStacksByOwner(cap.getEquipped(PlayerCollarsMod.COLLAR_ITEM), user.getUuid());
+        if (collarStack == null) {
+            user.sendMessage(Text.translatable("item.playercollars.paw_configurator.no_set_non_owner").formatted(Formatting.RED), true);
+            return ActionResult.FAIL;
+        }
+
+        Set<Identifier> canInteract = stack.get(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE);
+        if (cap.getEquipped(PlayerCollarsMod.PAWS_ITEM).isEmpty()) {
+            user.sendMessage(Text.translatable("item.playercollars.paw_configurator.no_paws_to_set").formatted(Formatting.RED), true);
+            return ActionResult.FAIL;
+        }
+        for (SlotEntryReference sr : cap.getEquipped(PlayerCollarsMod.PAWS_ITEM)) {
+            sr.stack().set(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE, canInteract);
+        }
         return ActionResult.SUCCESS;
     }
 }

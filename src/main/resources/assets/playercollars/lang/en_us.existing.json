@@ -12,6 +12,8 @@
   "item.playercollars.paw_configurator.added": "Paws can now interact with %s",
   "item.playercollars.paw_configurator.removed": "Paws can no longer interact with %s",
   "item.playercollars.paw_configurator.no_remove": "%s does not require hands to use",
+  "item.playercollars.paw_configurator.no_set_non_owner": "Must be owner to configure paws",
+  "item.playercollars.paw_configurator.no_paws_to_set": "Target is not wearing paws",
   "enchantment.playercollars.short_leash": "Tight Leash",
   "enchantment.playercollars.regeneration": "Healing",
   "enchantment.playercollars.thorns": "Spiked",
