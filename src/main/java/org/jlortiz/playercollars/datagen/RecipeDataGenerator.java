@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.BedItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -34,8 +35,21 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                 .input('b', ItemTags.BUTTONS)
                 .input('i', ConventionalItemTags.IRON_INGOTS)
                 .input('p', ItemTags.PLANKS)
+                .criterion(FabricRecipeProvider.hasItem(Items.IRON_INGOT),
+                        FabricRecipeProvider.conditionsFromItem(Items.IRON_INGOT))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PlayerCollarsMod.PAWS_ITEM).pattern(" w ").pattern("wlw").pattern(" w ")
+                .input('w', ItemTags.WOOL)
+                .input('l', Items.LEATHER)
                 .criterion(FabricRecipeProvider.hasItem(Items.LEATHER),
                         FabricRecipeProvider.conditionsFromItem(Items.LEATHER))
+                .offerTo(exporter);
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.TOOLS, PlayerCollarsMod.PAW_CONFIGURATION_ITEM)
+                .input(ConventionalItemTags.REDSTONE_DUSTS)
+                .input(ConventionalItemTags.COPPER_INGOTS)
+                .input(PlayerCollarsMod.PAWS_ITEM)
+                .criterion(FabricRecipeProvider.hasItem(PlayerCollarsMod.PAWS_ITEM),
+                        FabricRecipeProvider.conditionsFromItem(PlayerCollarsMod.PAWS_ITEM))
                 .offerTo(exporter);
         for (DyeColor c : DyeColor.values())
             generateBed(exporter, PlayerCollarsMod.DOG_BED_ITEMS[c.ordinal()], DatagenEntrypoint.WOOLS[c.ordinal()]);
