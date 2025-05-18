@@ -42,12 +42,12 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Redirect(method = "getBlockBreakingSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;getBlockBreakingSpeed(Lnet/minecraft/block/BlockState;)F"))
     private float getBlockBreakingSpeed(PlayerInventory instance, BlockState block) {
         float ret = instance.getBlockBreakingSpeed(block);
-        if (ret == 1) return ret;
         return TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped(PlayerCollarsMod.PAWS_ITEM))
                 .filter((x) -> !x.isEmpty()).map((x) -> {
                     if (TagUtil.isIn(BlockTags.SHOVEL_MINEABLE, block.getBlock())) {
                         return ToolMaterials.IRON.getMiningSpeedMultiplier();
                     }
+                    if (ret == 1) return ret;
                     return (ret - 1) * 0.125f + 1;
                 }).orElse(ret);
     }
@@ -66,7 +66,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "tickMovement", at= @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;updateItems()V", shift = At.Shift.AFTER))
     private void playercollars$dropPawItems(CallbackInfo ci) {
-        TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
+        TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped(PlayerCollarsMod.PAWS_ITEM))
                 .ifPresent((ls) -> {
                     for (Pair<SlotReference, ItemStack> p : ls) {
                         if (PawsItem.isSlippery(p.getRight())) {
