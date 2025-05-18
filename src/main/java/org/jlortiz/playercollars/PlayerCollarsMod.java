@@ -71,7 +71,7 @@ public class PlayerCollarsMod implements ModInitializer {
 			Identifier.CODEC, 0, 65535).xmap(Set::copyOf, List::copyOf);
 	public static final ComponentType<Set<Identifier>> CAN_INTERACT_COMPONENT_TYPE = Registry.register(
 			Registries.DATA_COMPONENT_TYPE,
-			Identifier.of(MOD_ID, "can_interact_component_component"),
+			Identifier.of(MOD_ID, "can_interact_component"),
 			ComponentType.<Set<Identifier>>builder().codec(CAN_INTERACT_COMPONENT_CODEC).build());
 
 	public static final RegistryEntry<EntityAttribute> ATTR_CLICKER_DISTANCE = Registry.registerReference(

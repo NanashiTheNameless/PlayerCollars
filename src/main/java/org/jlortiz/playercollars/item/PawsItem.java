@@ -29,7 +29,7 @@ public class PawsItem extends AccessoryItem {
         if (block.isIn(PlayerCollarsMod.PAWS_ALLOW_INTERACT)) return false;
         Set<Identifier> allowed = stack.get(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE);
         Optional<RegistryKey<Block>> key = block.getRegistryEntry().getKey();
-        return allowed != null && key.isPresent() && allowed.contains(key.get().getValue());
+        return allowed != null && key.isPresent() && !allowed.contains(key.get().getValue());
     }
 
     public static boolean isSlippery(ItemStack stack) {

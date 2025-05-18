@@ -14,6 +14,7 @@ public class RegisterClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         AccessoriesRendererRegistry.registerRenderer(PlayerCollarsMod.COLLAR_ITEM, CollarRenderer::new);
+        AccessoriesRendererRegistry.registerRenderer(PlayerCollarsMod.PAWS_ITEM, PawRenderer::new);
         ClientPlayNetworking.registerGlobalReceiver(PacketLookAtLerped.ID, (payload, context) -> context.client().execute(() -> RotationLerpHandler.beginClickTurn(payload.vec())));
         WorldRenderEvents.END.register(RotationLerpHandler::turnTowardsClick);
     }

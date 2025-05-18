@@ -75,6 +75,8 @@ loom {
             runDir "run"
         }
     }
+
+    accessWidenerPath = file("src/main/resources/playercollars.accesswidener")
 }
 
 tasks.withType(JavaCompile).configureEach {
