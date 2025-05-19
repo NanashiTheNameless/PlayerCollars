@@ -13,6 +13,7 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.DyeColor;
 import org.jlortiz.playercollars.PlayerCollarsMod;
+import org.jlortiz.playercollars.item.PawsItem;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -38,24 +39,30 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                         .input('p', ItemTags.PLANKS)
                         .criterion(hasItem(Items.IRON_INGOT), conditionsFromTag(ConventionalItemTags.IRON_INGOTS))
                         .offerTo(exporter);
-                createShaped(RecipeCategory.MISC, PlayerCollarsMod.PAWS_ITEM).pattern(" w ").pattern("wlw").pattern(" w ")
-                        .input('w', ItemTags.WOOL)
-                        .input('l', Items.LEATHER)
-                        .criterion(hasItem(Items.LEATHER), conditionsFromItem(Items.LEATHER))
-                        .offerTo(exporter);
                 createShapeless(RecipeCategory.TOOLS, PlayerCollarsMod.PAW_CONFIGURATION_ITEM)
                         .input(ConventionalItemTags.REDSTONE_DUSTS)
-                        .input(ConventionalItemTags.COPPER_INGOTS)
-                        .input(PlayerCollarsMod.PAWS_ITEM)
-                        .criterion(hasItem(PlayerCollarsMod.PAWS_ITEM), conditionsFromItem(PlayerCollarsMod.PAWS_ITEM))
+                        .input(ConventionalItemTags.IRON_INGOTS)
+                        .input(PlayerCollarsMod.PAWS_TAG)
+                        .criterion("has_paws", conditionsFromTag(PlayerCollarsMod.PAWS_TAG))
                         .offerTo(exporter);
                 for (DyeColor c : DyeColor.values())
                     generateBed(exporter, PlayerCollarsMod.DOG_BED_ITEMS[c.ordinal()], DatagenEntrypoint.WOOLS[c.ordinal()]);
+                for (int i = 0; i < PlayerCollarsMod.PAWS_DYE_COLORS.length; i++)
+                    generatePaws(exporter, PlayerCollarsMod.PAWS_ITEMS[i], DatagenEntrypoint.WOOLS[PlayerCollarsMod.PAWS_DYE_COLORS[i].ordinal()]);
             }
 
             private void generateBed(RecipeExporter exporter, BedItem output, Item input) {
                 createShaped(RecipeCategory.DECORATIONS, output).pattern("w w").pattern("www")
                         .input('w', input)
+                        .criterion(hasItem(input), conditionsFromItem(input))
+                        .group("dog_bed")
+                        .offerTo(exporter);
+            }
+
+            private void generatePaws(RecipeExporter exporter, PawsItem output, Item input) {
+                createShaped(RecipeCategory.MISC, output).pattern(" w ").pattern("wlw").pattern(" w ")
+                        .input('w', input)
+                        .input('l', Items.LEATHER)
                         .criterion(hasItem(input), conditionsFromItem(input))
                         .group("dog_bed")
                         .offerTo(exporter);

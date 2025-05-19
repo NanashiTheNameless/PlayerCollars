@@ -1,0 +1,15 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "playercollars:item/paw_configurator"
+	},
+	"display": {
+		"firstperson_righthand": {
+			"translation": [-8.75, 5.3125, 0]
+		},
+		"firstperson_lefthand": {
+			"translation": [-9.325, 5.3125, 0]
+		}
+	}
+}

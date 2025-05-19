@@ -43,7 +43,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         float ret = instance.getBlockBreakingSpeed(block);
         AccessoriesCapability cap = AccessoriesCapability.get(this);
         if (cap == null) return ret;
-        if (cap.getEquipped(PlayerCollarsMod.PAWS_ITEM).isEmpty()) return ret;
+        if (cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.PAWS_TAG)).isEmpty()) return ret;
         if (TagUtil.isIn(BlockTags.SHOVEL_MINEABLE, block.getBlock())) {
             return ToolMaterial.IRON.speed();
         }
@@ -55,7 +55,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         double ret = instance.getAttributeValue(registryEntry);
         AccessoriesCapability cap = AccessoriesCapability.get(this);
         if (cap == null) return ret;
-        if (cap.getEquipped(PlayerCollarsMod.PAWS_ITEM).isEmpty()) return ret;
+        if (cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.PAWS_TAG)).isEmpty()) return ret;
         return (ret - 1) * 0.75f + 1;
     }
 
@@ -68,7 +68,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     private void playercollars$dropPawItems(CallbackInfo ci) {
         AccessoriesCapability cap = AccessoriesCapability.get(this);
         if (cap == null) return;
-        for (SlotEntryReference sr : cap.getEquipped(PlayerCollarsMod.PAWS_ITEM)) {
+        for (SlotEntryReference sr : cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.PAWS_TAG))) {
             if (PawsItem.isSlippery(sr.stack())) {
                 ItemStack stack = inventory.dropSelectedItem(true);
                 if (!stack.isEmpty()) dropItem(stack, true);

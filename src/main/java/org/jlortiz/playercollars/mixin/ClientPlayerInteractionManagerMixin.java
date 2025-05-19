@@ -26,7 +26,7 @@ public class ClientPlayerInteractionManagerMixin {
         if (cap == null) return;
         BlockState block = (new CachedBlockPosition(player.getWorld(), hitResult.getBlockPos(), false)).getBlockState();
         if (block == null) return;
-        for (SlotEntryReference sr : cap.getEquipped(PlayerCollarsMod.PAWS_ITEM)) {
+        for (SlotEntryReference sr : cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.PAWS_TAG))) {
             if (PawsItem.shouldPreventBlockInteraction(sr.stack(), block)) {
                 cir.setReturnValue(ActionResult.PASS);
                 return;

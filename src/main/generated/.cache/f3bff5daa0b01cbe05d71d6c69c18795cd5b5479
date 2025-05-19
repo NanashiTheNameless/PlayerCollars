@@ -1,4 +1,5 @@
 // 1.21.4	-999999999-01-01T00:00:00	Player Collars/Tags for minecraft:item
-08cf8438fd49d0d984003f3d000d1958f96e0339 data/accessories/tags/item/hand.json
+d1afc1fd1ce2ac0907611dd58fabae7cb726c98b data/accessories/tags/item/hand.json
 ba260e7b4e09ce3027d6bfeb68aeec35dc590050 data/accessories/tags/item/necklace.json
 9cc48160b20a74a0cee7667289b677cac11ae4b6 data/minecraft/tags/item/dyeable.json
+d1afc1fd1ce2ac0907611dd58fabae7cb726c98b data/playercollars/tags/item/paws.json
