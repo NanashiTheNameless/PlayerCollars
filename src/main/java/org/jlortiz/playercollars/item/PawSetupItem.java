@@ -60,7 +60,7 @@ public class PawSetupItem extends Item {
 
         checked = Set.of(output.toArray(Identifier[]::new));
         context.getStack().set(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE, checked);
-        return ActionResult.SUCCESS;
+        return ActionResult.CONSUME;
     }
 
     @Override
@@ -83,11 +83,11 @@ public class PawSetupItem extends Item {
         }
 
         Set<Identifier> canInteract = stack.get(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE);
-        if (component.getEquipped(PlayerCollarsMod.PAWS_ITEM).isEmpty()) {
+        if (component.getEquipped((x) -> x.isIn(PlayerCollarsMod.PAWS_TAG)).isEmpty()) {
             user.sendMessage(Text.translatable("item.playercollars.paw_configurator.no_paws_to_set").formatted(Formatting.RED), true);
             return ActionResult.FAIL;
         }
-        for (Pair<SlotReference, ItemStack> p : component.getEquipped(PlayerCollarsMod.PAWS_ITEM)) {
+        for (Pair<SlotReference, ItemStack> p : component.getEquipped((x) -> x.isIn(PlayerCollarsMod.PAWS_TAG))) {
             p.getRight().set(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE, canInteract);
         }
         return ActionResult.SUCCESS;

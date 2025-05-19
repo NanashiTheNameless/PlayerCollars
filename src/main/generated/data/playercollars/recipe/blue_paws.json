@@ -1,12 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "group": "paws",
   "key": {
     "l": {
       "item": "minecraft:leather"
     },
     "w": {
-      "tag": "minecraft:wool"
+      "item": "minecraft:blue_wool"
     }
   },
   "pattern": [
@@ -16,6 +17,6 @@
   ],
   "result": {
     "count": 1,
-    "id": "playercollars:paws"
+    "id": "playercollars:blue_paws"
   }
 }

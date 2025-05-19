@@ -42,7 +42,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Redirect(method = "getBlockBreakingSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;getBlockBreakingSpeed(Lnet/minecraft/block/BlockState;)F"))
     private float getBlockBreakingSpeed(PlayerInventory instance, BlockState block) {
         float ret = instance.getBlockBreakingSpeed(block);
-        return TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped(PlayerCollarsMod.PAWS_ITEM))
+        return TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.PAWS_TAG)))
                 .filter((x) -> !x.isEmpty()).map((x) -> {
                     if (TagUtil.isIn(BlockTags.SHOVEL_MINEABLE, block.getBlock())) {
                         return ToolMaterials.IRON.getMiningSpeedMultiplier();
@@ -55,7 +55,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Redirect(method="attack", at= @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getAttributeValue(Lnet/minecraft/registry/entry/RegistryEntry;)D", ordinal=0))
     private double getAttributeValue(PlayerEntity instance, RegistryEntry<EntityAttribute> registryEntry) {
         double ret = instance.getAttributeValue(registryEntry);
-        return TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped(PlayerCollarsMod.PAWS_ITEM))
+        return TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.PAWS_TAG)))
                 .filter((x) -> !x.isEmpty()).map((x) -> (ret - 1) * 0.75f + 1).orElse(ret);
     }
 
@@ -66,7 +66,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "tickMovement", at= @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;updateItems()V", shift = At.Shift.AFTER))
     private void playercollars$dropPawItems(CallbackInfo ci) {
-        TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped(PlayerCollarsMod.PAWS_ITEM))
+        TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.PAWS_TAG)))
                 .ifPresent((ls) -> {
                     for (Pair<SlotReference, ItemStack> p : ls) {
                         if (PawsItem.isSlippery(p.getRight())) {

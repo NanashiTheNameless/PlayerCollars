@@ -2,6 +2,7 @@ package org.jlortiz.playercollars.mixin;
 
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;
+import net.fabricmc.fabric.api.tag.convention.v2.TagUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.pattern.CachedBlockPosition;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -24,7 +25,7 @@ public class ClientPlayerInteractionManagerMixin {
     private void playercollars$cancelPawInteractions(ClientPlayerEntity player, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir) {
         if (hand == Hand.OFF_HAND || player.isSpectator()) return;
         if (player.isSneaking() && !player.getStackInHand(hand).isEmpty()) return;
-        TrinketsApi.getTrinketComponent(player).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
+        TrinketsApi.getTrinketComponent(player).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.PAWS_TAG)))
                 .ifPresent((ls) -> {
                     BlockState block = (new CachedBlockPosition(player.getWorld(), hitResult.getBlockPos(), false)).getBlockState();
                     for (Pair<SlotReference, ItemStack> p : ls) {

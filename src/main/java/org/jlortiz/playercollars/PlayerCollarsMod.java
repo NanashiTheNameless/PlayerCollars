@@ -29,6 +29,7 @@ import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
@@ -51,7 +52,6 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final String MOD_ID = "playercollars";
 	public static final CollarItem COLLAR_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "collar"), new CollarItem());
 	public static final ClickerItem CLICKER_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "clicker"), new ClickerItem());
-    public static final PawsItem PAWS_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "paws"), new PawsItem());
     public static final PawSetupItem PAW_CONFIGURATION_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "paw_configurator"), new PawSetupItem());
 	public static final SoundEvent CLICKER_ON = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_on"),
 			SoundEvent.of(Identifier.of(MOD_ID, "clicker_on")));
@@ -83,7 +83,11 @@ public class PlayerCollarsMod implements ModInitializer {
 
 	public static final DogBedBlock[] DOG_BEDS = new DogBedBlock[DyeColor.values().length];
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
+	public static final DyeColor[] PAWS_DYE_COLORS = new DyeColor[]{DyeColor.WHITE, DyeColor.LIGHT_GRAY,
+			DyeColor.GRAY, DyeColor.BLACK, DyeColor.BLUE, DyeColor.RED, DyeColor.PURPLE};
+	public static final PawsItem[] PAWS_ITEMS = new PawsItem[PAWS_DYE_COLORS.length];
 	public static final TagKey<Block> PAWS_ALLOW_INTERACT = TagKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "paws_allow_interact"));
+	public static final TagKey<Item> PAWS_TAG = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "paws"));
 
 	public static ItemStack filterStacksByOwner(List<Pair<SlotReference, ItemStack>> stacks, UUID plr) {
 		for (Pair<SlotReference, ItemStack> p : stacks) {
@@ -103,12 +107,19 @@ public class PlayerCollarsMod implements ModInitializer {
 		ServerPlayNetworking.registerGlobalReceiver(PacketUpdateCollar.ID, PacketUpdateCollar::handle);
 		PayloadTypeRegistry.playS2C().register(PacketLookAtLerped.ID, PacketLookAtLerped.CODEC);
 		TrinketsApi.registerTrinket(PlayerCollarsMod.COLLAR_ITEM, PlayerCollarsMod.COLLAR_ITEM);
-        TrinketsApi.registerTrinket(PlayerCollarsMod.PAWS_ITEM, PlayerCollarsMod.PAWS_ITEM);
+        for (int i = 0; i < PAWS_DYE_COLORS.length; i++) {
+            DyeColor c = PAWS_DYE_COLORS[i];
+            Identifier itemKey = PawsItem.getIdentifier(c);
+            PAWS_ITEMS[i] = Registry.register(Registries.ITEM, itemKey,
+                    new PawsItem(c.getFireworkColor(), 0xF196CF));
+            TrinketsApi.registerTrinket(PAWS_ITEMS[i], PAWS_ITEMS[i]);
+        }
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(itemGroup -> {
 			itemGroup.add(COLLAR_ITEM);
 			itemGroup.add(CLICKER_ITEM);
-			itemGroup.add(PAWS_ITEM);
 			itemGroup.add(PAW_CONFIGURATION_ITEM);
+			for (PawsItem p : PAWS_ITEMS)
+				itemGroup.add(p);
 		});
 
 		for (DyeColor c : DyeColor.values()) {

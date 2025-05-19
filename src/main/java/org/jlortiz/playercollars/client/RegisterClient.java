@@ -31,11 +31,13 @@ public class RegisterClient implements ClientModInitializer {
             case 0 -> PawsItem.getColor(stack);
             case 1 -> PawsItem.getBeanColor(stack);
             default -> -1;
-        }, PlayerCollarsMod.PAWS_ITEM);
+        }, PlayerCollarsMod.PAWS_ITEMS);
         ModelPredicateProviderRegistry.register(PlayerCollarsMod.CLICKER_ITEM, Identifier.ofVanilla("cast"), (itemStack, clientWorld, livingEntity, seed) -> livingEntity != null && livingEntity.isUsingItem() && livingEntity.getActiveItem() == itemStack ? 1 : 0);
 
         TrinketRendererRegistry.registerRenderer(PlayerCollarsMod.COLLAR_ITEM, new CollarRenderer());
-        TrinketRendererRegistry.registerRenderer(PlayerCollarsMod.PAWS_ITEM, new PawRenderer());
+        PawRenderer pr = new PawRenderer();
+        for (PawsItem x : PlayerCollarsMod.PAWS_ITEMS)
+            TrinketRendererRegistry.registerRenderer(x, pr);
         ClientPlayNetworking.registerGlobalReceiver(PacketLookAtLerped.ID, (payload, context) -> context.client().execute(() -> RotationLerpHandler.beginClickTurn(payload.vec())));
         WorldRenderEvents.END.register(RotationLerpHandler::turnTowardsClick);
     }
