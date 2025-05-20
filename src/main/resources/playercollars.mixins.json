@@ -8,10 +8,11 @@
   },
   "refmap": "PlayerCollars-refmap.json",
   "mixins": [
+    "MixinLivingEntity",
     "MixinPlayerEntity",
     "MixinServerPlayerEntity",
     "MixinServerWorld",
     "MixinTurtleEntity",
-    "MixinLivingEntity"
+    "BoneItemMixin"
   ]
 }

@@ -28,5 +28,7 @@
   "item.playercollars.collar.paw": "Paw",
   "item.playercollars.collar.paw_color": "Paw: #%s",
   "item.playercollars.collar.remove_owner": "Remove Owner",
+  "message.playercollars.no_attack_owner": "Don't attack your owner!",
+  "message.playercollars.no_break_fence": "Can't unleash yourself!",
   "tag.item.trinkets.chest.necklace": "Necklace"
 }

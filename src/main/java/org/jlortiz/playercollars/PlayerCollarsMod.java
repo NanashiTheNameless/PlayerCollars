@@ -5,14 +5,22 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.component.ComponentType;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.ClampedEntityAttribute;
 import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.decoration.LeashKnotEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BedItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
@@ -22,14 +30,17 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.util.Uuids;
+import net.minecraft.text.Text;
+import net.minecraft.util.*;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.jlortiz.playercollars.item.ClickerItem;
 import org.jlortiz.playercollars.item.CollarItem;
 import org.jlortiz.playercollars.item.DogBedBlock;
 import org.jlortiz.playercollars.item.RegenerationEnchantmentEffect;
+import org.jlortiz.playercollars.leash.LeashImpl;
 
 import java.util.List;
 import java.util.UUID;
@@ -95,6 +106,39 @@ public class PlayerCollarsMod implements ModInitializer {
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(itemGroup -> {
 			for (BedItem bed : DOG_BED_ITEMS)
 				itemGroup.add(bed);
+		});
+
+		PlayerBlockBreakEvents.BEFORE.register((World var1, PlayerEntity player, BlockPos blockPos, BlockState var4, @Nullable BlockEntity var5) -> {
+			if (var1.isClient) return true;
+			if (player.isSpectator()) return true;
+			Entity leashHolderEntity = ((LeashImpl) player).leashplayers$getProxyLeashHolder();
+			if (leashHolderEntity instanceof LeashKnotEntity knot && blockPos.equals(knot.getAttachedBlockPos())) {
+				player.sendMessage(Text.translatable("message.playercollars.no_break_fence").formatted(Formatting.RED), true);
+				return false;
+			}
+			return true;
+		});
+
+		AttackEntityCallback.EVENT.register((PlayerEntity player, World var2, Hand var3, Entity var4, @Nullable EntityHitResult var5) -> {
+			if (var2.isClient) return ActionResult.PASS;
+			if (player.isSpectator()) return ActionResult.PASS;
+			if (var4 instanceof PlayerEntity &&
+				TrinketsApi.getTrinketComponent(player).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
+						.map((x) -> PlayerCollarsMod.filterStacksByOwner(x, var4.getUuid())).isPresent()) {
+					// Collared players are allowed to attack bad owners, but have 75% damage returned to them
+					player.sendMessage(Text.translatable("message.playercollars.no_attack_owner").formatted(Formatting.RED), true);
+					double f = player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+					f = (f - 1) * 0.75 + 1;
+					player.damage(player.getDamageSources().playerAttack(player), (float) Math.ceil(f));
+					return ActionResult.PASS;
+			}
+
+			Entity leashedEnt = ((LeashImpl) player).leashplayers$getProxyLeashHolder();
+			if (leashedEnt instanceof LeashKnotEntity && leashedEnt.equals(var4)) {
+				player.sendMessage(Text.translatable("message.playercollars.no_break_fence").formatted(Formatting.RED), true);
+				return ActionResult.FAIL;
+			}
+			return ActionResult.PASS;
 		});
 	}
 }

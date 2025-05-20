@@ -151,6 +151,11 @@ public abstract class MixinServerPlayerEntity implements LeashImpl {
         leashplayers$update();
     }
 
+    @Unique
+    public Entity leashplayers$getProxyLeashHolder() {
+        return leashplayers$proxy == null ? null : leashplayers$proxy.getLeashHolder();
+    }
+
     @Override
     public ActionResult leashplayers$interact(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
