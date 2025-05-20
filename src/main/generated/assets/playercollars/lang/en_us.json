@@ -44,5 +44,6 @@
   "item.playercollars.red_dog_bed": "Red Human-Sized Dog Bed",
   "item.playercollars.white_dog_bed": "White Human-Sized Dog Bed",
   "item.playercollars.yellow_dog_bed": "Yellow Human-Sized Dog Bed",
-  "tag.item.trinkets.chest.necklace": "Necklace"
+  "message.playercollars.no_attack_owner": "Don't attack your owner!",
+  "message.playercollars.no_break_fence": "Can't unleash yourself!"
 }
