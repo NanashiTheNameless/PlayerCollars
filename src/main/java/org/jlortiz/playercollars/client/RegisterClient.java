@@ -13,14 +13,15 @@ import net.minecraft.item.BedItem;
 import net.minecraft.util.Identifier;
 import org.jlortiz.playercollars.PacketLookAtLerped;
 import org.jlortiz.playercollars.PlayerCollarsMod;
+import org.jlortiz.playercollars.item.CollarItem;
 
 @Environment(EnvType.CLIENT)
 public class RegisterClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> switch (tintIndex) {
-            case 0 -> PlayerCollarsMod.COLLAR_ITEM.getColor(stack) | 0xff000000;
-            case 1 -> PlayerCollarsMod.COLLAR_ITEM.getPawColor(stack) | 0xff000000;
+            case 0 -> CollarItem.getColor(stack) | 0xff000000;
+            case 1 -> CollarItem.getPawColor(stack) | 0xff000000;
             default -> -1;
         }, PlayerCollarsMod.COLLAR_ITEM);
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 0 ? PlayerCollarsMod.CLICKER_ITEM.getColor(stack) | 0xff000000 : -1, PlayerCollarsMod.CLICKER_ITEM);

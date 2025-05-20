@@ -2,8 +2,8 @@ package org.jlortiz.playercollars.item;
 
 import com.google.common.collect.Multimap;
 import dev.emi.trinkets.api.SlotReference;
-import dev.emi.trinkets.api.TrinketEnums;
 import dev.emi.trinkets.api.Trinket;
+import dev.emi.trinkets.api.TrinketEnums;
 import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -51,17 +51,17 @@ public class CollarItem extends Item implements Trinket {
     @Override
     public void tick(ItemStack stack, SlotReference slot, LivingEntity entity) {}
 
-    public int getColor(ItemStack itemStack) {
+    public static int getColor(ItemStack itemStack) {
         DyedColorComponent $$1 = itemStack.get(DataComponentTypes.DYED_COLOR);
         return $$1 != null ? $$1.rgb() : MapColor.RED.color;
     }
 
-    public int getPawColor(ItemStack itemStack) {
+    public static int getPawColor(ItemStack itemStack) {
         MapColorComponent $$1 = itemStack.get(DataComponentTypes.MAP_COLOR);
         return $$1 != null ? $$1.rgb() : MapColor.BLUE.color;
     }
 
-    public @Nullable OwnerComponent getOwner(ItemStack is) {
+    public static @Nullable OwnerComponent getOwner(ItemStack is) {
         return is.get(PlayerCollarsMod.OWNER_COMPONENT_TYPE);
     }
 

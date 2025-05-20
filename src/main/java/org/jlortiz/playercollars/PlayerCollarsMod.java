@@ -75,11 +75,9 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static ItemStack filterStacksByOwner(List<Pair<SlotReference, ItemStack>> stacks, UUID plr) {
 		for (Pair<SlotReference, ItemStack> p : stacks) {
 			ItemStack is = p.getRight();
-			if (is.getItem() instanceof CollarItem item) {
-				OwnerComponent owner = item.getOwner(is);
-				if (owner != null && owner.uuid().equals(plr)) {
-					return is;
-				}
+			OwnerComponent owner = CollarItem.getOwner(is);
+			if (owner != null && owner.uuid().equals(plr)) {
+				return is;
 			}
 		}
 		return null;
@@ -99,7 +97,7 @@ public class PlayerCollarsMod implements ModInitializer {
 
 		for (DyeColor c : DyeColor.values()) {
 			DOG_BEDS[c.ordinal()] = Registry.register(Registries.BLOCK, Identifier.of(MOD_ID, c.getName() + "_dog_bed"),
-					new DogBedBlock(c, AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOD).strength(0.2F).nonOpaque().burnable().pistonBehavior(PistonBehavior.DESTROY)));
+					new DogBedBlock(c, AbstractBlock.Settings.create().sounds(BlockSoundGroup.WOOL).strength(0.2F).nonOpaque().burnable().pistonBehavior(PistonBehavior.DESTROY)));
 			DOG_BED_ITEMS[c.ordinal()] = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, c.getName() + "_dog_bed"),
 					new BedItem(DOG_BEDS[c.ordinal()], (new Item.Settings()).maxCount(1)));
 		}

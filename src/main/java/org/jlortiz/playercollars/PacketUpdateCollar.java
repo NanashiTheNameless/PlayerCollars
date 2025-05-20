@@ -20,7 +20,7 @@ public record PacketUpdateCollar(OwnerState os, int pawColor, int color) impleme
             PacketCodecs.INTEGER, PacketUpdateCollar::color,
             PacketUpdateCollar::new);
     public PacketUpdateCollar(ItemStack is, OwnerState os) {
-        this(os, PlayerCollarsMod.COLLAR_ITEM.getPawColor(is), PlayerCollarsMod.COLLAR_ITEM.getColor(is));
+        this(os, CollarItem.getPawColor(is), CollarItem.getColor(is));
     }
 
     @Override

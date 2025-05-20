@@ -29,9 +29,9 @@ public class CollarDyeScreen extends Screen {
         super(is.getName());
         this.is = is;
         this.ownUUID = plr;
-        initColor = item.getColor(is);
-        initPaw = item.getPawColor(is);
-        owner = item.getOwner(is);
+        initColor = CollarItem.getColor(is);
+        initPaw = CollarItem.getPawColor(is);
+        owner = CollarItem.getOwner(is);
     }
 
     @Override

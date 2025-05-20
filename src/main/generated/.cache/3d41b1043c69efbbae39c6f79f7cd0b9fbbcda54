@@ -1,4 +1,4 @@
-// 1.21.1	2025-05-19T22:57:20.1227899	Player Collars/Model Definitions
+// 1.21.1	2025-05-19T23:01:11.5170458	Player Collars/Model Definitions
 621c8704d9597617df22bd61e15434f7b59fc973 assets\playercollars\models\item\light_gray_dog_bed.json
 621c8704d9597617df22bd61e15434f7b59fc973 assets\playercollars\models\item\purple_dog_bed.json
 621c8704d9597617df22bd61e15434f7b59fc973 assets\playercollars\models\item\black_dog_bed.json
@@ -14,8 +14,8 @@ a4754e78b096db87d5710f5840d4da315bb4b115 assets\playercollars\models\block\gray_
 c1229bffacad69b8720426ef234a4bdf604ecdf8 assets\playercollars\blockstates\magenta_dog_bed.json
 621c8704d9597617df22bd61e15434f7b59fc973 assets\playercollars\models\item\red_dog_bed.json
 f1e8de6b2cafb81bd4fd91e2c2009e20e6908b82 assets\playercollars\blockstates\yellow_dog_bed.json
-e028cc8bdc64d4293b9735ca425a11bfd5d1ad8d assets\playercollars\blockstates\purple_dog_bed.json
 0af8ea8eae13c9cafa049358501977ab63a8dd11 assets\playercollars\blockstates\red_dog_bed.json
+e028cc8bdc64d4293b9735ca425a11bfd5d1ad8d assets\playercollars\blockstates\purple_dog_bed.json
 bbb2448fc7349cf3d78fbdab940a9f66331d8320 assets\playercollars\models\block\black_dog_bed.json
 89a3a8778c8f40979056b4d986e4d52f5b8cc7e9 assets\playercollars\models\block\magenta_dog_bed.json
 677831fdc04cb03a168ed6145ed2d919655f67f8 assets\playercollars\blockstates\orange_dog_bed.json
