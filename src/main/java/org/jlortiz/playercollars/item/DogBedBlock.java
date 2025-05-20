@@ -18,7 +18,7 @@ public class DogBedBlock extends BedBlock {
 
     public DogBedBlock(DyeColor color, RegistryKey<Block> key) {
         super(color, AbstractBlock.Settings.create()
-                .sounds(BlockSoundGroup.WOOD).strength(0.2F).nonOpaque().burnable()
+                .sounds(BlockSoundGroup.WOOL).strength(0.2F).nonOpaque().burnable()
                 .pistonBehavior(PistonBehavior.DESTROY).registryKey(key));
     }
 

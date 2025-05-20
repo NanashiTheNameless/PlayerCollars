@@ -14,6 +14,7 @@ import net.minecraft.text.Text;
 import org.jlortiz.playercollars.OwnerComponent;
 import org.jlortiz.playercollars.PacketUpdateCollar;
 import org.jlortiz.playercollars.PlayerCollarsMod;
+import org.jlortiz.playercollars.item.CollarItem;
 
 import java.util.UUID;
 
@@ -27,8 +28,8 @@ public class CollarDyeScreen extends Screen {
         super(is.getName());
         this.is = is;
         this.ownUUID = plr;
-        initColor = PlayerCollarsMod.COLLAR_ITEM.getColor(is);
-        initPaw = PlayerCollarsMod.COLLAR_ITEM.getPawColor(is);
+        initColor = CollarItem.getColor(is);
+        initPaw = CollarItem.getPawColor(is);
         owner = is.get(PlayerCollarsMod.OWNER_COMPONENT_TYPE);
     }
 

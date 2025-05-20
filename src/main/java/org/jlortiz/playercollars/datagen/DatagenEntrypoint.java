@@ -8,12 +8,14 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.block.BedBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.enums.BedPart;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.DyeColor;
@@ -36,6 +38,7 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
         pack.addProvider(ModelDataGenerator::new);
         pack.addProvider(LootTableGenerator::new);
         pack.addProvider(ItemTagGenerator::new);
+        pack.addProvider(BlockTagGenerator::new);
         pack.addProvider(EnglishLangProvider::new);
     }
 
@@ -60,6 +63,17 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
         protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
             getOrCreateTagBuilder(ItemTags.DYEABLE).add(PlayerCollarsMod.COLLAR_ITEM).add(PlayerCollarsMod.CLICKER_ITEM);
             getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(Accessories.MODID, "necklace"))).add(PlayerCollarsMod.COLLAR_ITEM);
+        }
+    }
+
+    private static class BlockTagGenerator extends FabricTagProvider<Block> {
+        public BlockTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+            super(output, RegistryKeys.BLOCK, registriesFuture);
+        }
+
+        @Override
+        protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
+            getOrCreateTagBuilder(BlockTags.BEDS).add(PlayerCollarsMod.DOG_BEDS);
         }
     }
 

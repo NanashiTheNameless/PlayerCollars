@@ -34,18 +34,18 @@ import org.jlortiz.playercollars.client.CollarDyeScreen;
 import java.util.List;
 
 public class CollarItem extends AccessoryItem {
-
     public static final RegistryKey<Item> REGISTRY_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "collar"));
+
     public CollarItem() {
         super(new Item.Settings().maxCount(1).registryKey(REGISTRY_KEY));
     }
 
-    public int getColor(ItemStack itemStack) {
+    public static int getColor(ItemStack itemStack) {
         DyedColorComponent $$1 = itemStack.get(DataComponentTypes.DYED_COLOR);
         return $$1 != null ? $$1.rgb() : MapColor.RED.color | 0xFF000000;
     }
 
-    public int getPawColor(ItemStack itemStack) {
+    public static int getPawColor(ItemStack itemStack) {
         MapColorComponent $$1 = itemStack.get(DataComponentTypes.MAP_COLOR);
         return $$1 != null ? $$1.rgb() : MapColor.BLUE.color;
     }

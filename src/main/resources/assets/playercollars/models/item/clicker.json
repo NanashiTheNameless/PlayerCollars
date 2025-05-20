@@ -4,9 +4,6 @@
 	"textures": {
 		"layer0": "playercollars:item/clicker"
 	},
-	"overrides": [
-		{"predicate": {"cast": 1}, "model": "playercollars:item/clicker_on"}
-	],
 	"display": {
 		"thirdperson_righthand": {
 			"translation": [0, 1.75, 1],
