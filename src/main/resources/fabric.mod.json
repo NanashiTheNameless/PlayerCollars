@@ -32,6 +32,7 @@
     ]
   },
   "mixins": [
+    "playercollars.leashplayers.mixins.json",
     "playercollars.mixins.json"
   ],
   "depends": {

@@ -1,4 +1,4 @@
-package org.jlortiz.playercollars.leash.mixin;
+package org.jlortiz.playercollars.mixin;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
