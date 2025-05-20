@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = PlayerEntity.class, priority = 500)
 public abstract class MixinPlayerEntity {
+    // Ideally this should be in MixinServerPlayerEntity, but I'm *very* wary about overriding methods in the player
     @Inject(method = "interact", at = @At("RETURN"), cancellable = true)
     private void leashplayers$onInteract(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> info) {
         if (info.getReturnValue() != ActionResult.PASS) return;

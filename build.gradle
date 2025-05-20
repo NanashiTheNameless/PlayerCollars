@@ -96,7 +96,7 @@ jar {
         rename { "${it}_${project.base.archivesName.get()}"}
     }
     exclude('org/jlortiz/playercollars/datagen/**')
-    exclude('resources/assets/playercollars/lang/en_us.existing.json')
+    exclude('assets/playercollars/lang/en_us.existing.json')
 }
 
 // configure the maven publication
