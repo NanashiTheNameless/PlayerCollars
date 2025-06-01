@@ -77,6 +77,14 @@ public class CollarItem extends Item implements Trinket {
     }
 
     @Override
+    public Text getName(ItemStack stack) {
+        OwnerComponent owner = stack.get(PlayerCollarsMod.OWNER_COMPONENT_TYPE);
+        if (owner != null && owner.ownedName().isPresent())
+            return Text.translatable("item.playercollars.collar.named", owner.ownedName().get());
+        return super.getName(stack);
+    }
+
+    @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
         if (type.isAdvanced()) {

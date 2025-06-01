@@ -14,8 +14,8 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import org.jlortiz.playercollars.PacketLookAtLerped;
 import org.jlortiz.playercollars.PlayerCollarsMod;
+import org.jlortiz.playercollars.network.PacketLookAtLerped;
 
 import java.util.List;
 
@@ -43,7 +43,7 @@ public class ClickerItem extends Item {
                 List<ServerPlayerEntity> plrs = ((ServerWorld) p_41432_).getPlayers((p) -> !p.isPartOf(p_41433_) && p.isInRange(p_41433_, distance));
                 PacketLookAtLerped packet = new PacketLookAtLerped(p_41433_);
                 for (ServerPlayerEntity p : plrs) {
-                    TrinketsApi.getTrinketComponent(p).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
+                    TrinketsApi.getTrinketComponent(p).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.COLLAR_TAG)))
                             .map((x) -> PlayerCollarsMod.filterStacksByOwner(x, p_41433_.getUuid()))
                             .ifPresent((x) -> ServerPlayNetworking.send(p, packet));
                 }

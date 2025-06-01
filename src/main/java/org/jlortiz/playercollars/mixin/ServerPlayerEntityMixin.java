@@ -27,7 +27,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     @Inject(at=@At("TAIL"), method="damage")
     private void checkCollarThorns(DamageSource p_9037_, float p_9038_, CallbackInfoReturnable<Boolean> cir) {
         if (p_9037_.getAttacker() != null) {
-            TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
+            TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.COLLAR_TAG)))
                     .ifPresent((ls) -> {
                         for (Pair<SlotReference, ItemStack> p : ls) {
                             EnchantmentHelper.onTargetDamaged((ServerWorld) getWorld(), p_9037_.getAttacker(), p_9037_, p.getRight());

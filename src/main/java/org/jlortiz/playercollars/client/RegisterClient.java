@@ -11,9 +11,9 @@ import net.minecraft.block.BedBlock;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.item.BedItem;
 import net.minecraft.util.Identifier;
-import org.jlortiz.playercollars.PacketLookAtLerped;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.item.CollarItem;
+import org.jlortiz.playercollars.network.PacketLookAtLerped;
 
 @Environment(EnvType.CLIENT)
 public class RegisterClient implements ClientModInitializer {

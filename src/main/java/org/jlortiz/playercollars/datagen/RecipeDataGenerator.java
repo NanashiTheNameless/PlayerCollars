@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.BedItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -36,6 +37,13 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                 .input('p', ItemTags.PLANKS)
                 .criterion(FabricRecipeProvider.hasItem(Items.LEATHER),
                         FabricRecipeProvider.conditionsFromItem(Items.LEATHER))
+                .offerTo(exporter);
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, PlayerCollarsMod.DEED_OF_OWNERSHIP)
+                .input(Items.PAPER)
+                .input(Items.LEAD)
+                .input(Items.INK_SAC)
+                .input(Items.FEATHER)
+                .criterion(hasItem(Items.PAPER), conditionsFromItem(Items.PAPER))
                 .offerTo(exporter);
         for (DyeColor c : DyeColor.values())
             generateBed(exporter, PlayerCollarsMod.DOG_BED_ITEMS[c.ordinal()], DatagenEntrypoint.WOOLS[c.ordinal()]);

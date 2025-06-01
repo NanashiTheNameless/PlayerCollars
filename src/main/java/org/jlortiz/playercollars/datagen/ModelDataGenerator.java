@@ -43,5 +43,8 @@ public class ModelDataGenerator extends FabricModelProvider {
         Item whiteBed = PlayerCollarsMod.DOG_BED_ITEMS[DyeColor.WHITE.ordinal()];
         for (Item i : PlayerCollarsMod.DOG_BED_ITEMS)
             itemModelGenerator.register(i, whiteBed, Models.GENERATED);
+
+        itemModelGenerator.register(PlayerCollarsMod.DEED_OF_OWNERSHIP, Models.GENERATED);
+        itemModelGenerator.register(PlayerCollarsMod.DEED_OF_OWNERSHIP_STAMPED, Models.GENERATED);
     }
 }

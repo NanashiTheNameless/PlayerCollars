@@ -27,20 +27,21 @@ import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
+import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.jlortiz.playercollars.item.ClickerItem;
-import org.jlortiz.playercollars.item.CollarItem;
-import org.jlortiz.playercollars.item.DogBedBlock;
-import org.jlortiz.playercollars.item.RegenerationEnchantmentEffect;
+import org.jlortiz.playercollars.item.*;
 import org.jlortiz.playercollars.leash.LeashImpl;
+import org.jlortiz.playercollars.network.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -49,6 +50,8 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final String MOD_ID = "playercollars";
 	public static final CollarItem COLLAR_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "collar"), new CollarItem());
 	public static final ClickerItem CLICKER_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "clicker"), new ClickerItem());
+    public static final DeedItem DEED_OF_OWNERSHIP = Registry.register(Registries.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "deed_of_ownership"), new DeedItem());
+    public static final Item DEED_OF_OWNERSHIP_STAMPED = Registry.register(Registries.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "stamped_deed_of_ownership"), new StampedDeedItem());
 	public static final SoundEvent CLICKER_ON = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_on"),
 			SoundEvent.of(Identifier.of(MOD_ID, "clicker_on")));
 	public static final SoundEvent CLICKER_OFF = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_off"),
@@ -56,7 +59,9 @@ public class PlayerCollarsMod implements ModInitializer {
 
 	private static final Codec<OwnerComponent> OWNER_COMPONENT_CODEC = RecordCodecBuilder.create(builder -> builder.group(
 			Uuids.CODEC.fieldOf("uuid").forGetter(OwnerComponent::uuid),
-            Codec.STRING.fieldOf("name").forGetter(OwnerComponent::name)
+            Codec.STRING.fieldOf("name").forGetter(OwnerComponent::name),
+			Codecs.optional(Uuids.CODEC).fieldOf("owned").forGetter(OwnerComponent::owned),
+			Codecs.optional(Codec.STRING).fieldOf("owned_name").forGetter(OwnerComponent::ownedName)
     ).apply(builder, OwnerComponent::new));
 	public static final ComponentType<OwnerComponent> OWNER_COMPONENT_TYPE = Registry.register(
 			Registries.DATA_COMPONENT_TYPE,
@@ -71,6 +76,7 @@ public class PlayerCollarsMod implements ModInitializer {
 
 	public static final DogBedBlock[] DOG_BEDS = new DogBedBlock[DyeColor.values().length];
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
+	public static final TagKey<Item> COLLAR_TAG = TagKey.of(RegistryKeys.ITEM, Identifier.of("c", "collars"));
 
 	public static ItemStack filterStacksByOwner(List<Pair<SlotReference, ItemStack>> stacks, UUID plr) {
 		for (Pair<SlotReference, ItemStack> p : stacks) {
@@ -85,14 +91,18 @@ public class PlayerCollarsMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		Registry.register(Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, Identifier.of(PlayerCollarsMod.MOD_ID, "regeneration_effect"), RegenerationEnchantmentEffect.CODEC);
+		Registry.register(Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, Identifier.of(MOD_ID, "regeneration_effect"), RegenerationEnchantmentEffect.CODEC);
+		Registry.register(Registries.RECIPE_SERIALIZER, Identifier.of(MOD_ID, "owner_transfer"), OwnershipCraftingRecipe.Serializer.INSTANCE);
 		PayloadTypeRegistry.playC2S().register(PacketUpdateCollar.ID, PacketUpdateCollar.CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(PacketUpdateCollar.ID, PacketUpdateCollar::handle);
+		PayloadTypeRegistry.playC2S().register(PacketStampDeed.ID, PacketStampDeed.CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(PacketStampDeed.ID, PacketStampDeed::handle);
 		PayloadTypeRegistry.playS2C().register(PacketLookAtLerped.ID, PacketLookAtLerped.CODEC);
 		TrinketsApi.registerTrinket(PlayerCollarsMod.COLLAR_ITEM, PlayerCollarsMod.COLLAR_ITEM);
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(itemGroup -> {
 			itemGroup.add(COLLAR_ITEM);
 			itemGroup.add(CLICKER_ITEM);
+			itemGroup.add(DEED_OF_OWNERSHIP);
 		});
 
 		for (DyeColor c : DyeColor.values()) {
@@ -121,7 +131,7 @@ public class PlayerCollarsMod implements ModInitializer {
 			if (var2.isClient) return ActionResult.PASS;
 			if (player.isSpectator()) return ActionResult.PASS;
 			if (var4 instanceof PlayerEntity &&
-				TrinketsApi.getTrinketComponent(player).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
+				TrinketsApi.getTrinketComponent(player).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.COLLAR_TAG)))
 						.map((x) -> PlayerCollarsMod.filterStacksByOwner(x, var4.getUuid())).isPresent()) {
 					// Collared players are allowed to attack bad owners, but have 75% damage returned to them
 					player.sendMessage(Text.translatable("message.playercollars.no_attack_owner").formatted(Formatting.RED), true);

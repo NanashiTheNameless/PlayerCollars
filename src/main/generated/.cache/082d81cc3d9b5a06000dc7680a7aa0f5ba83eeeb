@@ -1,4 +1,4 @@
-// 1.21.1	2025-05-19T23:01:11.5160448	Player Collars/Recipes
+// 1.21.1	2025-06-15T17:47:29.2362833	Player Collars/Recipes
 ac2a00f30fd164671fbd96ea9071b37f574c0b6d data\playercollars\advancement\recipes\decorations\light_blue_dog_bed.json
 45fa76247aa259cb95302b1659af03f7c18dcc21 data\playercollars\recipe\brown_dog_bed.json
 dcd8fa0b78fb74c6c0fcf5fb3acb9a21cd8e298f data\playercollars\advancement\recipes\decorations\green_dog_bed.json
@@ -12,6 +12,8 @@ b945895131c83126b8416e1e6f9118d659f69c72 data\playercollars\recipe\magenta_dog_b
 2d8792c83642af069d62fd3bfae0a593bd6cf153 data\playercollars\recipe\collar.json
 2c272950cc975f1f47e7da4bb46d2069cdf2efc3 data\playercollars\advancement\recipes\decorations\yellow_dog_bed.json
 5845cc6fbb3a63519b3ac65e81ea361d57f4c322 data\playercollars\advancement\recipes\decorations\purple_dog_bed.json
+38edfffe47a528d97517560b9caa173359bf357c data\playercollars\advancement\recipes\misc\deed_of_ownership.json
+bc8da7aabda18ee9cd3608170178b8659ec82d48 data\playercollars\recipe\deed_of_ownership.json
 64e80b5102af9012513bef3d8e94a8be670f85ed data\playercollars\advancement\recipes\decorations\white_dog_bed.json
 d29f0871f39fa7e32ae4542596b1e4b5e7a85c83 data\playercollars\advancement\recipes\decorations\blue_dog_bed.json
 86378f51c2aa8affcb627b25212701c63c7e0ce2 data\playercollars\advancement\recipes\decorations\light_gray_dog_bed.json

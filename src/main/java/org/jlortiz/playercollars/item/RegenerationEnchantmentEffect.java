@@ -29,7 +29,7 @@ public record RegenerationEnchantmentEffect(EnchantmentLevelBasedValue level) im
 
     @Override
     public void apply(ServerWorld world, int level, EnchantmentEffectContext context, Entity user, Vec3d pos) {
-        Optional<List<Pair<SlotReference, ItemStack>>> o = TrinketsApi.getTrinketComponent(context.owner()).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM));
+        Optional<List<Pair<SlotReference, ItemStack>>> o = TrinketsApi.getTrinketComponent(context.owner()).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.COLLAR_TAG)));
         if (o.isPresent()) {
             List<Pair<SlotReference, ItemStack>> ls = o.get();
             for (Pair<SlotReference, ItemStack> p : ls) {

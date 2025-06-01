@@ -159,7 +159,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() == Items.LEAD && leashplayers$holder == null) {
             AtomicBoolean found = new AtomicBoolean(false);
-            TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
+            TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.COLLAR_TAG)))
                     .map((x) -> PlayerCollarsMod.filterStacksByOwner(x, player.getUuid()))
                     .ifPresent((stack1) -> {
                         found.set(true);
