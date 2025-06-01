@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:paper",
+    "minecraft:lead",
+    "minecraft:ink_sac",
+    "minecraft:feather"
+  ],
+  "result": {
+    "count": 1,
+    "id": "playercollars:deed_of_ownership"
+  }
+}

@@ -12,9 +12,9 @@ import net.minecraft.component.type.MapColorComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import org.jlortiz.playercollars.OwnerComponent;
-import org.jlortiz.playercollars.PacketUpdateCollar;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.item.CollarItem;
+import org.jlortiz.playercollars.network.PacketUpdateCollar;
 
 import java.util.UUID;
 
@@ -66,12 +66,12 @@ public class CollarDyeScreen extends Screen {
 
         this.addDrawableChild(dyeField);
         this.addDrawableChild(pawField);
-        this.addDrawableChild(ButtonWidget.builder(Text.literal("Done"), (btn) -> {
+        this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.done"), (btn) -> {
             PacketUpdateCollar.OwnerState os = owner == null ? PacketUpdateCollar.OwnerState.DEL : (owner.uuid().equals(ownUUID) ? PacketUpdateCollar.OwnerState.ADD : PacketUpdateCollar.OwnerState.NOP);
             ClientPlayNetworking.send(new PacketUpdateCollar(is, os));
             this.client.setScreen(null);
         }).dimensions(x + 5, y + 50, 75, 20).build());
-        this.addDrawableChild(ButtonWidget.builder(Text.literal("Cancel"), (btn) -> {
+        this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.cancel"), (btn) -> {
             is.set(DataComponentTypes.DYED_COLOR, new DyedColorComponent(initColor, true));
             is.set(DataComponentTypes.MAP_COLOR, new MapColorComponent(initPaw));
             this.client.setScreen(null);

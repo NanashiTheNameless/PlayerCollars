@@ -158,7 +158,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
         if (stack.getItem() == Items.LEAD && leashplayers$holder == null) {
             AccessoriesCapability cap = AccessoriesCapability.get(this);
             if (cap == null) return ActionResult.PASS;
-            ItemStack is = PlayerCollarsMod.filterStacksByOwner(cap.getEquipped(PlayerCollarsMod.COLLAR_ITEM), player.getUuid());
+            ItemStack is = PlayerCollarsMod.filterStacksByOwner(cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.COLLAR_TAG)), player.getUuid());
             if (is == null) return ActionResult.PASS;
             leashplayer$loyalty = getAttributeValue(PlayerCollarsMod.ATTR_LEASH_DISTANCE);
             if (!player.isCreative()) {

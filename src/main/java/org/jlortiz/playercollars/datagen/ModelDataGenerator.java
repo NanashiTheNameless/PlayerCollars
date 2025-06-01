@@ -50,5 +50,8 @@ public class ModelDataGenerator extends FabricModelProvider {
             );
             itemModelGenerator.output.accept(PlayerCollarsMod.DOG_BED_ITEMS[i], m);
         }
+
+        itemModelGenerator.register(PlayerCollarsMod.DEED_OF_OWNERSHIP, Models.GENERATED);
+        itemModelGenerator.register(PlayerCollarsMod.DEED_OF_OWNERSHIP_STAMPED, Models.GENERATED);
     }
 }

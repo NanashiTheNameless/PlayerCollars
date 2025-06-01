@@ -1,0 +1,9 @@
+{
+  "values": [
+    "playercollars:collar",
+    {
+      "id": "#petworks:collars",
+      "required": false
+    }
+  ]
+}

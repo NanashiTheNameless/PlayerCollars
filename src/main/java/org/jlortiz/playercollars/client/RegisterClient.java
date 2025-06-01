@@ -6,8 +6,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import org.jlortiz.playercollars.PacketLookAtLerped;
 import org.jlortiz.playercollars.PlayerCollarsMod;
+import org.jlortiz.playercollars.network.PacketLookAtLerped;
 
 @Environment(EnvType.CLIENT)
 public class RegisterClient implements ClientModInitializer {

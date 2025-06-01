@@ -38,6 +38,13 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                         .input('p', ItemTags.PLANKS)
                         .criterion(hasItem(Items.LEATHER), conditionsFromItem(Items.LEATHER))
                         .offerTo(exporter);
+                createShapeless(RecipeCategory.MISC, PlayerCollarsMod.DEED_OF_OWNERSHIP)
+                        .input(Items.PAPER)
+                        .input(Items.LEAD)
+                        .input(Items.INK_SAC)
+                        .input(Items.FEATHER)
+                        .criterion(hasItem(Items.PAPER), conditionsFromItem(Items.PAPER))
+                        .offerTo(exporter);
                 for (DyeColor c : DyeColor.values())
                     generateBed(exporter, PlayerCollarsMod.DOG_BED_ITEMS[c.ordinal()], DatagenEntrypoint.WOOLS[c.ordinal()]);
             }

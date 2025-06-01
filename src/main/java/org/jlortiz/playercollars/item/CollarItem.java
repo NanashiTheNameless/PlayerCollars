@@ -22,10 +22,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Colors;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.jlortiz.playercollars.OwnerComponent;
 import org.jlortiz.playercollars.PlayerCollarsMod;
@@ -62,6 +59,14 @@ public class CollarItem extends AccessoryItem {
     }
 
     @Override
+    public Text getName(ItemStack stack) {
+        OwnerComponent owner = stack.get(PlayerCollarsMod.OWNER_COMPONENT_TYPE);
+        if (owner != null && owner.ownedName().isPresent())
+            return Text.translatable("item.playercollars.collar.named", owner.ownedName().get());
+        return super.getName(stack);
+    }
+
+    @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
         if (type.isAdvanced()) {
@@ -69,7 +74,7 @@ public class CollarItem extends AccessoryItem {
         }
         OwnerComponent owner = stack.get(PlayerCollarsMod.OWNER_COMPONENT_TYPE);
         if (owner != null) {
-            tooltip.add(Text.translatable("item.playercollars.collar.owner", owner.name()).setStyle(Style.EMPTY.withColor(Colors.GRAY)));
+            tooltip.add(Text.translatable("item.playercollars.collar.owner", owner.name()).formatted(Formatting.GRAY));
         }
     }
 

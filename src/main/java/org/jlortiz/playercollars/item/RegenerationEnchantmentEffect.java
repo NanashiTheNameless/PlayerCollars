@@ -29,7 +29,7 @@ public record RegenerationEnchantmentEffect(EnchantmentLevelBasedValue level) im
         if (context.owner() == null) return;
         AccessoriesCapability cap = AccessoriesCapability.get(context.owner());
         if (cap == null) return;
-        List<SlotEntryReference> ls = cap.getEquipped(PlayerCollarsMod.COLLAR_ITEM);
+        List<SlotEntryReference> ls = cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.COLLAR_TAG));
         for (SlotEntryReference p : ls) {
             OwnerComponent oc = p.stack().get(PlayerCollarsMod.OWNER_COMPONENT_TYPE);
             if (oc != null) {

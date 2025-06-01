@@ -1,4 +1,4 @@
-package org.jlortiz.playercollars;
+package org.jlortiz.playercollars.network;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.component.DataComponentTypes;
@@ -10,6 +10,8 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
+import org.jlortiz.playercollars.OwnerComponent;
+import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.item.CollarItem;
 
 public record PacketUpdateCollar(OwnerState os, int pawColor, int color) implements CustomPayload {

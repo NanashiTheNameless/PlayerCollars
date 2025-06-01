@@ -15,8 +15,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import org.jlortiz.playercollars.PacketLookAtLerped;
 import org.jlortiz.playercollars.PlayerCollarsMod;
+import org.jlortiz.playercollars.network.PacketLookAtLerped;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class ClickerItem extends Item {
                 for (ServerPlayerEntity p : plrs) {
                     AccessoriesCapability cap = AccessoriesCapability.get(p);
                     if (cap != null) {
-                        ItemStack is = PlayerCollarsMod.filterStacksByOwner(cap.getEquipped(PlayerCollarsMod.COLLAR_ITEM), p_41433_.getUuid());
+                        ItemStack is = PlayerCollarsMod.filterStacksByOwner(cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.COLLAR_TAG)), p_41433_.getUuid());
                         if (is != null) {
                             ServerPlayNetworking.send(p, packet);
                         }

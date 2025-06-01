@@ -27,7 +27,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         if (source.getAttacker() != null) {
             AccessoriesCapability cap = AccessoriesCapability.get(this);
             if (cap == null) return;
-            for (SlotEntryReference ser : cap.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
+            for (SlotEntryReference ser : cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.COLLAR_TAG)))
                 EnchantmentHelper.onTargetDamaged(world, source.getAttacker(), source, ser.stack());
         }
     }
