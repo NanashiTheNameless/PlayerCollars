@@ -160,7 +160,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
         if (stack.getItem() == Items.LEAD && leashplayers$holder == null) {
             AtomicBoolean found = new AtomicBoolean(false);
             TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.COLLAR_TAG)))
-                    .map((x) -> PlayerCollarsMod.filterStacksByOwner(x, player.getUuid()))
+                    .map((x) -> PlayerCollarsMod.filterStacksByOwner(x, player.getUuid(), getUuid()))
                     .ifPresent((stack1) -> {
                         found.set(true);
                         leashplayer$loyalty = getAttributeValue(PlayerCollarsMod.ATTR_LEASH_DISTANCE);

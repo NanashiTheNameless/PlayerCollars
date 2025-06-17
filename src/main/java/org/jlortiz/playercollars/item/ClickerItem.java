@@ -44,7 +44,7 @@ public class ClickerItem extends Item {
                 PacketLookAtLerped packet = new PacketLookAtLerped(p_41433_);
                 for (ServerPlayerEntity p : plrs) {
                     TrinketsApi.getTrinketComponent(p).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.COLLAR_TAG)))
-                            .map((x) -> PlayerCollarsMod.filterStacksByOwner(x, p_41433_.getUuid()))
+                            .map((x) -> PlayerCollarsMod.filterStacksByOwner(x, p_41433_.getUuid(), p.getUuid()))
                             .ifPresent((x) -> ServerPlayNetworking.send(p, packet));
                 }
             }

@@ -34,7 +34,7 @@ public record RegenerationEnchantmentEffect(EnchantmentLevelBasedValue level) im
             List<Pair<SlotReference, ItemStack>> ls = o.get();
             for (Pair<SlotReference, ItemStack> p : ls) {
                 OwnerComponent oc = p.getRight().get(PlayerCollarsMod.OWNER_COMPONENT_TYPE);
-                if (oc != null) {
+                if (oc != null && (oc.owned().isEmpty() || oc.owned().get().equals(context.owner().getUuid()))) {
                     PlayerEntity own = world.getPlayerByUuid(oc.uuid());
                     if (own != null && own.distanceTo(user) < 16) {
                         context.owner().addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 40, level, false, false, false));

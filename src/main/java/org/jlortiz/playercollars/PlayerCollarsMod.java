@@ -78,11 +78,12 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
 	public static final TagKey<Item> COLLAR_TAG = TagKey.of(RegistryKeys.ITEM, Identifier.of("c", "collars"));
 
-	public static ItemStack filterStacksByOwner(List<Pair<SlotReference, ItemStack>> stacks, UUID plr) {
+	public static ItemStack filterStacksByOwner(List<Pair<SlotReference, ItemStack>> stacks, UUID plr, UUID entity) {
 		for (Pair<SlotReference, ItemStack> p : stacks) {
 			ItemStack is = p.getRight();
 			OwnerComponent owner = CollarItem.getOwner(is);
-			if (owner != null && owner.uuid().equals(plr)) {
+			if (owner != null && owner.uuid().equals(plr) &&
+					(owner.owned().isEmpty() || owner.owned().get().equals(entity))) {
 				return is;
 			}
 		}
@@ -132,7 +133,7 @@ public class PlayerCollarsMod implements ModInitializer {
 			if (player.isSpectator()) return ActionResult.PASS;
 			if (var4 instanceof PlayerEntity &&
 				TrinketsApi.getTrinketComponent(player).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.COLLAR_TAG)))
-						.map((x) -> PlayerCollarsMod.filterStacksByOwner(x, var4.getUuid())).isPresent()) {
+						.map((x) -> PlayerCollarsMod.filterStacksByOwner(x, var4.getUuid(), player.getUuid())).isPresent()) {
 					// Collared players are allowed to attack bad owners, but have 75% damage returned to them
 					player.sendMessage(Text.translatable("message.playercollars.no_attack_owner").formatted(Formatting.RED), true);
 					double f = player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
