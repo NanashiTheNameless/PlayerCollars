@@ -26,12 +26,14 @@ import net.minecraft.item.BedItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
@@ -39,6 +41,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.jlortiz.playercollars.item.*;
@@ -48,6 +51,7 @@ import org.jlortiz.playercollars.network.*;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.UnaryOperator;
 
 public class PlayerCollarsMod implements ModInitializer {
 	public static final String MOD_ID = "playercollars";
@@ -105,6 +109,18 @@ public class PlayerCollarsMod implements ModInitializer {
 			}
 		}
 		return null;
+	}
+
+	public static ActionResult pullPlayerTowards(ServerPlayerEntity plr, Vec3d towards, double minDist, double maxDist, UnaryOperator<Double> getFactor) {
+		Vec3d vecTo = towards.subtract(plr.getPos());
+		double distance = vecTo.length();
+		if (distance < minDist) return ActionResult.PASS;
+		if (distance > maxDist) return ActionResult.FAIL;
+
+		plr.addVelocity(vecTo.multiply(Math.abs(getFactor.apply(distance))));
+		plr.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(plr));
+		plr.velocityDirty = false;
+		return ActionResult.SUCCESS;
 	}
 
 	@Override

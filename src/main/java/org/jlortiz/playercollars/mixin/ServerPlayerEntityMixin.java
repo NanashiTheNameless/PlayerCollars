@@ -7,32 +7,23 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
-import net.minecraft.network.packet.s2c.play.PositionFlag;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jlortiz.playercollars.OwnerWalkerImpl;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.leash.LeashProxyEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Set;
-
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity implements OwnerWalkerImpl {
-    @Shadow public abstract boolean teleport(ServerWorld world, double destX, double destY, double destZ, Set<PositionFlag> flags, float yaw, float pitch, boolean resetCamera);
-
-    @Shadow public ServerPlayNetworkHandler networkHandler;
-
     public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(world, pos, yaw, gameProfile);
     }
@@ -53,11 +44,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ow
     @Inject(method="tick", at=@At("TAIL"))
     private void tickWalkToOwner(CallbackInfo ci) {
         if (getWorld().isClient || playercollars$ownerToWalkTo == null) return;
-        if (playercollars$ownerToWalkTo.isRemoved()) {
-            playercollars$ownerToWalkTo = null;
-            return;
-        }
-        if (isSneaking() || (!playercollars$ownerToWalkTo.isNavigating() && squaredDistanceTo(playercollars$ownerToWalkTo) < 0.25f)) {
+        if (isSneaking() || playercollars$ownerToWalkTo.isRemoved()) {
             playercollars$ownerToWalkTo.proxyRemove();
             playercollars$ownerToWalkTo = null;
             return;
@@ -67,12 +54,12 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ow
             stopRiding();
         }
 
-        double dx = (playercollars$ownerToWalkTo.getX() - getX());
-        double dy = (playercollars$ownerToWalkTo.getY() - getY());
-        double dz = (playercollars$ownerToWalkTo.getZ() - getZ());
-        setVelocity(dx * 0.6, dy * 0.6, dz * 0.6);
-        networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(this));
-        velocityDirty = false;
+        ActionResult result = PlayerCollarsMod.pullPlayerTowards((ServerPlayerEntity) (Object) this,
+                playercollars$ownerToWalkTo.getPos(), 0.5, 1024d, (x) -> 0.6);
+        if (result == ActionResult.FAIL || (result == ActionResult.PASS && !playercollars$ownerToWalkTo.isNavigating())) {
+            playercollars$ownerToWalkTo.proxyRemove();
+            playercollars$ownerToWalkTo = null;
+        }
     }
 
     @Override
