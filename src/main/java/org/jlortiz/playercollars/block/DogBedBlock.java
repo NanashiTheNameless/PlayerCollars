@@ -1,4 +1,4 @@
-package org.jlortiz.playercollars.item;
+package org.jlortiz.playercollars.block;
 
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;

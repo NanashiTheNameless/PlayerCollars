@@ -52,6 +52,12 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                         .input(Items.FEATHER)
                         .criterion(hasItem(Items.PAPER), conditionsFromItem(Items.PAPER))
                         .offerTo(exporter);
+                createShaped(RecipeCategory.BUILDING_BLOCKS, PlayerCollarsMod.INVISIBLE_FENCE_BLOCK_ITEM).pattern("grg").pattern("srs")
+                        .input('r', Items.REDSTONE)
+                        .input('g', Items.GLASS_PANE)
+                        .input('s', Items.STONE)
+                        .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
+                        .offerTo(exporter);
                 for (DyeColor c : DyeColor.values())
                     generateBed(exporter, PlayerCollarsMod.DOG_BED_ITEMS[c.ordinal()], DatagenEntrypoint.WOOLS[c.ordinal()]);
                 for (int i = 0; i < PlayerCollarsMod.PAWS_DYE_COLORS.length; i++)

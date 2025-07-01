@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -22,10 +23,7 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.decoration.LeashKnotEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BedItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -35,6 +33,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
@@ -44,9 +43,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.jlortiz.playercollars.block.DogBedBlock;
+import org.jlortiz.playercollars.block.InvisibleFenceBlock;
 import org.jlortiz.playercollars.item.*;
 import org.jlortiz.playercollars.leash.LeashImpl;
-import org.jlortiz.playercollars.network.*;
+import org.jlortiz.playercollars.network.PacketLookAtLerped;
+import org.jlortiz.playercollars.network.PacketStampDeed;
+import org.jlortiz.playercollars.network.PacketUpdateCollar;
 
 import java.util.List;
 import java.util.Set;
@@ -60,6 +63,9 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final DeedItem DEED_OF_OWNERSHIP = Registry.register(Registries.ITEM, DeedItem.REGISTRY_KEY, new DeedItem());
 	public static final Item DEED_OF_OWNERSHIP_STAMPED = Registry.register(Registries.ITEM, StampedDeedItem.REGISTRY_KEY, new StampedDeedItem());
 	public static final PawSetupItem PAW_CONFIGURATION_ITEM = Registry.register(Registries.ITEM, PawSetupItem.REGISTRY_KEY, new PawSetupItem());
+	public static final InvisibleFenceBlock INVISIBLE_FENCE_BLOCK = Registry.register(Registries.BLOCK, InvisibleFenceBlock.REGISTRY_KEY,
+			new InvisibleFenceBlock(AbstractBlock.Settings.create().noCollision().breakInstantly().sounds(BlockSoundGroup.STONE).registryKey(InvisibleFenceBlock.REGISTRY_KEY)));
+	public static final BlockItem INVISIBLE_FENCE_BLOCK_ITEM = Registry.register(Registries.ITEM, InvisibleFenceBlock.ITEM_REGISTRY_KEY, new BlockItem(INVISIBLE_FENCE_BLOCK, new Item.Settings().registryKey(InvisibleFenceBlock.ITEM_REGISTRY_KEY)));
 	public static final SoundEvent CLICKER_ON = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_on"),
 			SoundEvent.of(Identifier.of(MOD_ID, "clicker_on")));
 	public static final SoundEvent CLICKER_OFF = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_off"),
@@ -147,6 +153,7 @@ public class PlayerCollarsMod implements ModInitializer {
 			itemGroup.add(PAW_CONFIGURATION_ITEM);
 			for (PawsItem p : PAWS_ITEMS)
 				itemGroup.add(p);
+			itemGroup.add(INVISIBLE_FENCE_BLOCK_ITEM);
 		});
 
 		for (DyeColor c : DyeColor.values()) {
