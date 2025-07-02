@@ -53,6 +53,14 @@
   "item.playercollars.lime_dog_bed": "Lime Human-Sized Dog Bed",
   "item.playercollars.magenta_dog_bed": "Magenta Human-Sized Dog Bed",
   "item.playercollars.orange_dog_bed": "Orange Human-Sized Dog Bed",
+  "item.playercollars.paw_configurator": "Paw Patroller",
+  "item.playercollars.paw_configurator.added": "Paws can now interact with %s",
+  "item.playercollars.paw_configurator.no_paws_to_set": "Target is not wearing paws",
+  "item.playercollars.paw_configurator.no_remove": "%s does not require hands to use",
+  "item.playercollars.paw_configurator.no_set_non_owner": "Must be owner to configure paws",
+  "item.playercollars.paw_configurator.removed": "Paws can no longer interact with %s",
+  "item.playercollars.paws": "Paws",
+  "item.playercollars.paws.slippery": "Slippery - cannot hold items",
   "item.playercollars.pink_dog_bed": "Pink Human-Sized Dog Bed",
   "item.playercollars.purple_dog_bed": "Purple Human-Sized Dog Bed",
   "item.playercollars.red_dog_bed": "Red Human-Sized Dog Bed",
@@ -60,5 +68,8 @@
   "item.playercollars.white_dog_bed": "White Human-Sized Dog Bed",
   "item.playercollars.yellow_dog_bed": "Yellow Human-Sized Dog Bed",
   "message.playercollars.no_attack_owner": "Don't attack your owner!",
-  "message.playercollars.no_break_fence": "Can't unleash yourself!"
+  "message.playercollars.no_break_fence": "Can't unleash yourself!",
+  "tag.block.playercollars.paws_allow_interact": "Usable with Paws",
+  "tag.item.trinkets.chest.hand": "Hand",
+  "tag.item.trinkets.chest.necklace": "Necklace"
 }

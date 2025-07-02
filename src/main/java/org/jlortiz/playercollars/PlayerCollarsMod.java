@@ -1,6 +1,7 @@
 package org.jlortiz.playercollars;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.ListCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.wispforest.accessories.api.AccessoriesCapability;
 import io.wispforest.accessories.api.AccessoryRegistry;
@@ -44,6 +45,8 @@ import org.jlortiz.playercollars.item.*;
 import org.jlortiz.playercollars.leash.LeashImpl;
 import org.jlortiz.playercollars.network.*;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class PlayerCollarsMod implements ModInitializer {
@@ -52,6 +55,7 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final ClickerItem CLICKER_ITEM = Registry.register(Registries.ITEM, ClickerItem.REGISTRY_KEY, new ClickerItem());
 	public static final DeedItem DEED_OF_OWNERSHIP = Registry.register(Registries.ITEM, DeedItem.REGISTRY_KEY, new DeedItem());
 	public static final Item DEED_OF_OWNERSHIP_STAMPED = Registry.register(Registries.ITEM, StampedDeedItem.REGISTRY_KEY, new StampedDeedItem());
+	public static final PawSetupItem PAW_CONFIGURATION_ITEM = Registry.register(Registries.ITEM, PawSetupItem.REGISTRY_KEY, new PawSetupItem());
 	public static final SoundEvent CLICKER_ON = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_on"),
 			SoundEvent.of(Identifier.of(MOD_ID, "clicker_on")));
 	public static final SoundEvent CLICKER_OFF = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_off"),
@@ -67,6 +71,14 @@ public class PlayerCollarsMod implements ModInitializer {
 			Registries.DATA_COMPONENT_TYPE,
 			Identifier.of(MOD_ID, "owner_component"),
 			ComponentType.<OwnerComponent>builder().codec(OWNER_COMPONENT_CODEC).build());
+
+	private static final Codec<Set<Identifier>> CAN_INTERACT_COMPONENT_CODEC = new ListCodec<>(
+			Identifier.CODEC, 0, 65535).xmap(Set::copyOf, List::copyOf);
+	public static final ComponentType<Set<Identifier>> CAN_INTERACT_COMPONENT_TYPE = Registry.register(
+			Registries.DATA_COMPONENT_TYPE,
+			Identifier.of(MOD_ID, "can_interact_component"),
+			ComponentType.<Set<Identifier>>builder().codec(CAN_INTERACT_COMPONENT_CODEC).build());
+
 	public static final RegistryEntry<EntityAttribute> ATTR_CLICKER_DISTANCE = Registry.registerReference(
 			Registries.ATTRIBUTE, Identifier.of(PlayerCollarsMod.MOD_ID, "clicker_distance"),
 			new ClampedEntityAttribute("attribute.playercollars.clicker_distance", 4, 0, 32));
@@ -77,6 +89,11 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final DogBedBlock[] DOG_BEDS = new DogBedBlock[DyeColor.values().length];
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
 	public static final TagKey<Item> COLLAR_TAG = TagKey.of(RegistryKeys.ITEM, Identifier.of("c", "collars"));
+	public static final DyeColor[] PAWS_DYE_COLORS = new DyeColor[]{DyeColor.WHITE, DyeColor.LIGHT_GRAY,
+			DyeColor.GRAY, DyeColor.BLACK, DyeColor.BLUE, DyeColor.RED, DyeColor.PURPLE};
+	public static final PawsItem[] PAWS_ITEMS = new PawsItem[PAWS_DYE_COLORS.length];
+	public static final TagKey<Block> PAWS_ALLOW_INTERACT = TagKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "paws_allow_interact"));
+	public static final TagKey<Item> PAWS_TAG = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "paws"));
 
 	public static ItemStack filterStacksByOwner(Iterable<SlotEntryReference> stacks, UUID plr) {
 		for (SlotEntryReference p : stacks) {
@@ -99,10 +116,20 @@ public class PlayerCollarsMod implements ModInitializer {
 		ServerPlayNetworking.registerGlobalReceiver(PacketStampDeed.ID, PacketStampDeed::handle);
 		PayloadTypeRegistry.playS2C().register(PacketLookAtLerped.ID, PacketLookAtLerped.CODEC);
 		AccessoryRegistry.register(COLLAR_ITEM, COLLAR_ITEM);
+
+		for (int i = 0; i < PAWS_DYE_COLORS.length; i++) {
+			DyeColor c = PAWS_DYE_COLORS[i];
+			RegistryKey<Item> itemKey = PawsItem.getRegistryKey(c);
+			PAWS_ITEMS[i] = Registry.register(Registries.ITEM, itemKey,
+					new PawsItem(c.getFireworkColor(), 0xF196CF));
+		}
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(itemGroup -> {
 			itemGroup.add(COLLAR_ITEM);
 			itemGroup.add(CLICKER_ITEM);
 			itemGroup.add(DEED_OF_OWNERSHIP);
+			itemGroup.add(PAW_CONFIGURATION_ITEM);
+			for (PawsItem p : PAWS_ITEMS)
+				itemGroup.add(p);
 		});
 
 		for (DyeColor c : DyeColor.values()) {

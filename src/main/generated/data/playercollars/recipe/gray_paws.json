@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "dog_bed",
+  "key": {
+    "l": "minecraft:leather",
+    "w": "minecraft:gray_wool"
+  },
+  "pattern": [
+    " w ",
+    "wlw",
+    " w "
+  ],
+  "result": {
+    "count": 1,
+    "id": "playercollars:gray_paws"
+  }
+}

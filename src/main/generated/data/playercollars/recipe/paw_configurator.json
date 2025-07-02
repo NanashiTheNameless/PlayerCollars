@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "#c:dusts/redstone",
+    "#c:ingots/iron",
+    "#playercollars:paws"
+  ],
+  "result": {
+    "count": 1,
+    "id": "playercollars:paw_configurator"
+  }
+}
