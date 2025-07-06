@@ -15,6 +15,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import org.jlortiz.playercollars.OwnerWalkerImpl;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.network.PacketLookAtLerped;
 
@@ -40,6 +41,7 @@ public class ClickerItem extends Item {
                         ItemStack is = PlayerCollarsMod.filterStacksByOwner(cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.COLLAR_TAG)), p_41433_.getUuid());
                         if (is != null) {
                             ServerPlayNetworking.send(p, packet);
+                            if (p instanceof OwnerWalkerImpl impl) impl.playercollars$walkToOwner(p_41433_, distance);
                         }
                     }
                 }

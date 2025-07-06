@@ -86,6 +86,7 @@ public class PlayerCollarsMod implements ModInitializer {
 			Registries.ATTRIBUTE, Identifier.of(PlayerCollarsMod.MOD_ID, "leash_distance"),
 			new ClampedEntityAttribute("attribute.playercollars.leash_distance", 4, 2, 16));
 
+
 	public static final DogBedBlock[] DOG_BEDS = new DogBedBlock[DyeColor.values().length];
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
 	public static final TagKey<Item> COLLAR_TAG = TagKey.of(RegistryKeys.ITEM, Identifier.of("c", "collars"));
@@ -180,5 +181,7 @@ public class PlayerCollarsMod implements ModInitializer {
 			}
 			return ActionResult.PASS;
 		});
+
+
 	}
 }
