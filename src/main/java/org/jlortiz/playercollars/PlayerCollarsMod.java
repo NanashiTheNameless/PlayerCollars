@@ -84,7 +84,7 @@ public class PlayerCollarsMod implements ModInitializer {
 			new ClampedEntityAttribute("attribute.playercollars.clicker_distance", 4, 0, 32));
 	public static final RegistryEntry<EntityAttribute> ATTR_LEASH_DISTANCE = Registry.registerReference(
 			Registries.ATTRIBUTE, Identifier.of(PlayerCollarsMod.MOD_ID, "leash_distance"),
-			new ClampedEntityAttribute("attribute.playercollars.leash_distance", 4, 2, 4));
+			new ClampedEntityAttribute("attribute.playercollars.leash_distance", 4, 2, 16));
 
 	public static final DogBedBlock[] DOG_BEDS = new DogBedBlock[DyeColor.values().length];
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
