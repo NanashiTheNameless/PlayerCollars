@@ -14,6 +14,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import org.jlortiz.playercollars.OwnerWalkerImpl;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.network.PacketLookAtLerped;
 
@@ -45,7 +46,10 @@ public class ClickerItem extends Item {
                 for (ServerPlayerEntity p : plrs) {
                     TrinketsApi.getTrinketComponent(p).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.COLLAR_TAG)))
                             .map((x) -> PlayerCollarsMod.filterStacksByOwner(x, p_41433_.getUuid(), p.getUuid()))
-                            .ifPresent((x) -> ServerPlayNetworking.send(p, packet));
+                            .ifPresent((x) -> {
+                                ServerPlayNetworking.send(p, packet);
+                                if (p instanceof OwnerWalkerImpl impl) impl.playercollars$walkToOwner(p_41433_, distance);
+                            });
                 }
             }
             p_41432_.playSoundFromEntity(null, p_41433_, PlayerCollarsMod.CLICKER_ON, SoundCategory.PLAYERS, 1, 1);

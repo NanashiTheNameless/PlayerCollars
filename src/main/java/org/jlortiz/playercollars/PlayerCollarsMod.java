@@ -21,37 +21,43 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.decoration.LeashKnotEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BedItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
+import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.jlortiz.playercollars.block.DogBedBlock;
+import org.jlortiz.playercollars.block.InvisibleFenceBlock;
 import org.jlortiz.playercollars.item.*;
 import org.jlortiz.playercollars.leash.LeashImpl;
 import org.jlortiz.playercollars.network.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.UnaryOperator;
 
 public class PlayerCollarsMod implements ModInitializer {
 	public static final String MOD_ID = "playercollars";
-	public static final CollarItem COLLAR_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "collar"), new CollarItem());
-	public static final ClickerItem CLICKER_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "clicker"), new ClickerItem());
+    public static final CollarItem COLLAR_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "collar"), new CollarItem());
+    public static final ClickerItem CLICKER_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "clicker"), new ClickerItem());
     public static final DeedItem DEED_OF_OWNERSHIP = Registry.register(Registries.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "deed_of_ownership"), new DeedItem());
     public static final Item DEED_OF_OWNERSHIP_STAMPED = Registry.register(Registries.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "stamped_deed_of_ownership"), new StampedDeedItem());
+    public static final InvisibleFenceBlock INVISIBLE_FENCE_BLOCK = Registry.register(Registries.BLOCK, InvisibleFenceBlock.REGISTRY_KEY,
+            new InvisibleFenceBlock(AbstractBlock.Settings.create().noCollision().breakInstantly().sounds(BlockSoundGroup.STONE)));
+    public static final BlockItem INVISIBLE_FENCE_BLOCK_ITEM = Registry.register(Registries.ITEM, InvisibleFenceBlock.ITEM_REGISTRY_KEY, new BlockItem(INVISIBLE_FENCE_BLOCK, new Item.Settings()));
 	public static final SoundEvent CLICKER_ON = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_on"),
 			SoundEvent.of(Identifier.of(MOD_ID, "clicker_on")));
 	public static final SoundEvent CLICKER_OFF = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_off"),
@@ -74,6 +80,7 @@ public class PlayerCollarsMod implements ModInitializer {
 			Registries.ATTRIBUTE, Identifier.of(PlayerCollarsMod.MOD_ID, "leash_distance"),
 			new ClampedEntityAttribute("attribute.playercollars.leash_distance", 4, 2, 16));
 
+
 	public static final DogBedBlock[] DOG_BEDS = new DogBedBlock[DyeColor.values().length];
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
 	public static final TagKey<Item> COLLAR_TAG = TagKey.of(RegistryKeys.ITEM, Identifier.of("c", "collars"));
@@ -90,6 +97,18 @@ public class PlayerCollarsMod implements ModInitializer {
 		return null;
 	}
 
+	public static ActionResult pullPlayerTowards(ServerPlayerEntity plr, Vec3d towards, double minDist, double maxDist, UnaryOperator<Double> getFactor) {
+		Vec3d vecTo = towards.subtract(plr.getPos());
+		double distance = vecTo.length();
+		if (distance < minDist) return ActionResult.PASS;
+		if (distance > maxDist) return ActionResult.FAIL;
+
+		plr.addVelocity(vecTo.multiply(Math.abs(getFactor.apply(distance))));
+		plr.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(plr));
+		plr.velocityDirty = false;
+		return ActionResult.SUCCESS;
+	}
+
 	@Override
 	public void onInitialize() {
 		Registry.register(Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, Identifier.of(MOD_ID, "regeneration_effect"), RegenerationEnchantmentEffect.CODEC);
@@ -104,6 +123,7 @@ public class PlayerCollarsMod implements ModInitializer {
 			itemGroup.add(COLLAR_ITEM);
 			itemGroup.add(CLICKER_ITEM);
 			itemGroup.add(DEED_OF_OWNERSHIP);
+			itemGroup.add(INVISIBLE_FENCE_BLOCK_ITEM);
 		});
 
 		for (DyeColor c : DyeColor.values()) {
@@ -149,5 +169,7 @@ public class PlayerCollarsMod implements ModInitializer {
 			}
 			return ActionResult.PASS;
 		});
+
+
 	}
 }

@@ -21,7 +21,7 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import org.jlortiz.playercollars.PlayerCollarsMod;
-import org.jlortiz.playercollars.item.DogBedBlock;
+import org.jlortiz.playercollars.block.DogBedBlock;
 
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;

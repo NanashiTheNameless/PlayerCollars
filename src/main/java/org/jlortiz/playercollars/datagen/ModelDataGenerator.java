@@ -9,7 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import org.jlortiz.playercollars.PlayerCollarsMod;
-import org.jlortiz.playercollars.item.DogBedBlock;
+import org.jlortiz.playercollars.block.DogBedBlock;
 
 import java.util.Optional;
 
