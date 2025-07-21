@@ -29,7 +29,7 @@ public class CollarRenderer implements TrinketRenderer {
         try {
             ModelPart body = ((PlayerEntityModel<?>) entityModel).body;
             boolean hasChestplate = false;
-            for (ItemStack is : slotReference.inventory().getComponent().getEntity().getArmorItems()) {
+            for (ItemStack is : livingEntity.getArmorItems()) {
                 if ((is.getItem() instanceof ArmorItem ai) && ai.getSlotType() == EquipmentSlot.CHEST) {
                     hasChestplate = true;
                     break;
