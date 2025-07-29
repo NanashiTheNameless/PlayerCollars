@@ -1,7 +1,7 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "playercollars:item/light_blue_dog_bed",
+    "model": "playercollars:item/white_dog_bed",
     "tints": [
       {
         "type": "minecraft:constant",

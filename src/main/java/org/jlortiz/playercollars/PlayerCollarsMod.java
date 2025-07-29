@@ -144,7 +144,7 @@ public class PlayerCollarsMod implements ModInitializer {
 			DyeColor c = PAWS_DYE_COLORS[i];
 			RegistryKey<Item> itemKey = PawsItem.getRegistryKey(c);
 			PAWS_ITEMS[i] = Registry.register(Registries.ITEM, itemKey,
-					new PawsItem(c.getFireworkColor(), 0xF196CF));
+					new PawsItem(itemKey, c.getFireworkColor(), 0xF196CF));
 		}
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(itemGroup -> {
 			itemGroup.add(COLLAR_ITEM);

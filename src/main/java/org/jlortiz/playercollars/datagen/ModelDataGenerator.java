@@ -7,11 +7,14 @@ import net.minecraft.block.enums.BedPart;
 import net.minecraft.client.data.*;
 import net.minecraft.client.render.item.model.ItemModel;
 import net.minecraft.client.render.item.tint.ConstantTintSource;
+import net.minecraft.client.render.item.tint.DyeTintSource;
+import net.minecraft.client.render.item.tint.MapColorTintSource;
 import net.minecraft.item.Item;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.block.DogBedBlock;
+import org.jlortiz.playercollars.item.PawsItem;
 
 import java.util.Optional;
 
@@ -43,12 +46,15 @@ public class ModelDataGenerator extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         Item whiteBed = PlayerCollarsMod.DOG_BED_ITEMS[DyeColor.WHITE.ordinal()];
+        Identifier bedItemModel = itemModelGenerator.uploadWithTextureSource(whiteBed, whiteBed, Models.GENERATED);
         for (int i = 0; i < DyeColor.values().length; i++) {
-            ItemModel.Unbaked m = ItemModels.tinted(
-                    itemModelGenerator.uploadWithTextureSource(PlayerCollarsMod.DOG_BED_ITEMS[i], whiteBed, Models.GENERATED),
-                    new ConstantTintSource(DyeColor.values()[i].getFireworkColor())
-            );
+            ItemModel.Unbaked m = ItemModels.tinted(bedItemModel, new ConstantTintSource(DyeColor.values()[i].getFireworkColor()));
             itemModelGenerator.output.accept(PlayerCollarsMod.DOG_BED_ITEMS[i], m);
+        }
+
+        Identifier pawsModel = Identifier.of(PlayerCollarsMod.MOD_ID, "item/paws");
+        for (PawsItem i : PlayerCollarsMod.PAWS_ITEMS) {
+            itemModelGenerator.output.accept(i, ItemModels.tinted(pawsModel, new DyeTintSource(i.color), new MapColorTintSource(i.beansColor)));
         }
 
         itemModelGenerator.register(PlayerCollarsMod.DEED_OF_OWNERSHIP, Models.GENERATED);

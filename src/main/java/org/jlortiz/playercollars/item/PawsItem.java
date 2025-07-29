@@ -3,6 +3,7 @@ package org.jlortiz.playercollars.item;
 import io.wispforest.accessories.api.AccessoryItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.MapColor;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.component.type.MapColorComponent;
@@ -28,13 +29,15 @@ import java.util.Optional;
 import java.util.Set;
 
 public class PawsItem extends AccessoryItem {
-    public static final RegistryKey<Item> REGISTRY_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "paws"));
+    public final int color, beansColor;
 
-    public PawsItem(int color, int pawColor) {
-        super(new Item.Settings().maxCount(1).registryKey(REGISTRY_KEY)
+    public PawsItem(RegistryKey<Item> key, int color, int beansColor) {
+        super(new Item.Settings().maxCount(1).registryKey(key)
                 .component(DataComponentTypes.DYED_COLOR, new DyedColorComponent(color | 0xFF000000, false))
-                .component(DataComponentTypes.MAP_COLOR, new MapColorComponent(pawColor))
+                .component(DataComponentTypes.MAP_COLOR, new MapColorComponent(beansColor))
         );
+        this.color = color | 0xFF000000;
+        this.beansColor = beansColor;
     }
 
     public static boolean shouldPreventBlockInteraction(ItemStack stack, @NotNull BlockState block) {
