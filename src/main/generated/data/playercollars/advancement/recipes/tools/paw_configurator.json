@@ -1,32 +1,32 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_iron_ingot": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "playercollars:paw_configurator"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_white_paws": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:iron_ingot"
+            "items": "#playercollars:paws"
           }
         ]
       },
       "trigger": "minecraft:inventory_changed"
-    },
-    "has_the_recipe": {
-      "conditions": {
-        "recipe": "playercollars:clicker"
-      },
-      "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
       "has_the_recipe",
-      "has_iron_ingot"
+      "has_white_paws"
     ]
   ],
   "rewards": {
     "recipes": [
-      "playercollars:clicker"
+      "playercollars:paw_configurator"
     ]
   }
 }

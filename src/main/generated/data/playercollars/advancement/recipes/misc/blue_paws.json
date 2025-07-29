@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_iron_ingot": {
+    "has_leather": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:iron_ingot"
+            "items": "minecraft:leather"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "playercollars:clicker"
+        "recipe": "playercollars:blue_paws"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_iron_ingot"
+      "has_leather"
     ]
   ],
   "rewards": {
     "recipes": [
-      "playercollars:clicker"
+      "playercollars:blue_paws"
     ]
   }
 }

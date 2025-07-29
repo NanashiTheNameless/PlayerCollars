@@ -44,6 +44,11 @@ public class ModelDataGenerator extends FabricModelProvider {
         for (Item i : PlayerCollarsMod.DOG_BED_ITEMS)
             itemModelGenerator.register(i, whiteBed, Models.GENERATED);
 
+        Model basePaws = new Model(Optional.of(Identifier.of(PlayerCollarsMod.MOD_ID, "item/white_paws")), Optional.empty());
+        for (int i = 1; i < PlayerCollarsMod.PAWS_ITEMS.length; i++) {
+            itemModelGenerator.register(PlayerCollarsMod.PAWS_ITEMS[i], basePaws);
+        }
+
         itemModelGenerator.register(PlayerCollarsMod.DEED_OF_OWNERSHIP, Models.GENERATED);
         itemModelGenerator.register(PlayerCollarsMod.DEED_OF_OWNERSHIP_STAMPED, Models.GENERATED);
     }

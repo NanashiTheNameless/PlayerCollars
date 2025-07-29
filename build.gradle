@@ -53,6 +53,10 @@ fabricApi {
     configureDataGeneration()
 }
 
+loom {
+    accessWidenerPath = file("src/main/resources/playercollars.accesswidener")
+}
+
 tasks.withType(JavaCompile).configureEach {
     it.options.release = 21
 }
