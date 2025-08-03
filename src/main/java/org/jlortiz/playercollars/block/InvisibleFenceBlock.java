@@ -135,6 +135,8 @@ public class InvisibleFenceBlock extends HorizontalFacingBlock {
     protected boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
         BlockPos blockPos = pos.down();
         BlockState blockState = world.getBlockState(blockPos);
-        return state.get(HALF) == DoubleBlockHalf.LOWER ? blockState.isSideSolidFullSquare(world, blockPos, Direction.UP) : blockState.isOf(this);
+        return state.get(HALF) == DoubleBlockHalf.LOWER ?
+                blockState.isSideSolidFullSquare(world, blockPos, Direction.UP) &&
+                world.getBlockState(pos.up()).isAir() : blockState.isOf(this);
     }
 }

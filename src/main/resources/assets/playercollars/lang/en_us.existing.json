@@ -7,6 +7,7 @@
   "item.playercollars.collar.become_owner": "Become Owner",
   "item.playercollars.collar.remove_owner": "Remove Owner",
   "item.playercollars.clicker": "Clicker",
+  "item.playercollars.paws": "Paws",
   "item.playercollars.paws.slippery": "Slippery - cannot hold items",
   "item.playercollars.paw_configurator": "Paw Patroller",
   "item.playercollars.paw_configurator.added": "Paws can now interact with %s",
@@ -14,6 +15,7 @@
   "item.playercollars.paw_configurator.no_remove": "%s does not require hands to use",
   "item.playercollars.paw_configurator.no_set_non_owner": "Must be owner to configure paws",
   "item.playercollars.paw_configurator.no_paws_to_set": "Target is not wearing paws",
+  "item.playercollars.paw_configurator.success": "Paws updated successfully",
   "item.playercollars.invisible_fence": "Invisible Fence",
   "block.playercollars.invisible_fence": "Invisible Fence",
   "item.playercollars.deed_of_ownership": "Blank Deed of Ownership",
@@ -40,5 +42,6 @@
   "tag.item.trinkets.hand.glove": "Glove",
   "message.playercollars.no_break_fence": "Can't unleash yourself!",
   "message.playercollars.no_attack_owner": "Don't attack your owner!",
-  "tag.block.playercollars.paws_allow_interact": "Usable with Paws"
+  "tag.block.playercollars.paws_allow_interact": "Usable with Paws",
+  "gamerule.playerLeashesBreak": "Player collar leashes break if stretched too far"
 }

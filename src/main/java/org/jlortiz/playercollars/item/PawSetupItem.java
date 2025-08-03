@@ -90,6 +90,7 @@ public class PawSetupItem extends Item {
         for (Pair<SlotReference, ItemStack> p : component.getEquipped((x) -> x.isIn(PlayerCollarsMod.PAWS_TAG))) {
             p.getRight().set(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE, canInteract);
         }
+        user.sendMessage(Text.translatable("item.playercollars.paw_configurator.success"), true);
         return ActionResult.SUCCESS;
     }
 }
