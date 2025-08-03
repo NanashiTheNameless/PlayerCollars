@@ -21,7 +21,6 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import org.jlortiz.playercollars.PlayerCollarsMod;
-import org.jlortiz.playercollars.block.DogBedBlock;
 
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
@@ -88,7 +87,23 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
         }
 
         private static void generateColorNames(TranslationBuilder translationBuilder, String suffix, Function<Integer, DyeColor> getColor, Item... items) {
+            String[] keys = new String[items.length];
             for (int i = 0; i < items.length; i++) {
+                keys[i] = items[i].getTranslationKey();
+            }
+            generateColorNames(translationBuilder, suffix, getColor, keys);
+        }
+
+        private static void generateColorNames(TranslationBuilder translationBuilder, String suffix, Function<Integer, DyeColor> getColor, Block... blocks) {
+            String[] keys = new String[blocks.length];
+            for (int i = 0; i < blocks.length; i++) {
+                keys[i] = blocks[i].getTranslationKey();
+            }
+            generateColorNames(translationBuilder, suffix, getColor, keys);
+        }
+
+        private static void generateColorNames(TranslationBuilder translationBuilder, String suffix, Function<Integer, DyeColor> getColor, String... keys) {
+            for (int i = 0; i < keys.length; i++) {
                 String pre = getColor.apply(i).getName();
                 char []buf = new char[pre.length() + suffix.length()];
                 boolean newWord = true;
@@ -104,13 +119,14 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
                     buf[j] = c;
                 }
                 suffix.getChars(0, buf.length - pre.length(), buf, pre.length());
-                translationBuilder.add(items[i], String.valueOf(buf));
+                translationBuilder.add(keys[i], String.valueOf(buf));
             }
         }
 
         @Override
         public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
             generateColorNames(translationBuilder, " Human-Sized Dog Bed", DyeColor::byId, PlayerCollarsMod.DOG_BED_ITEMS);
+            generateColorNames(translationBuilder, " Human-Sized Dog Bed", DyeColor::byId, PlayerCollarsMod.DOG_BEDS);
             generateColorNames(translationBuilder, " Paws", (i) -> PlayerCollarsMod.PAWS_DYE_COLORS[i], PlayerCollarsMod.PAWS_ITEMS);
 
             try {

@@ -31,6 +31,7 @@
   "item.playercollars.paw_configurator.no_remove": "%s does not require hands to use",
   "item.playercollars.paw_configurator.no_set_non_owner": "Must be owner to configure paws",
   "item.playercollars.paw_configurator.no_paws_to_set": "Target is not wearing paws",
+  "item.playercollars.paw_configurator.success": "Paws updated successfully",
   "enchantment.playercollars.short_leash": "Tight Leash",
   "enchantment.playercollars.regeneration": "Healing",
   "enchantment.playercollars.thorns": "Spiked",
@@ -41,5 +42,6 @@
   "message.playercollars.no_attack_owner": "Don't attack your owner!",
   "tag.item.trinkets.chest.necklace": "Necklace",
   "tag.item.trinkets.chest.hand": "Hand",
-  "tag.block.playercollars.paws_allow_interact": "Usable with Paws"
+  "tag.block.playercollars.paws_allow_interact": "Usable with Paws",
+  "gamerule.playerLeashesBreak": "Player collar leashes break if stretched too far"
 }

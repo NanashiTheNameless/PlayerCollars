@@ -94,6 +94,7 @@ public class PawSetupItem extends Item {
         for (SlotEntryReference sr : cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.PAWS_TAG))) {
             sr.stack().set(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE, canInteract);
         }
+        user.sendMessage(Text.translatable("item.playercollars.paw_configurator.success"), true);
         return ActionResult.SUCCESS;
     }
 }
