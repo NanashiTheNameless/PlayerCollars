@@ -7,10 +7,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.leash.LeashImpl;
@@ -27,6 +29,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Mixin(ServerPlayerEntity.class)
 public abstract class MixinServerPlayerEntity extends PlayerEntity implements LeashImpl {
     @Shadow public abstract boolean isDisconnected();
+
+    @Shadow public abstract ServerWorld getServerWorld();
+
+    @Shadow public abstract Entity teleportTo(TeleportTarget par1);
 
     @Unique
     private LeashProxyEntity leashplayers$proxy;
@@ -91,8 +97,13 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
         ActionResult result = PlayerCollarsMod.pullPlayerTowards((ServerPlayerEntity) (Object) this, pos,
                 leashplayer$loyalty, leashplayer$loyalty + 6, (x) -> Math.min(0.15 * (x - leashplayer$loyalty), 0.375) / x);
         if (result == ActionResult.FAIL) {
-            leashplayers$detach();
-            leashplayers$drop();
+            if (getServerWorld().getGameRules().getBoolean(PlayerCollarsMod.PLAYER_LEASHES_BREAK_RULE)) {
+                leashplayers$detach();
+                leashplayers$drop();
+            } else {
+                leashplayers$proxy.refreshPositionAndAngles(holder.getPos(), leashplayers$proxy.getYaw(), leashplayers$proxy.getPitch());
+                refreshPositionAndAngles(holder.getPos(), getYaw(), getPitch());
+            }
         }
     }
 
