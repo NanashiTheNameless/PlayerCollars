@@ -4,11 +4,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.pathing.LandPathNodeMaker;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.ai.pathing.PathNodeMaker;
 import net.minecraft.entity.ai.pathing.PathNodeNavigator;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.scoreboard.ServerScoreboard;
@@ -34,6 +34,7 @@ public final class LeashProxyEntity extends TurtleEntity {
         if (shouldNavigate) {
             navigation.tick();
             moveControl.tick();
+            jumpControl.tick();
             tickMovement();
             return false;
         }
@@ -56,6 +57,16 @@ public final class LeashProxyEntity extends TurtleEntity {
         if (proxyUpdate() && !proxyIsRemoved()) {
             proxyRemove();
         }
+    }
+
+    @Override
+    public boolean canMoveVoluntarily() {
+        return false;
+    }
+
+    @Override
+    public boolean isLogicalSideForUpdatingMovement() {
+        return !this.getWorld().isClient;
     }
 
     public boolean proxyIsRemoved() {
@@ -82,22 +93,21 @@ public final class LeashProxyEntity extends TurtleEntity {
         this.target = target;
         this.shouldNavigate = navigateTo != null;
         if (shouldNavigate) {
+            this.moveControl = new MoveControl(this);
             setPosition(target.getPos());
             PathNodeMaker nodeMaker = new LandPathNodeMaker();
             nodeMaker.setCanSwim(true);
             PathNodeNavigator navigation = new PathNodeNavigator(nodeMaker, followRange);
             int i = followRange + 8;
             ChunkCache cache = new ChunkCache(this.getWorld(), this.getBlockPos().add(-i, -i, -i), this.getBlockPos().add(i, i, i));
-            Path path = navigation.findPathToAny(cache, this, Set.of(navigateTo), followRange, 3, 1);
-            getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(1.75f);
-            getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(0.65f);
-            this.navigation.startMovingAlong(path, 1);
+            Path path = navigation.findPathToAny(cache, this, Set.of(navigateTo), followRange, 4, 1);
+            this.navigation.startMovingAlong(path, 1.25);
         }
 
         setHealth(1.0F);
         setInvulnerable(true);
 
-        setBaby(true);
+        setBaby(!shouldNavigate);
         setInvisible(true);
         noClip = !shouldNavigate;
 
