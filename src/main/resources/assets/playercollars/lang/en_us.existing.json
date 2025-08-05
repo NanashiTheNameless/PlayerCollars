@@ -36,6 +36,7 @@
   "enchantment.playercollars.regeneration": "Healing",
   "enchantment.playercollars.thorns": "Spiked",
   "enchantment.playercollars.clicker": "Audible",
+  "enchantment.playercollars.clicker_walk": "Beckon",
   "attribute.playercollars.clicker_distance": "Clicker Distance",
   "attribute.playercollars.leash_distance": "Leash Distance",
   "tag.item.trinkets.chest.necklace": "Necklace",
