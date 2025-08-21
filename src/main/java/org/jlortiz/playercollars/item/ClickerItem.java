@@ -2,6 +2,9 @@ package org.jlortiz.playercollars.item;
 
 import io.wispforest.accessories.api.AccessoriesCapability;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.component.ComponentType;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.EnchantableComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -23,7 +26,8 @@ import java.util.List;
 public class ClickerItem extends Item {
     public static final RegistryKey<Item> REGISTRY_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "clicker"));
     public ClickerItem() {
-        super(new Item.Settings().maxCount(1).registryKey(REGISTRY_KEY));
+        super(new Item.Settings().maxCount(1).registryKey(REGISTRY_KEY)
+                .component(DataComponentTypes.ENCHANTABLE, new EnchantableComponent(45)));
     }
 
     @Override

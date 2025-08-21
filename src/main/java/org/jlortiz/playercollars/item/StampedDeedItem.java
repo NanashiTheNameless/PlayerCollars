@@ -23,7 +23,7 @@ public class StampedDeedItem extends Item {
     @Override
     public Text getName(ItemStack stack) {
         OwnerComponent owner = stack.get(PlayerCollarsMod.OWNER_COMPONENT_TYPE);
-        if (owner == null || owner.ownedName().isEmpty()) return Text.translatable("item.playercollars.deed_of_ownership");
+        if (owner == null || owner.ownedName().isEmpty()) return Text.translatable("item.playercollars.stamped_deed_of_ownership.invalid");
         return Text.translatable("item.playercollars.stamped_deed_of_ownership", owner.ownedName().get());
     }
 

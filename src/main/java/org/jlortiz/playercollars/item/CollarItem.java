@@ -6,12 +6,15 @@ import io.wispforest.accessories.api.attributes.AccessoryAttributeBuilder;
 import io.wispforest.accessories.api.slot.SlotReference;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.minecraft.block.MapColor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.DyedColorComponent;
+import net.minecraft.component.type.EnchantableComponent;
 import net.minecraft.component.type.MapColorComponent;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
@@ -34,7 +38,10 @@ public class CollarItem extends AccessoryItem {
     public static final RegistryKey<Item> REGISTRY_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "collar"));
 
     public CollarItem() {
-        super(new Item.Settings().maxCount(1).registryKey(REGISTRY_KEY));
+        super(new Item.Settings().maxCount(1).registryKey(REGISTRY_KEY)
+                .component(DataComponentTypes.ENCHANTABLE, new EnchantableComponent(100))
+                .component(DataComponentTypes.DYED_COLOR, new DyedColorComponent(MapColor.RED.color, false))
+                .component(DataComponentTypes.MAP_COLOR, new MapColorComponent(MapColor.BLUE.color)));
     }
 
     public static int getColor(ItemStack itemStack) {
