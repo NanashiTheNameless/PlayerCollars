@@ -2,8 +2,6 @@ package org.jlortiz.playercollars.item;
 
 import io.wispforest.accessories.api.AccessoriesCapability;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -17,7 +15,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import org.jlortiz.playercollars.OwnerWalkerImpl;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.network.PacketLookAtLerped;
 
@@ -25,7 +22,6 @@ import java.util.List;
 
 public class ClickerItem extends Item {
     public static final RegistryKey<Item> REGISTRY_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "clicker"));
-    private static final RegistryKey<Enchantment> WALK_ENCHANTMENT = RegistryKey.of(RegistryKeys.ENCHANTMENT, Identifier.of(PlayerCollarsMod.MOD_ID, "clicker_walk"));
     public ClickerItem() {
         super(new Item.Settings().maxCount(1).registryKey(REGISTRY_KEY));
     }
@@ -35,9 +31,6 @@ public class ClickerItem extends Item {
         p_41433_.setCurrentHand(p_41434_);
         if (!p_41432_.isClient) {
             double distance = p_41433_.getAttributeValue(PlayerCollarsMod.ATTR_CLICKER_DISTANCE);
-            boolean shouldWalk = p_41432_.getRegistryManager().getOptional(RegistryKeys.ENCHANTMENT)
-                    .flatMap((x) -> x.getOptional(WALK_ENCHANTMENT))
-                    .map((x) -> EnchantmentHelper.getLevel(x, p_41433_.getStackInHand(p_41434_)) > 0).orElse(false);
             if (distance > 0) {
                 List<ServerPlayerEntity> plrs = ((ServerWorld) p_41432_).getPlayers((p) -> !p.isPartOf(p_41433_) && p.isInRange(p_41433_, distance));
                 PacketLookAtLerped packet = new PacketLookAtLerped(p_41433_);
@@ -47,7 +40,6 @@ public class ClickerItem extends Item {
                         ItemStack is = PlayerCollarsMod.filterStacksByOwner(cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.COLLAR_TAG)), p_41433_.getUuid());
                         if (is != null) {
                             ServerPlayNetworking.send(p, packet);
-                            if (shouldWalk && p instanceof OwnerWalkerImpl impl) impl.playercollars$walkToOwner(p_41433_, distance);
                         }
                     }
                 }
