@@ -22,13 +22,13 @@ import net.minecraft.item.DyeableItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.client.CollarDyeScreen;
 
 import java.util.List;
@@ -112,6 +112,14 @@ public class CollarItem extends Item implements DyeableItem, Trinket {
         if (owner != null) {
             p_41423_.add(Text.translatable("item.playercollars.collar.owner", owner.getRight()).setStyle(Style.EMPTY.withColor(Colors.GRAY)));
         }
+    }
+
+    @Override
+    public Multimap<EntityAttribute, EntityAttributeModifier> getModifiers(ItemStack stack, SlotReference slot, LivingEntity entity, UUID uuid) {
+        Multimap<EntityAttribute, EntityAttributeModifier> modifiers = Trinket.super.getModifiers(stack, slot, entity, uuid);
+        int loyalty = EnchantmentHelper.getLoyalty(stack);
+        modifiers.put(PlayerCollarsMod.ATTR_LEASH_DISTANCE, new EntityAttributeModifier(getTranslationKey(), -loyalty, EntityAttributeModifier.Operation.ADDITION));
+        return modifiers;
     }
 
     @Override

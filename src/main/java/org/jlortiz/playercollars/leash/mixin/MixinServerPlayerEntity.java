@@ -1,24 +1,27 @@
 package org.jlortiz.playercollars.leash.mixin;
 
+import com.mojang.authlib.GameProfile;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Pair;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.leash.LeashImpl;
 import org.jlortiz.playercollars.leash.LeashProxyEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,10 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class MixinServerPlayerEntity implements LeashImpl {
-    @Unique
-    private final ServerPlayerEntity leashplayers$self = (ServerPlayerEntity) (Object) this;
-
+public abstract class MixinServerPlayerEntity extends PlayerEntity implements LeashImpl {
     @Unique
     private LeashProxyEntity leashplayers$proxy;
     @Unique
@@ -41,17 +41,22 @@ public abstract class MixinServerPlayerEntity implements LeashImpl {
     private int leashplayers$lastage;
 
     @Unique
-    private int leashplayer$loyalty;
+    private double leashplayer$loyalty;
+    @Shadow
+    public abstract boolean isDisconnected();
 
+    public MixinServerPlayerEntity(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
+        super(world, pos, yaw, gameProfile);
+    }
 
     @Unique
     private void leashplayers$update() {
         if (
                 leashplayers$holder != null && (
                         !leashplayers$holder.isAlive()
-                                || !leashplayers$self.isAlive()
-                                || leashplayers$self.isDisconnected()
-                                || leashplayers$self.hasVehicle()
+                                || !isAlive()
+                                || isDisconnected()
+                                || hasVehicle()
                 )
         ) {
             leashplayers$detach();
@@ -81,34 +86,22 @@ public abstract class MixinServerPlayerEntity implements LeashImpl {
 
     @Unique
     private void leashplayers$apply() {
-        ServerPlayerEntity player = leashplayers$self;
         Entity holder = leashplayers$holder;
         if (holder == null) return;
-        if (holder.getWorld() != player.getWorld()) return;
-
-        float distance = player.distanceTo(holder);
-        if (distance < 4 - leashplayer$loyalty) {
-            return;
-        }
-        if (distance > 10f - leashplayer$loyalty) {
+        if (holder.getWorld() != getWorld() || Math.abs(getY() - holder.getY()) > 6 + leashplayer$loyalty) {
             leashplayers$detach();
             leashplayers$drop();
             return;
         }
 
-        double dx = (holder.getX() - player.getX()) / (double) distance;
-        double dy = (holder.getY() - player.getY()) / (double) distance;
-        double dz = (holder.getZ() - player.getZ()) / (double) distance;
-        final double factor = 0.4d + 0.1d * leashplayer$loyalty;
-
-        player.addVelocity(
-                Math.copySign(dx * dx * factor, dx),
-                Math.copySign(dy * dy * factor, dy),
-                Math.copySign(dz * dz * factor, dz)
-        );
-
-        player.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(player));
-        player.velocityDirty = false;
+        // Don't pull on the Y axis - it'll make the unfortunate player fly all over the place
+        Vec3d pos = new Vec3d(holder.getX(), getY(), holder.getZ());
+        ActionResult result = PlayerCollarsMod.pullPlayerTowards((ServerPlayerEntity) (Object) this, pos,
+                leashplayer$loyalty, leashplayer$loyalty + 6, (x) -> Math.min(0.15 * (x - leashplayer$loyalty), 0.375) / x);
+        if (result == ActionResult.FAIL) {
+            leashplayers$detach();
+            leashplayers$drop();
+        }
     }
 
     @Unique
@@ -116,17 +109,17 @@ public abstract class MixinServerPlayerEntity implements LeashImpl {
         leashplayers$holder = entity;
 
         if (leashplayers$proxy == null) {
-            leashplayers$proxy = new LeashProxyEntity(leashplayers$self);
-            leashplayers$proxy.setPos(leashplayers$self.getX(), leashplayers$self.getY(), leashplayers$self.getZ());
-            leashplayers$self.getWorld().spawnEntity(leashplayers$proxy);
+            leashplayers$proxy = new LeashProxyEntity(this);
+            leashplayers$proxy.setPos(getX(), getY(), getZ());
+            getWorld().spawnEntity(leashplayers$proxy);
         }
         leashplayers$proxy.attachLeash(leashplayers$holder, true);
 
-        if (leashplayers$self.hasVehicle()) {
-            leashplayers$self.stopRiding();
+        if (hasVehicle()) {
+            stopRiding();
         }
 
-        leashplayers$lastage = leashplayers$self.age;
+        leashplayers$lastage = age;
     }
 
     @Unique
@@ -143,7 +136,7 @@ public abstract class MixinServerPlayerEntity implements LeashImpl {
 
     @Unique
     private void leashplayers$drop() {
-        leashplayers$self.dropItem(new ItemStack(Items.LEAD), false, true);
+        dropItem(new ItemStack(Items.LEAD), false, true);
     }
 
     @Inject(method = "tick()V", at = @At("TAIL"))
@@ -156,11 +149,11 @@ public abstract class MixinServerPlayerEntity implements LeashImpl {
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() == Items.LEAD && leashplayers$holder == null) {
             AtomicBoolean found = new AtomicBoolean(false);
-            TrinketsApi.getTrinketComponent((PlayerEntity) (Object) this).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
+            TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
                     .map((x) -> PlayerCollarsMod.filterStacksByOwner(x, player.getUuid()))
                     .ifPresent((stack1) -> {
                         found.set(true);
-                        leashplayer$loyalty = EnchantmentHelper.getLoyalty(stack1);
+                        leashplayer$loyalty = getAttributeValue(PlayerCollarsMod.ATTR_LEASH_DISTANCE);
                     });
             if (!found.get()) return ActionResult.PASS;
             if (!player.isCreative()) {
@@ -170,7 +163,7 @@ public abstract class MixinServerPlayerEntity implements LeashImpl {
             return ActionResult.SUCCESS;
         }
 
-        if (leashplayers$holder == player && leashplayers$lastage + 20 < leashplayers$self.age) {
+        if (leashplayers$holder == player && leashplayers$lastage + 20 < age) {
             if (!player.isCreative()) {
                 leashplayers$drop();
             }
@@ -184,13 +177,12 @@ public abstract class MixinServerPlayerEntity implements LeashImpl {
     @Inject(at=@At("TAIL"), method="damage")
     private void checkCollarThorns(DamageSource p_9037_, float p_9038_, CallbackInfoReturnable<Boolean> cir) {
         if (p_9037_.getAttacker() != null) {
-            LivingEntity self = ((LivingEntity) (Object) this);
-            TrinketsApi.getTrinketComponent(self).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
+            TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
                     .ifPresent((ls) -> {
                         for (Pair<SlotReference, ItemStack> p : ls) {
                             int l = EnchantmentHelper.getLevel(Enchantments.THORNS, p.getRight());
                             if (l > 0) {
-                                Enchantments.THORNS.onUserDamaged(self, p_9037_.getAttacker(), l);
+                                Enchantments.THORNS.onUserDamaged(this, p_9037_.getAttacker(), l);
                             }
                         }
                     });
