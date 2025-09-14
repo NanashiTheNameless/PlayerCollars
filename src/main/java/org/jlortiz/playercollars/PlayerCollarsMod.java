@@ -3,12 +3,20 @@ package org.jlortiz.playercollars;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.ClampedEntityAttribute;
 import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.decoration.LeashKnotEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
@@ -16,13 +24,17 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
+import net.minecraft.text.Text;
+import net.minecraft.util.*;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.jlortiz.playercollars.item.ClickerItem;
 import org.jlortiz.playercollars.item.CollarItem;
+import org.jlortiz.playercollars.leash.LeashImpl;
 
 import java.util.List;
 import java.util.UUID;
@@ -75,6 +87,39 @@ public class PlayerCollarsMod implements ModInitializer {
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(itemGroup -> {
 			itemGroup.add(COLLAR_ITEM);
 			itemGroup.add(CLICKER_ITEM);
+		});
+
+		PlayerBlockBreakEvents.BEFORE.register((World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) -> {
+			if (world.isClient) return true;
+			if (player.isSpectator()) return true;
+			net.minecraft.entity.Entity leashHolderEntity = ((LeashImpl) player).leashplayers$getProxyLeashHolder();
+			if (leashHolderEntity instanceof LeashKnotEntity knot && pos.equals(knot.getBlockPos())) {
+				player.sendMessage(Text.translatable("message.playercollars.no_break_fence").formatted(Formatting.RED), true);
+				return false;
+			}
+			return true;
+		});
+
+		AttackEntityCallback.EVENT.register((PlayerEntity player, World var2, Hand var3, Entity var4, @Nullable EntityHitResult var5) -> {
+			if (var2.isClient) return ActionResult.PASS;
+			if (player.isSpectator()) return ActionResult.PASS;
+			if (var4 instanceof PlayerEntity &&
+					TrinketsApi.getTrinketComponent(player).map((x) -> x.getEquipped(PlayerCollarsMod.COLLAR_ITEM))
+							.map((x) -> PlayerCollarsMod.filterStacksByOwner(x, var4.getUuid())).isPresent()) {
+				// Collared players are allowed to attack bad owners, but have 75% damage returned to them
+				player.sendMessage(Text.translatable("message.playercollars.no_attack_owner").formatted(Formatting.RED), true);
+				double f = player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+				f = (f - 1) * 0.75 + 1;
+				player.damage(player.getDamageSources().playerAttack(player), (float) Math.ceil(f));
+				return ActionResult.PASS;
+			}
+
+			Entity leashedEnt = ((LeashImpl) player).leashplayers$getProxyLeashHolder();
+			if (leashedEnt instanceof LeashKnotEntity && leashedEnt.equals(var4)) {
+				player.sendMessage(Text.translatable("message.playercollars.no_break_fence").formatted(Formatting.RED), true);
+				return ActionResult.FAIL;
+			}
+			return ActionResult.PASS;
 		});
 	}
 }

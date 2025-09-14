@@ -6,5 +6,9 @@
   "item.playercollars.collar.owner": "Owner: %s",
   "item.playercollars.collar.become_owner": "Become Owner",
   "item.playercollars.collar.remove_owner": "Remove Owner",
-  "item.playercollars.clicker": "Clicker"
+  "item.playercollars.clicker": "Clicker",
+  "gamerule.playerLeashesBreak": "Player leashes break when stretched",
+  "attribute.playercollars.leash_distance": "Leash Distance",
+  "message.playercollars.no_break_fence": "Can't unleash yourself!",
+  "message.playercollars.no_attack_owner": "Don't attack your owner!"
 }

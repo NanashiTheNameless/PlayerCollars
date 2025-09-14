@@ -158,6 +158,11 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
         leashplayers$update();
     }
 
+    @Unique
+    public Entity leashplayers$getProxyLeashHolder() {
+        return leashplayers$proxy == null ? null : leashplayers$proxy.getHoldingEntity();
+    }
+
     @Override
     public ActionResult leashplayers$interact(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
