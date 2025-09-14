@@ -20,7 +20,6 @@ public abstract class MixinEnchantmentTarget {
         if (stack.getItem() == PlayerCollarsMod.COLLAR_ITEM) {
             List<EnchantmentLevelEntry> ls = new ArrayList<>();
             ls.add(new EnchantmentLevelEntry(Enchantments.MENDING, 1));
-            ls.add(new EnchantmentLevelEntry(Enchantments.BINDING_CURSE, 1));
             Enchantment enchantment = Enchantments.THORNS;
             for (int i = enchantment.getMaxLevel(); i > enchantment.getMinLevel() - 1; --i) {
                 if (power >= enchantment.getMinPower(i) && power <= enchantment.getMaxPower(i)) {
