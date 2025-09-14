@@ -3,6 +3,8 @@ package org.jlortiz.playercollars;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.attribute.ClampedEntityAttribute;
@@ -18,6 +20,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameRules;
 import org.jlortiz.playercollars.item.ClickerItem;
 import org.jlortiz.playercollars.item.CollarItem;
 
@@ -37,6 +40,8 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final EntityAttribute ATTR_LEASH_DISTANCE = Registry.register(
 			Registries.ATTRIBUTE, Identifier.of(PlayerCollarsMod.MOD_ID, "leash_distance"),
 			new ClampedEntityAttribute("attribute.playercollars.leash_distance", 4, 2, 16));
+	public static final GameRules.Key<GameRules.BooleanRule> PLAYER_LEASHES_BREAK_RULE = GameRuleRegistry.register(
+			"playerLeashesBreak", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true));
 
 	public static ItemStack filterStacksByOwner(List<Pair<SlotReference, ItemStack>> stacks, UUID plr) {
 		for (Pair<SlotReference, ItemStack> p : stacks) {

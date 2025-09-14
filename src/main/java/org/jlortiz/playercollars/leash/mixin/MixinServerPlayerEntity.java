@@ -10,7 +10,9 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Pair;
@@ -44,6 +46,8 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
     private double leashplayer$loyalty;
     @Shadow
     public abstract boolean isDisconnected();
+    @Shadow public abstract ServerWorld getServerWorld();
+    @Shadow public ServerPlayNetworkHandler networkHandler;
 
     public MixinServerPlayerEntity(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(world, pos, yaw, gameProfile);
@@ -88,19 +92,29 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
     private void leashplayers$apply() {
         Entity holder = leashplayers$holder;
         if (holder == null) return;
-        if (holder.getWorld() != getWorld() || Math.abs(getY() - holder.getY()) > 6 + leashplayer$loyalty) {
+        if (holder.getWorld() != getWorld()) {
             leashplayers$detach();
             leashplayers$drop();
             return;
         }
 
-        // Don't pull on the Y axis - it'll make the unfortunate player fly all over the place
-        Vec3d pos = new Vec3d(holder.getX(), getY(), holder.getZ());
-        ActionResult result = PlayerCollarsMod.pullPlayerTowards((ServerPlayerEntity) (Object) this, pos,
-                leashplayer$loyalty, leashplayer$loyalty + 6, (x) -> Math.min(0.15 * (x - leashplayer$loyalty), 0.375) / x);
+        ActionResult result;
+        if (Math.abs(getY() - holder.getY()) > 6 + leashplayer$loyalty) {
+            result = ActionResult.FAIL;
+        } else {
+            // Don't pull on the Y axis - it'll make the unfortunate player fly all over the place
+            Vec3d pos = new Vec3d(holder.getX(), getY(), holder.getZ());
+            result = PlayerCollarsMod.pullPlayerTowards((ServerPlayerEntity) (Object) this, pos,
+                    leashplayer$loyalty, leashplayer$loyalty + 6, (x) -> Math.min(0.15 * (x - leashplayer$loyalty), 0.375) / x);
+        }
         if (result == ActionResult.FAIL) {
-            leashplayers$detach();
-            leashplayers$drop();
+            if (getServerWorld().getGameRules().getBoolean(PlayerCollarsMod.PLAYER_LEASHES_BREAK_RULE)) {
+                leashplayers$detach();
+                leashplayers$drop();
+            } else {
+                leashplayers$proxy.refreshPositionAndAngles(holder.getBlockPos(), leashplayers$proxy.getYaw(), leashplayers$proxy.getPitch());
+                networkHandler.requestTeleport(holder.getX(), holder.getY(), holder.getZ(), getYaw(), getPitch());
+            }
         }
     }
 
