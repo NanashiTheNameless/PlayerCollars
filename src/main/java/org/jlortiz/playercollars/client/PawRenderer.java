@@ -10,6 +10,7 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.util.Arm;
@@ -45,7 +46,10 @@ public class PawRenderer implements AccessoryRenderer {
     public <S extends LivingEntityRenderState> void render(ItemStack stack, SlotReference reference, MatrixStack matrices, EntityModel<S> entityModel, S renderState, VertexConsumerProvider multiBufferSource, int light, float partialTicks) {
         if (!(entityModel instanceof PlayerEntityModel model)) return;
 
-        renderForArm(stack, matrices, model, reference.entity().getWorld(), multiBufferSource, light, false);
-        renderForArm(stack, matrices, model, reference.entity().getWorld(), multiBufferSource, light, true);
+        ItemStack is = stack.copy();
+        is.remove(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE);
+        is.remove(DataComponentTypes.ENCHANTMENTS);
+        renderForArm(is, matrices, model, reference.entity().getWorld(), multiBufferSource, light, false);
+        renderForArm(is, matrices, model, reference.entity().getWorld(), multiBufferSource, light, true);
     }
 }
