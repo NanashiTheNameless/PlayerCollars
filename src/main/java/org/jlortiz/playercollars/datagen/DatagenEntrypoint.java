@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.enums.BedPart;
+import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -21,6 +22,7 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import org.jlortiz.playercollars.PlayerCollarsMod;
+import org.jlortiz.playercollars.block.InvisibleFenceBlock;
 
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
@@ -28,10 +30,13 @@ import java.util.function.Function;
 
 public class DatagenEntrypoint implements DataGeneratorEntrypoint {
     public static final BlockItem[] WOOLS = new BlockItem[DyeColor.values().length];
+    public static final BlockItem[] TERRACOTTAS = new BlockItem[DyeColor.values().length];
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-        for (DyeColor c : DyeColor.values())
+        for (DyeColor c : DyeColor.values()) {
             WOOLS[c.ordinal()] = (BlockItem) Registries.ITEM.get(Identifier.ofVanilla(c.getName() + "_wool"));
+            TERRACOTTAS[c.ordinal()] = (BlockItem) Registries.ITEM.get(Identifier.ofVanilla(c.getName() + "_terracotta"));
+        }
 
         FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
         pack.addProvider(RecipeDataGenerator::new);
@@ -51,6 +56,9 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
         public void generate() {
             for (int i = 0; i < PlayerCollarsMod.DOG_BEDS.length; i++)
                 addDrop(PlayerCollarsMod.DOG_BEDS[i], dropsWithProperty(PlayerCollarsMod.DOG_BEDS[i], BedBlock.PART, BedPart.HEAD));
+            for (int i = 0; i < PlayerCollarsMod.DOG_BOWLS.length; i++)
+                addDrop(PlayerCollarsMod.DOG_BOWLS[i], drops(PlayerCollarsMod.DOG_BOWL_ITEMS[i]));
+            addDrop(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK, dropsWithProperty(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK, InvisibleFenceBlock.HALF, DoubleBlockHalf.LOWER));
         }
     }
 

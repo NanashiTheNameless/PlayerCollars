@@ -58,8 +58,10 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                         .input('s', Items.STONE)
                         .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
                         .offerTo(exporter);
-                for (DyeColor c : DyeColor.values())
+                for (DyeColor c : DyeColor.values()) {
                     generateBed(exporter, PlayerCollarsMod.DOG_BED_ITEMS[c.ordinal()], DatagenEntrypoint.WOOLS[c.ordinal()]);
+                    generateBowl(exporter, PlayerCollarsMod.DOG_BOWL_ITEMS[c.ordinal()], DatagenEntrypoint.TERRACOTTAS[c.ordinal()]);
+                }
                 for (int i = 0; i < PlayerCollarsMod.PAWS_DYE_COLORS.length; i++)
                     generatePaws(exporter, PlayerCollarsMod.PAWS_ITEMS[i], DatagenEntrypoint.WOOLS[PlayerCollarsMod.PAWS_DYE_COLORS[i].ordinal()]);
             }
@@ -78,6 +80,14 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                         .input('l', Items.LEATHER)
                         .criterion(hasItem(input), conditionsFromItem(input))
                         .group("dog_bed")
+                        .offerTo(exporter);
+            }
+
+            private void generateBowl(RecipeExporter exporter, Item output, Item input) {
+                createShaped(RecipeCategory.DECORATIONS, output).pattern("w w").pattern("www")
+                        .input('w', input)
+                        .criterion(hasItem(input), conditionsFromItem(input))
+                        .group("dog_bowl")
                         .offerTo(exporter);
             }
         };
