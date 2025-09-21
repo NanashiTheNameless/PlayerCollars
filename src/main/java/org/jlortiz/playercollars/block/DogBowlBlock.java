@@ -4,8 +4,12 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.FoodComponent;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.mob.DrownedEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
@@ -17,6 +21,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
@@ -24,8 +29,21 @@ import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 
+import java.util.Optional;
+
 public class DogBowlBlock extends Block implements BlockEntityProvider {
-    protected static final VoxelShape SHAPE = Block.createCuboidShape(1.0, 0.0, 1.0, 15.0, 1.0, 15.0);
+    private static final VoxelShape SHAPE_BASE = VoxelShapes.union(
+            Block.createCuboidShape(2.0, 0.0, 1.0, 14.0, 5.0, 2.0),
+            Block.createCuboidShape(2.0, 0.0, 14.0, 14.0, 5.0, 15.0),
+            Block.createCuboidShape(1.0, 0.0, 1.0, 2.0, 5.0, 15.0),
+            Block.createCuboidShape(14.0, 0.0, 1.0, 15.0, 5.0, 15.0)
+            );
+    private static final VoxelShape[] SHAPE = new VoxelShape[] {
+            VoxelShapes.union(SHAPE_BASE, Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 1.0, 14.0)),
+            VoxelShapes.union(SHAPE_BASE, Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 2.0, 14.0)),
+            VoxelShapes.union(SHAPE_BASE, Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 4.0, 14.0)),
+            VoxelShapes.union(SHAPE_BASE, Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 6.0, 14.0))
+    };
     public static final IntProperty LEVEL = Properties.AGE_3;
     public final DyeColor color;
 
@@ -53,7 +71,8 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
 
     @Override
     protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
+        int level = state.get(LEVEL);
+        return (level < 0 || level > 3) ? SHAPE_BASE : SHAPE[level];
     }
 
     @Override
@@ -63,11 +82,17 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
         int decr = be.insert(stack);
         if (decr > 0) {
             stack.decrement(decr);
-            state = state.with(LEVEL, Math.min((be.getCount() + 15) / 16, 3));
+            state = state.with(LEVEL, Math.min((be.getCount() + 20) / 21, 3));
             world.setBlockState(pos, state, 0);
             return ItemActionResult.SUCCESS;
         }
         return ItemActionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        if (world.getBlockEntity(pos) instanceof DogBowlBlockEntity be) be.drop();
+        return super.onBreak(world, pos, state, player);
     }
 
     @Override
@@ -76,7 +101,7 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
 
         ItemStack is = be.take();
         if (is.isEmpty()) return ActionResult.PASS;
-        state = state.with(LEVEL, Math.min((be.getCount() + 15) / 16, 3));
+        state = state.with(LEVEL, Math.min((be.getCount() + 20) / 21, 3));
         world.setBlockState(pos, state, 0);
 
         FoodComponent food = is.get(DataComponentTypes.FOOD);
@@ -101,6 +126,21 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
             super(PlayerCollarsMod.DOG_BOWL_BLOCK_ENTITY, pos, state);
         }
 
+        @Override
+        protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+            super.readNbt(nbt, registryLookup);
+            inBowl = Optional.of(nbt.getCompound("item"))
+                    .flatMap((x) -> ItemStack.fromNbt(registryLookup, x))
+                    .orElse(ItemStack.EMPTY);
+        }
+
+        @Override
+        protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+            super.writeNbt(nbt, registryLookup);
+            if (!inBowl.isEmpty())
+                nbt.put("item", inBowl.encode(registryLookup));
+        }
+
         protected int getCount() {
             return inBowl.getCount();
         }
@@ -108,11 +148,13 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
         protected int insert(ItemStack is) {
             if (inBowl.isEmpty()) {
                 inBowl = is.copy();
+                markDirty();
                 return is.getCount();
             }
             if (is.isOf(inBowl.getItem())) {
                 int count = Math.min(is.getCount(), inBowl.getMaxCount() - inBowl.getCount());
                 inBowl.increment(count);
+                markDirty();
                 return count;
             }
             return 0;
@@ -122,7 +164,14 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
             if (inBowl.isEmpty()) return ItemStack.EMPTY;
             ItemStack is = inBowl.copyWithCount(1);
             inBowl.decrement(1);
+            markDirty();
             return is;
+        }
+
+        protected void drop() {
+            if (inBowl.isEmpty() || world == null) return;
+            world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), inBowl));
+            inBowl = ItemStack.EMPTY;
         }
     }
 }

@@ -14,6 +14,7 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.DyeColor;
 import org.jlortiz.playercollars.PlayerCollarsMod;
+import org.jlortiz.playercollars.block.DogBowlBlock;
 import org.jlortiz.playercollars.item.PawsItem;
 
 import java.util.concurrent.CompletableFuture;
@@ -59,8 +60,10 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                 .input('s', Items.STONE)
                 .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
                 .offerTo(exporter);
-        for (DyeColor c : DyeColor.values())
+        for (DyeColor c : DyeColor.values()) {
             generateBed(exporter, PlayerCollarsMod.DOG_BED_ITEMS[c.ordinal()], DatagenEntrypoint.WOOLS[c.ordinal()]);
+            generateBowl(exporter, PlayerCollarsMod.DOG_BOWL_ITEMS[c.ordinal()], DatagenEntrypoint.TERRACOTTAS[c.ordinal()]);
+        }
         for (int i = 0; i < PlayerCollarsMod.PAWS_DYE_COLORS.length; i++)
             generatePaws(exporter, PlayerCollarsMod.PAWS_ITEMS[i], DatagenEntrypoint.WOOLS[PlayerCollarsMod.PAWS_DYE_COLORS[i].ordinal()]);
     }
@@ -81,6 +84,15 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                 .criterion(FabricRecipeProvider.hasItem(Items.LEATHER),
                         FabricRecipeProvider.conditionsFromItem(Items.LEATHER))
                 .group("paws")
+                .offerTo(exporter);
+    }
+
+    private void generateBowl(RecipeExporter exporter, Item output, Item input) {
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, output).pattern("w w").pattern("www")
+                .input('w', input)
+                .criterion(FabricRecipeProvider.hasItem(input),
+                        FabricRecipeProvider.conditionsFromItem(input))
+                .group("dog_bowl")
                 .offerTo(exporter);
     }
 }
