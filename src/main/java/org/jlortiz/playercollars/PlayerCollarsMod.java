@@ -14,10 +14,13 @@ import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.component.ComponentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.ClampedEntityAttribute;
@@ -47,6 +50,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.jlortiz.playercollars.block.DogBedBlock;
+import org.jlortiz.playercollars.block.DogBowlBlock;
 import org.jlortiz.playercollars.block.InvisibleFenceBlock;
 import org.jlortiz.playercollars.item.*;
 import org.jlortiz.playercollars.leash.LeashImpl;
@@ -101,7 +105,6 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final GameRules.Key<GameRules.BooleanRule> PLAYER_LEASHES_BREAK_RULE = GameRuleRegistry.register(
 			"playerLeashesBreak", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true));
 
-
 	public static final DogBedBlock[] DOG_BEDS = new DogBedBlock[DyeColor.values().length];
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
 	public static final TagKey<Item> COLLAR_TAG = TagKey.of(RegistryKeys.ITEM, Identifier.of("c", "collars"));
@@ -110,6 +113,25 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final PawsItem[] PAWS_ITEMS = new PawsItem[PAWS_DYE_COLORS.length];
 	public static final TagKey<Block> PAWS_ALLOW_INTERACT = TagKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "paws_allow_interact"));
 	public static final TagKey<Item> PAWS_TAG = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "paws"));
+
+    public static final DogBowlBlock[] DOG_BOWLS = new DogBowlBlock[DyeColor.values().length];
+    public static final Item[] DOG_BOWL_ITEMS = new Item[DyeColor.values().length];
+    public static final BlockEntityType<DogBowlBlock.DogBowlBlockEntity> DOG_BOWL_BLOCK_ENTITY;
+
+    static {
+        for (DyeColor c : DyeColor.values()) {
+			RegistryKey<Block> blockKey = DogBowlBlock.getRegistryKey(c);
+            DOG_BOWLS[c.ordinal()] = Registry.register(Registries.BLOCK, blockKey.getValue(),
+                    new DogBowlBlock(c, AbstractBlock.Settings.create().sounds(BlockSoundGroup.STONE).strength(0.6F).nonOpaque().pistonBehavior(PistonBehavior.DESTROY).registryKey(blockKey)));
+			RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, blockKey.getValue());
+            DOG_BOWL_ITEMS[c.ordinal()] = Registry.register(Registries.ITEM, itemKey.getValue(),
+                    new BlockItem(DOG_BOWLS[c.ordinal()], new Item.Settings().registryKey(itemKey)));
+        }
+        DOG_BOWL_BLOCK_ENTITY = Registry.register(
+                Registries.BLOCK_ENTITY_TYPE, Identifier.of(MOD_ID, "dog_bowl"),
+				FabricBlockEntityTypeBuilder.create(DogBowlBlock.DogBowlBlockEntity::new, DOG_BOWLS).build()
+        );
+    }
 
 	public static ItemStack filterStacksByOwner(Iterable<SlotEntryReference> stacks, UUID plr) {
 		for (SlotEntryReference p : stacks) {
@@ -171,6 +193,14 @@ public class PlayerCollarsMod implements ModInitializer {
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(itemGroup -> {
 			for (BedItem bed : DOG_BED_ITEMS)
 				itemGroup.add(bed);
+			for (Item bowl : DOG_BOWL_ITEMS)
+				itemGroup.add(bowl);
+		});
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register(itemGroup -> {
+			for (BedItem bed : DOG_BED_ITEMS)
+				itemGroup.add(bed);
+			for (Item bowl : DOG_BOWL_ITEMS)
+				itemGroup.add(bowl);
 		});
 
 		PlayerBlockBreakEvents.BEFORE.register((World var1, PlayerEntity player, BlockPos blockPos, BlockState var4, @Nullable BlockEntity var5) -> {
