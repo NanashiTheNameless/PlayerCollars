@@ -1,13 +1,9 @@
 package org.jlortiz.playercollars.item;
 
-import dev.emi.trinkets.api.Trinket;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.DyedColorComponent;
-import net.minecraft.component.type.MapColorComponent;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.tooltip.TooltipType;
@@ -26,22 +22,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class PawsItem extends Item implements Trinket {
+public class PawsItem extends FootPawsItem {
     public PawsItem(int color, int pawColor) {
-        super(new Item.Settings().maxCount(1)
-                .component(DataComponentTypes.DYED_COLOR, new DyedColorComponent(color | 0xFF000000, false))
-                .component(DataComponentTypes.MAP_COLOR, new MapColorComponent(pawColor))
-        );
-    }
-
-    public static int getColor(ItemStack is) {
-        DyedColorComponent color = is.get(DataComponentTypes.DYED_COLOR);
-        return color != null ? color.rgb() | 0xFF000000 : 0xFFFFFFFF;
-    }
-
-    public static int getBeanColor(ItemStack is) {
-        MapColorComponent color = is.get(DataComponentTypes.MAP_COLOR);
-        return color != null ? color.rgb() | 0xFF000000 : 0xFFF196CF;
+        super(color, pawColor);
     }
 
     public static boolean shouldPreventBlockInteraction(ItemStack stack, @NotNull BlockState block) {

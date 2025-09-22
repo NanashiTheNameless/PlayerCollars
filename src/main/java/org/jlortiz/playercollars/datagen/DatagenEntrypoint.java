@@ -73,8 +73,10 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
             getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(TrinketsMain.MOD_ID, "chest/necklace"))).add(PlayerCollarsMod.COLLAR_ITEM);
             getOrCreateTagBuilder(PlayerCollarsMod.COLLAR_TAG).add(PlayerCollarsMod.COLLAR_ITEM)
                     .addOptionalTag(TagKey.of(RegistryKeys.ITEM, Identifier.of("petworks", "collars")));
-            getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(TrinketsMain.MOD_ID, "hand/glove"))).addTag(PlayerCollarsMod.PAWS_TAG);
             getOrCreateTagBuilder(PlayerCollarsMod.PAWS_TAG).add(PlayerCollarsMod.PAWS_ITEMS);
+            getOrCreateTagBuilder(PlayerCollarsMod.FOOT_PAWS_TAG).add(PlayerCollarsMod.FOOT_PAWS_ITEMS);
+            getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(TrinketsMain.MOD_ID, "hand/glove"))).addTag(PlayerCollarsMod.PAWS_TAG);
+            getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(TrinketsMain.MOD_ID, "feet/shoes"))).addTag(PlayerCollarsMod.FOOT_PAWS_TAG);
         }
     }
 
@@ -122,6 +124,7 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
         public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
             generateColorNames(translationBuilder, " Human-Sized Dog Bed", DyeColor::byId, PlayerCollarsMod.DOG_BED_ITEMS);
             generateColorNames(translationBuilder, " Paws", (i) -> PlayerCollarsMod.PAWS_DYE_COLORS[i], PlayerCollarsMod.PAWS_ITEMS);
+            generateColorNames(translationBuilder, " Foot Paws", (i) -> PlayerCollarsMod.PAWS_DYE_COLORS[i], PlayerCollarsMod.FOOT_PAWS_ITEMS);
             generateColorNames(translationBuilder, " Dog Bowl", DyeColor::byId, PlayerCollarsMod.DOG_BOWL_ITEMS);
 
             try {

@@ -4,6 +4,7 @@ import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.fabric.api.tag.convention.v2.TagUtil;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -78,5 +79,16 @@ public abstract class PlayerEntityMixin extends LivingEntity {
                         }
                     }
                 });
+    }
+
+    @Redirect(method="updatePose", at= @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;setPose(Lnet/minecraft/entity/EntityPose;)V"))
+    private void playercollars$forceCrawl(PlayerEntity instance, EntityPose entityPose) {
+        if (!instance.getAbilities().flying && (entityPose == EntityPose.CROUCHING || entityPose == EntityPose.STANDING)) {
+            if (TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.FOOT_PAWS_TAG)))
+                    .filter((x) -> !x.isEmpty()).isPresent()) {
+                entityPose = EntityPose.SWIMMING;
+            }
+        }
+        instance.setPose(entityPose);
     }
 }

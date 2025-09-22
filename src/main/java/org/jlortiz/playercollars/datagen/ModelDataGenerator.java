@@ -5,9 +5,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.enums.BedPart;
 import net.minecraft.data.client.*;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import org.jlortiz.playercollars.PlayerCollarsMod;
@@ -64,6 +62,10 @@ public class ModelDataGenerator extends FabricModelProvider {
         Model basePaws = new Model(Optional.of(Identifier.of(PlayerCollarsMod.MOD_ID, "item/white_paws")), Optional.empty());
         for (int i = 1; i < PlayerCollarsMod.PAWS_ITEMS.length; i++) {
             itemModelGenerator.register(PlayerCollarsMod.PAWS_ITEMS[i], basePaws);
+        }
+        basePaws = new Model(Optional.of(Identifier.of(PlayerCollarsMod.MOD_ID, "item/white_foot_paws")), Optional.empty());
+        for (int i = 1; i < PlayerCollarsMod.FOOT_PAWS_ITEMS.length; i++) {
+            itemModelGenerator.register(PlayerCollarsMod.FOOT_PAWS_ITEMS[i], basePaws);
         }
 
         itemModelGenerator.register(PlayerCollarsMod.DEED_OF_OWNERSHIP, Models.GENERATED);

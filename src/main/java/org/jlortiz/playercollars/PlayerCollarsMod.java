@@ -104,11 +104,14 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final DogBedBlock[] DOG_BEDS = new DogBedBlock[DyeColor.values().length];
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
 	public static final TagKey<Item> COLLAR_TAG = TagKey.of(RegistryKeys.ITEM, Identifier.of("c", "collars"));
+
 	public static final DyeColor[] PAWS_DYE_COLORS = new DyeColor[]{DyeColor.WHITE, DyeColor.LIGHT_GRAY,
 			DyeColor.GRAY, DyeColor.BLACK, DyeColor.BLUE, DyeColor.RED, DyeColor.PURPLE};
 	public static final PawsItem[] PAWS_ITEMS = new PawsItem[PAWS_DYE_COLORS.length];
 	public static final TagKey<Block> PAWS_ALLOW_INTERACT = TagKey.of(RegistryKeys.BLOCK, Identifier.of(MOD_ID, "paws_allow_interact"));
 	public static final TagKey<Item> PAWS_TAG = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "paws"));
+	public static final FootPawsItem[] FOOT_PAWS_ITEMS = new FootPawsItem[PAWS_DYE_COLORS.length];
+	public static final TagKey<Item> FOOT_PAWS_TAG = TagKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "foot_paws"));
 
 	public static final DogBowlBlock[] DOG_BOWLS = new DogBowlBlock[DyeColor.values().length];
 	public static final Item[] DOG_BOWL_ITEMS = new Item[DyeColor.values().length];
@@ -168,12 +171,18 @@ public class PlayerCollarsMod implements ModInitializer {
             PAWS_ITEMS[i] = Registry.register(Registries.ITEM, itemKey,
                     new PawsItem(c.getFireworkColor(), 0xF196CF));
             TrinketsApi.registerTrinket(PAWS_ITEMS[i], PAWS_ITEMS[i]);
+			itemKey = FootPawsItem.getIdentifier(c);
+			FOOT_PAWS_ITEMS[i] = Registry.register(Registries.ITEM, itemKey,
+					new FootPawsItem(c.getFireworkColor(), 0xF196CF));
+			TrinketsApi.registerTrinket(FOOT_PAWS_ITEMS[i], FOOT_PAWS_ITEMS[i]);
         }
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(itemGroup -> {
 			itemGroup.add(COLLAR_ITEM);
 			itemGroup.add(CLICKER_ITEM);
 			itemGroup.add(PAW_CONFIGURATION_ITEM);
 			for (PawsItem p : PAWS_ITEMS)
+				itemGroup.add(p);
+			for (FootPawsItem p : FOOT_PAWS_ITEMS)
 				itemGroup.add(p);
 			itemGroup.add(DEED_OF_OWNERSHIP);
 			itemGroup.add(INVISIBLE_FENCE_BLOCK_ITEM);
