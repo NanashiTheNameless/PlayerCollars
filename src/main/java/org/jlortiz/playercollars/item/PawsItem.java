@@ -1,12 +1,8 @@
 package org.jlortiz.playercollars.item;
 
-import io.wispforest.accessories.api.AccessoryItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.MapColor;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.DyedColorComponent;
-import net.minecraft.component.type.MapColorComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,16 +24,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class PawsItem extends AccessoryItem {
-    public final int color, beansColor;
-
-    public PawsItem(RegistryKey<Item> key, int color, int beansColor) {
-        super(new Item.Settings().maxCount(1).registryKey(key)
-                .component(DataComponentTypes.DYED_COLOR, new DyedColorComponent(color | 0xFF000000, false))
-                .component(DataComponentTypes.MAP_COLOR, new MapColorComponent(beansColor))
-        );
-        this.color = color | 0xFF000000;
-        this.beansColor = beansColor;
+public class PawsItem extends FootPawsItem {
+    public PawsItem(RegistryKey<Item> key, int color, int pawColor) {
+        super(key, color, pawColor);
     }
 
     public static boolean shouldPreventBlockInteraction(ItemStack stack, @NotNull BlockState block) {

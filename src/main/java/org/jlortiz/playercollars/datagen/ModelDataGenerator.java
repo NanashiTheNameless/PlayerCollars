@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.block.DogBedBlock;
 import org.jlortiz.playercollars.block.DogBowlBlock;
-import org.jlortiz.playercollars.item.PawsItem;
+import org.jlortiz.playercollars.item.FootPawsItem;
 
 import java.util.Optional;
 
@@ -68,7 +68,11 @@ public class ModelDataGenerator extends FabricModelProvider {
         }
 
         Identifier pawsModel = Identifier.of(PlayerCollarsMod.MOD_ID, "item/paws");
-        for (PawsItem i : PlayerCollarsMod.PAWS_ITEMS) {
+        for (FootPawsItem i : PlayerCollarsMod.PAWS_ITEMS) {
+            itemModelGenerator.output.accept(i, ItemModels.tinted(pawsModel, new DyeTintSource(i.color), new MapColorTintSource(i.beansColor)));
+        }
+        pawsModel = Identifier.of(PlayerCollarsMod.MOD_ID, "item/foot_paws");
+        for (FootPawsItem i : PlayerCollarsMod.FOOT_PAWS_ITEMS) {
             itemModelGenerator.output.accept(i, ItemModels.tinted(pawsModel, new DyeTintSource(i.color), new MapColorTintSource(i.beansColor)));
         }
 

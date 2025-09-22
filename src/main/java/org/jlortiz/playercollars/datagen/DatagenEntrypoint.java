@@ -72,7 +72,9 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
             getOrCreateTagBuilder(ItemTags.DYEABLE).add(PlayerCollarsMod.COLLAR_ITEM).add(PlayerCollarsMod.CLICKER_ITEM);
             getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(Accessories.MODID, "necklace"))).add(PlayerCollarsMod.COLLAR_ITEM);
             getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(Accessories.MODID, "hand"))).add(PlayerCollarsMod.PAWS_ITEMS);
+            getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(Accessories.MODID, "shoes"))).addTag(PlayerCollarsMod.FOOT_PAWS_TAG);
             getOrCreateTagBuilder(PlayerCollarsMod.PAWS_TAG).add(PlayerCollarsMod.PAWS_ITEMS);
+            getOrCreateTagBuilder(PlayerCollarsMod.FOOT_PAWS_TAG).add(PlayerCollarsMod.FOOT_PAWS_ITEMS);
             getOrCreateTagBuilder(PlayerCollarsMod.COLLAR_TAG).add(PlayerCollarsMod.COLLAR_ITEM)
                     .addOptionalTag(TagKey.of(RegistryKeys.ITEM, Identifier.of("petworks", "collars")));
         }
@@ -86,6 +88,9 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
         @Override
         protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
             getOrCreateTagBuilder(BlockTags.BEDS).add(PlayerCollarsMod.DOG_BEDS);
+//            getOrCreateTagBuilder(PlayerCollarsMod.PAWS_ALLOW_INTERACT).addTag(BlockTags.BUTTONS)
+//                    .add(Blocks.LEVER).addTag(BlockTags.CROPS).addTag(BlockTags.BEDS)
+//                    .addTag(BlockTags.GEODE_INVALID_BLOCKS).addTag(BlockTags.CAULDRONS);
         }
     }
 
@@ -136,7 +141,9 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
             generateColorNames(translationBuilder, " Human-Sized Dog Bed", DyeColor::byId, PlayerCollarsMod.DOG_BED_ITEMS);
             generateColorNames(translationBuilder, " Human-Sized Dog Bed", DyeColor::byId, PlayerCollarsMod.DOG_BEDS);
             generateColorNames(translationBuilder, " Paws", (i) -> PlayerCollarsMod.PAWS_DYE_COLORS[i], PlayerCollarsMod.PAWS_ITEMS);
+            generateColorNames(translationBuilder, " Foot Paws", (i) -> PlayerCollarsMod.PAWS_DYE_COLORS[i], PlayerCollarsMod.FOOT_PAWS_ITEMS);
             generateColorNames(translationBuilder, " Dog Bowl", DyeColor::byId, PlayerCollarsMod.DOG_BOWL_ITEMS);
+            generateColorNames(translationBuilder, " Dog Bowl", DyeColor::byId, PlayerCollarsMod.DOG_BOWLS);
 
             try {
                 Path existingFilePath = dataOutput.getModContainer().findPath("assets/" + PlayerCollarsMod.MOD_ID + "/lang/en_us.existing.json").get();

@@ -4,6 +4,7 @@ import io.wispforest.accessories.api.AccessoriesCapability;
 import io.wispforest.accessories.api.slot.SlotEntryReference;
 import net.fabricmc.fabric.api.tag.convention.v2.TagUtil;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -77,5 +78,15 @@ public abstract class PlayerEntityMixin extends LivingEntity {
                 return;
             }
         }
+    }
+
+    @Redirect(method="updatePose", at= @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;setPose(Lnet/minecraft/entity/EntityPose;)V"))
+    private void playercollars$forceCrawl(PlayerEntity instance, EntityPose entityPose) {
+        if (!instance.getAbilities().flying && (entityPose == EntityPose.CROUCHING || entityPose == EntityPose.STANDING)) {
+            AccessoriesCapability cap = AccessoriesCapability.get(this);
+            if (cap != null && !cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.FOOT_PAWS_TAG)).isEmpty())
+                entityPose = EntityPose.SWIMMING;
+        }
+        instance.setPose(entityPose);
     }
 }

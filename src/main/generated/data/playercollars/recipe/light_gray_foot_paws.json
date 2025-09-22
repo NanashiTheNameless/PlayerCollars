@@ -1,18 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "group": "paws",
+  "group": "foot_paws",
   "key": {
     "l": "minecraft:leather",
-    "w": "minecraft:purple_wool"
+    "w": "minecraft:light_gray_wool"
   },
   "pattern": [
     " w ",
-    "wlw",
-    " w "
+    " w ",
+    "wlw"
   ],
   "result": {
     "count": 1,
-    "id": "playercollars:purple_paws"
+    "id": "playercollars:light_gray_foot_paws"
   }
 }

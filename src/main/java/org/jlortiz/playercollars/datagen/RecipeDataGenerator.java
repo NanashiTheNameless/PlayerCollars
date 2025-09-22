@@ -62,8 +62,10 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                     generateBed(exporter, PlayerCollarsMod.DOG_BED_ITEMS[c.ordinal()], DatagenEntrypoint.WOOLS[c.ordinal()]);
                     generateBowl(exporter, PlayerCollarsMod.DOG_BOWL_ITEMS[c.ordinal()], DatagenEntrypoint.TERRACOTTAS[c.ordinal()]);
                 }
-                for (int i = 0; i < PlayerCollarsMod.PAWS_DYE_COLORS.length; i++)
+                for (int i = 0; i < PlayerCollarsMod.PAWS_DYE_COLORS.length; i++) {
                     generatePaws(exporter, PlayerCollarsMod.PAWS_ITEMS[i], DatagenEntrypoint.WOOLS[PlayerCollarsMod.PAWS_DYE_COLORS[i].ordinal()]);
+                    generateFootPaws(exporter, PlayerCollarsMod.FOOT_PAWS_ITEMS[i], DatagenEntrypoint.WOOLS[PlayerCollarsMod.PAWS_DYE_COLORS[i].ordinal()]);
+                }
             }
 
             private void generateBed(RecipeExporter exporter, BedItem output, Item input) {
@@ -79,7 +81,16 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                         .input('w', input)
                         .input('l', Items.LEATHER)
                         .criterion(hasItem(input), conditionsFromItem(input))
-                        .group("dog_bed")
+                        .group("paws")
+                        .offerTo(exporter);
+            }
+
+            private void generateFootPaws(RecipeExporter exporter, Item output, Item input) {
+                createShaped(RecipeCategory.MISC, output).pattern(" w ").pattern(" w ").pattern("wlw")
+                        .input('w', input)
+                        .input('l', Items.LEATHER)
+                        .criterion(hasItem(Items.LEATHER), conditionsFromItem(Items.LEATHER))
+                        .group("foot_paws")
                         .offerTo(exporter);
             }
 
