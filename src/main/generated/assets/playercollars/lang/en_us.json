@@ -73,6 +73,7 @@
   "item.playercollars.deed_of_ownership.line8": "WITNESS my paw and official seal (on reverse).",
   "item.playercollars.deed_of_ownership.no_self_own": "Can't sign a contract with yourself!",
   "item.playercollars.deed_of_ownership.stamp": "Stamp Deed",
+  "item.playercollars.golden_spatula": "Golden Spatula",
   "item.playercollars.gray_dog_bed": "Gray Human-Sized Dog Bed",
   "item.playercollars.gray_dog_bowl": "Gray Dog Bowl",
   "item.playercollars.gray_foot_paws": "Gray Foot Paws",
@@ -121,7 +122,5 @@
   "item.playercollars.yellow_dog_bowl": "Yellow Dog Bowl",
   "message.playercollars.no_attack_owner": "Don't attack your owner!",
   "message.playercollars.no_break_fence": "Can't unleash yourself!",
-  "tag.block.playercollars.paws_allow_interact": "Usable with Paws",
-  "tag.item.trinkets.chest.hand": "Hand",
-  "tag.item.trinkets.chest.necklace": "Necklace"
+  "tag.block.playercollars.paws_allow_interact": "Usable with Paws"
 }

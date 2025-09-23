@@ -73,6 +73,8 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final InvisibleFenceBlock INVISIBLE_FENCE_BLOCK = Registry.register(Registries.BLOCK, InvisibleFenceBlock.REGISTRY_KEY,
 			new InvisibleFenceBlock(AbstractBlock.Settings.create().noCollision().breakInstantly().sounds(BlockSoundGroup.STONE).registryKey(InvisibleFenceBlock.REGISTRY_KEY)));
 	public static final BlockItem INVISIBLE_FENCE_BLOCK_ITEM = Registry.register(Registries.ITEM, InvisibleFenceBlock.ITEM_REGISTRY_KEY, new BlockItem(INVISIBLE_FENCE_BLOCK, new Item.Settings().registryKey(InvisibleFenceBlock.ITEM_REGISTRY_KEY)));
+	public static final SpatulaItem SPATULA_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "golden_spatula"), new SpatulaItem());
+
 	public static final SoundEvent CLICKER_ON = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_on"),
 			SoundEvent.of(Identifier.of(MOD_ID, "clicker_on")));
 	public static final SoundEvent CLICKER_OFF = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_off"),
@@ -188,7 +190,8 @@ public class PlayerCollarsMod implements ModInitializer {
 				itemGroup.add(p);
 			for (FootPawsItem p : FOOT_PAWS_ITEMS)
 				itemGroup.add(p);
-			itemGroup.add(INVISIBLE_FENCE_BLOCK_ITEM);
+			itemGroup.add(DEED_OF_OWNERSHIP);
+			itemGroup.add(SPATULA_ITEM);
 		});
 
 		for (DyeColor c : DyeColor.values()) {
@@ -203,6 +206,7 @@ public class PlayerCollarsMod implements ModInitializer {
 				itemGroup.add(bed);
 			for (Item bowl : DOG_BOWL_ITEMS)
 				itemGroup.add(bowl);
+			itemGroup.add(INVISIBLE_FENCE_BLOCK_ITEM);
 		});
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register(itemGroup -> {
 			for (BedItem bed : DOG_BED_ITEMS)

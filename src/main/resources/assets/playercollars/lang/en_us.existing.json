@@ -33,6 +33,7 @@
   "item.playercollars.paw_configurator.no_set_non_owner": "Must be owner to configure paws",
   "item.playercollars.paw_configurator.no_paws_to_set": "Target is not wearing paws",
   "item.playercollars.paw_configurator.success": "Paws updated successfully",
+  "item.playercollars.golden_spatula": "Golden Spatula",
   "enchantment.playercollars.short_leash": "Tight Leash",
   "enchantment.playercollars.regeneration": "Healing",
   "enchantment.playercollars.thorns": "Spiked",
@@ -42,8 +43,6 @@
   "attribute.playercollars.leash_distance": "Leash Distance",
   "message.playercollars.no_break_fence": "Can't unleash yourself!",
   "message.playercollars.no_attack_owner": "Don't attack your owner!",
-  "tag.item.trinkets.chest.necklace": "Necklace",
-  "tag.item.trinkets.chest.hand": "Hand",
   "tag.block.playercollars.paws_allow_interact": "Usable with Paws",
   "gamerule.playerLeashesBreak": "Player collar leashes break if stretched too far"
 }
