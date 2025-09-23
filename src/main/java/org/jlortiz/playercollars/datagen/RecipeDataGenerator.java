@@ -59,6 +59,11 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                 .input('s', Items.STONE)
                 .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
                 .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, PlayerCollarsMod.SPATULA_ITEM).pattern("  g").pattern(" g ").pattern("s  ")
+                .input('g', ConventionalItemTags.GOLD_INGOTS)
+                .input('s', Items.STICK)
+                .criterion(hasItem(Items.GOLD_INGOT), conditionsFromTag(ConventionalItemTags.GOLD_INGOTS))
+                .offerTo(exporter);
         for (DyeColor c : DyeColor.values()) {
             generateBed(exporter, PlayerCollarsMod.DOG_BED_ITEMS[c.ordinal()], DatagenEntrypoint.WOOLS[c.ordinal()]);
             generateBowl(exporter, PlayerCollarsMod.DOG_BOWL_ITEMS[c.ordinal()], DatagenEntrypoint.TERRACOTTAS[c.ordinal()]);
