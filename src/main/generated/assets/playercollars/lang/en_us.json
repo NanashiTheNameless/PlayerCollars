@@ -87,6 +87,7 @@
   "item.playercollars.stamped_deed_of_ownership": "%s's Deed of Ownership",
   "item.playercollars.white_foot_paws": "White Foot Paws",
   "item.playercollars.white_paws": "White Paws",
+  "itemGroup.playercollars": "Leashable Collars",
   "message.playercollars.no_attack_owner": "Don't attack your owner!",
   "message.playercollars.no_break_fence": "Can't unleash yourself!",
   "tag.block.playercollars.paws_allow_interact": "Usable with Paws",

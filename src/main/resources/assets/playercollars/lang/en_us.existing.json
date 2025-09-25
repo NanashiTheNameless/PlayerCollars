@@ -33,6 +33,7 @@
   "item.playercollars.deed_of_ownership.filled": "Unsigned Deed of Ownership",
   "item.playercollars.stamped_deed_of_ownership": "%s's Deed of Ownership",
   "item.playercollars.golden_spatula": "Golden Spatula",
+  "itemGroup.playercollars": "Leashable Collars",
   "enchantment.playercollars.short_leash": "Tight Leash",
   "enchantment.playercollars.regeneration": "Healing",
   "enchantment.playercollars.thorns": "Spiked",

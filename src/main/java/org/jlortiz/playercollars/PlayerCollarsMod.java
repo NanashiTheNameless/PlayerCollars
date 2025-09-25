@@ -10,7 +10,7 @@ import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.AbstractBlock;
@@ -118,6 +118,7 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final DogBowlBlock[] DOG_BOWLS = new DogBowlBlock[DyeColor.values().length];
 	public static final Item[] DOG_BOWL_ITEMS = new Item[DyeColor.values().length];
 	public static final BlockEntityType<DogBowlBlock.DogBowlBlockEntity> DOG_BOWL_BLOCK_ENTITY;
+	public static final ItemGroup GROUP;
 
 	static {
 		for (DyeColor c : DyeColor.values()) {
@@ -130,6 +131,26 @@ public class PlayerCollarsMod implements ModInitializer {
 				Registries.BLOCK_ENTITY_TYPE, Identifier.of(MOD_ID, "dog_bowl"),
 				BlockEntityType.Builder.create(DogBowlBlock.DogBowlBlockEntity::new, DOG_BOWLS).build()
 		);
+
+		GROUP = Registry.register(Registries.ITEM_GROUP, Identifier.of(MOD_ID, "group"),
+				FabricItemGroup.builder().displayName(Text.translatable("itemGroup.playercollars"))
+				.icon(COLLAR_ITEM::getDefaultStack)
+				.entries(((displayContext, entries) -> {
+					entries.add(COLLAR_ITEM);
+					entries.add(CLICKER_ITEM);
+					entries.add(PAW_CONFIGURATION_ITEM);
+					for (PawsItem p : PAWS_ITEMS)
+						entries.add(p);
+					for (FootPawsItem p : FOOT_PAWS_ITEMS)
+						entries.add(p);
+					entries.add(DEED_OF_OWNERSHIP);
+					entries.add(SPATULA_ITEM);
+					for (BedItem bed : DOG_BED_ITEMS)
+						entries.add(bed);
+					for (Item bowl : DOG_BOWL_ITEMS)
+						entries.add(bowl);
+					entries.add(INVISIBLE_FENCE_BLOCK_ITEM);
+				})).build());
 	}
 
 	public static ItemStack filterStacksByOwner(List<Pair<SlotReference, ItemStack>> stacks, UUID plr, UUID entity) {
@@ -178,17 +199,6 @@ public class PlayerCollarsMod implements ModInitializer {
 					new FootPawsItem(c.getFireworkColor(), 0xF196CF));
 			TrinketsApi.registerTrinket(FOOT_PAWS_ITEMS[i], FOOT_PAWS_ITEMS[i]);
         }
-		ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(itemGroup -> {
-			itemGroup.add(COLLAR_ITEM);
-			itemGroup.add(CLICKER_ITEM);
-			itemGroup.add(PAW_CONFIGURATION_ITEM);
-			for (PawsItem p : PAWS_ITEMS)
-				itemGroup.add(p);
-			for (FootPawsItem p : FOOT_PAWS_ITEMS)
-				itemGroup.add(p);
-			itemGroup.add(DEED_OF_OWNERSHIP);
-			itemGroup.add(SPATULA_ITEM);
-		});
 
 		for (DyeColor c : DyeColor.values()) {
 			DOG_BEDS[c.ordinal()] = Registry.register(Registries.BLOCK, Identifier.of(MOD_ID, c.getName() + "_dog_bed"),
@@ -196,19 +206,6 @@ public class PlayerCollarsMod implements ModInitializer {
 			DOG_BED_ITEMS[c.ordinal()] = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, c.getName() + "_dog_bed"),
 					new BedItem(DOG_BEDS[c.ordinal()], (new Item.Settings()).maxCount(1)));
 		}
-		ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(itemGroup -> {
-			for (BedItem bed : DOG_BED_ITEMS)
-				itemGroup.add(bed);
-			for (Item bowl : DOG_BOWL_ITEMS)
-				itemGroup.add(bowl);
-			itemGroup.add(INVISIBLE_FENCE_BLOCK_ITEM);
-		});
-		ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register(itemGroup -> {
-			for (BedItem bed : DOG_BED_ITEMS)
-				itemGroup.add(bed);
-			for (Item bowl : DOG_BOWL_ITEMS)
-				itemGroup.add(bowl);
-		});
 
 		PlayerBlockBreakEvents.BEFORE.register((World var1, PlayerEntity player, BlockPos blockPos, BlockState var4, @Nullable BlockEntity var5) -> {
 			if (var1.isClient) return true;
