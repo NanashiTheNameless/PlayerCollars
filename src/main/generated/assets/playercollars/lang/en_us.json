@@ -118,6 +118,7 @@
   "item.playercollars.white_dog_bowl": "White Dog Bowl",
   "item.playercollars.white_foot_paws": "White Foot Paws",
   "item.playercollars.white_paws": "White Paws",
+  "itemGroup.playercollars": "Leashable Collars",
   "item.playercollars.yellow_dog_bed": "Yellow Human-Sized Dog Bed",
   "item.playercollars.yellow_dog_bowl": "Yellow Dog Bowl",
   "message.playercollars.no_attack_owner": "Don't attack your owner!",

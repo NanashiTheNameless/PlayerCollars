@@ -34,6 +34,7 @@
   "item.playercollars.paw_configurator.no_paws_to_set": "Target is not wearing paws",
   "item.playercollars.paw_configurator.success": "Paws updated successfully",
   "item.playercollars.golden_spatula": "Golden Spatula",
+  "itemGroup.playercollars": "Leashable Collars",
   "enchantment.playercollars.short_leash": "Tight Leash",
   "enchantment.playercollars.regeneration": "Healing",
   "enchantment.playercollars.thorns": "Spiked",
