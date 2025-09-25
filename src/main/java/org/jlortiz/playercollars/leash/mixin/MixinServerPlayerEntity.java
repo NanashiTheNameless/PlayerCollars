@@ -31,8 +31,6 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
 
     @Shadow public abstract ServerWorld getServerWorld();
 
-    @Shadow public abstract Entity teleportTo(TeleportTarget par1);
-
     @Shadow public ServerPlayNetworkHandler networkHandler;
     @Unique
     private LeashProxyEntity leashplayers$proxy;
@@ -107,8 +105,10 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
                 leashplayers$detach();
                 leashplayers$drop();
             } else {
+                dismountVehicle();
                 leashplayers$proxy.refreshPositionAndAngles(holder.getPos(), leashplayers$proxy.getYaw(), leashplayers$proxy.getPitch());
                 networkHandler.requestTeleport(holder.getX(), holder.getY(), holder.getZ(), getYaw(), getPitch());
+                setVelocity(Vec3d.ZERO);
             }
         }
     }
