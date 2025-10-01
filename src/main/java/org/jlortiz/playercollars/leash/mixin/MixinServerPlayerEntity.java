@@ -10,6 +10,7 @@ import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +25,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.UUID;
 
@@ -56,7 +58,6 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
                         !leashplayers$holder.isAlive()
                                 || !isAlive()
                                 || isDisconnected()
-                        // || hasVehicle()
                 )
         ) {
             leashplayers$detach();
@@ -145,8 +146,8 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
         }
         leashplayers$proxy.attachLeash(leashplayers$holder, true);
 
-        if (hasVehicle()) {
-            stopRiding();
+        if (this.hasVehicle() && !this.getServerWorld().getGameRules().getBoolean(PlayerCollarsMod.LEASHED_PLAYERS_RIDE_ENTITIES)) {
+            this.stopRiding();
         }
 
         leashplayers$lastage = age;
@@ -172,6 +173,18 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
     @Inject(method = "tick()V", at = @At("TAIL"))
     private void leashplayers$tick(CallbackInfo info) {
         leashplayers$update();
+    }
+
+    @Inject(method = "startRiding(Lnet/minecraft/entity/Entity;Z)Z", at = @At("HEAD"), cancellable = true)
+    private void leashplayers$startriding(Entity entity, boolean force, CallbackInfoReturnable<Boolean> cir) {
+
+        boolean isLeashed = this.leashplayers$getProxyLeashHolder() != null;
+        boolean disallowMount = !this.getServerWorld().getGameRules().getBoolean(PlayerCollarsMod.LEASHED_PLAYERS_RIDE_ENTITIES);
+
+        if (isLeashed && disallowMount) {
+            this.sendMessage(Text.translatable("message.playercollars.no_ride_entity"), true);
+            cir.cancel();
+        }
     }
 
     @Override

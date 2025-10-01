@@ -39,6 +39,7 @@
   "enchantment.playercollars.regeneration": "Healing",
   "enchantment.playercollars.short_leash": "Tight Leash",
   "enchantment.playercollars.thorns": "Spiked",
+  "gamerule.leashedPlayersRideEntities": "Leashed players can ride entities",
   "gamerule.playerLeashesBreak": "Player collar leashes break if stretched too far",
   "gui.playercollars.paw_configurator.block.open": "Interactable Blocks",
   "gui.playercollars.paw_configurator.block.title": "%s's Paws - Blocks",
@@ -134,5 +135,6 @@
   "itemGroup.playercollars": "Leashable Collars",
   "message.playercollars.no_attack_owner": "Don't attack your owner!",
   "message.playercollars.no_break_fence": "Can't unleash yourself!",
+  "message.playercollars.no_ride_entity": "Can't ride this entity!",
   "tag.block.playercollars.paws_allow_interact": "Usable with Paws"
 }

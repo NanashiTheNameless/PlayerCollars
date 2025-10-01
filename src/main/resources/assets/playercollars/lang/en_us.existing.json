@@ -54,7 +54,9 @@
   "attribute.playercollars.clicker_distance": "Clicker Distance",
   "attribute.playercollars.leash_distance": "Leash Distance",
   "message.playercollars.no_break_fence": "Can't unleash yourself!",
+  "message.playercollars.no_ride_entity": "Can't ride this entity!",
   "message.playercollars.no_attack_owner": "Don't attack your owner!",
   "tag.block.playercollars.paws_allow_interact": "Usable with Paws",
-  "gamerule.playerLeashesBreak": "Player collar leashes break if stretched too far"
+  "gamerule.playerLeashesBreak": "Player collar leashes break if stretched too far",
+  "gamerule.leashedPlayersRideEntities": "Leashed players can ride entities"
 }
