@@ -65,14 +65,16 @@ import java.util.function.UnaryOperator;
 
 public class PlayerCollarsMod implements ModInitializer {
 	public static final String MOD_ID = "playercollars";
-	public static final CollarItem COLLAR_ITEM = Registry.register(Registries.ITEM, CollarItem.REGISTRY_KEY, new CollarItem());
-	public static final ClickerItem CLICKER_ITEM = Registry.register(Registries.ITEM, ClickerItem.REGISTRY_KEY, new ClickerItem());
-	public static final DeedItem DEED_OF_OWNERSHIP = Registry.register(Registries.ITEM, DeedItem.REGISTRY_KEY, new DeedItem());
-	public static final Item DEED_OF_OWNERSHIP_STAMPED = Registry.register(Registries.ITEM, StampedDeedItem.REGISTRY_KEY, new StampedDeedItem());
-	public static final PawSetupItem PAW_CONFIGURATION_ITEM = Registry.register(Registries.ITEM, PawSetupItem.REGISTRY_KEY, new PawSetupItem());
-	public static final InvisibleFenceBlock INVISIBLE_FENCE_BLOCK = Registry.register(Registries.BLOCK, InvisibleFenceBlock.REGISTRY_KEY,
-			new InvisibleFenceBlock(AbstractBlock.Settings.create().noCollision().breakInstantly().sounds(BlockSoundGroup.STONE).registryKey(InvisibleFenceBlock.REGISTRY_KEY)));
-	public static final BlockItem INVISIBLE_FENCE_BLOCK_ITEM = Registry.register(Registries.ITEM, InvisibleFenceBlock.ITEM_REGISTRY_KEY, new BlockItem(INVISIBLE_FENCE_BLOCK, new Item.Settings().registryKey(InvisibleFenceBlock.ITEM_REGISTRY_KEY)));
+    public static final CollarItem COLLAR_ITEM = Registry.register(Registries.ITEM, CollarItem.REGISTRY_KEY, new CollarItem());
+    public static final ClickerItem CLICKER_ITEM = Registry.register(Registries.ITEM, ClickerItem.REGISTRY_KEY, new ClickerItem());
+    public static final DeedItem DEED_OF_OWNERSHIP = Registry.register(Registries.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "deed_of_ownership"), new DeedItem());
+    public static final Item DEED_OF_OWNERSHIP_STAMPED = Registry.register(Registries.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "stamped_deed_of_ownership"), new StampedDeedItem());
+    public static final InvisibleFenceBlock INVISIBLE_FENCE_BLOCK = Registry.register(Registries.BLOCK, InvisibleFenceBlock.REGISTRY_KEY,
+            new InvisibleFenceBlock(AbstractBlock.Settings.create().noCollision().breakInstantly().sounds(BlockSoundGroup.STONE)));
+    public static final BlockItem INVISIBLE_FENCE_BLOCK_ITEM = Registry.register(Registries.ITEM, InvisibleFenceBlock.ITEM_REGISTRY_KEY,
+			new BlockItem(INVISIBLE_FENCE_BLOCK, new Item.Settings().registryKey(InvisibleFenceBlock.ITEM_REGISTRY_KEY)));
+    public static final PawSetupItem PAW_CONFIGURATION_ITEM = Registry.register(Registries.ITEM, PawSetupItem.REGISTRY_KEY, new PawSetupItem());
+    public static final CollarLockerItem COLLAR_LOCKER_ITEM = Registry.register(Registries.ITEM, CollarLockerItem.REGISTRY_KEY, new CollarLockerItem());
 	public static final SpatulaItem SPATULA_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "golden_spatula"), new SpatulaItem());
 
 	public static final SoundEvent CLICKER_ON = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_on"),
@@ -99,10 +101,10 @@ public class PlayerCollarsMod implements ModInitializer {
 			ComponentType.<Set<Identifier>>builder().codec(CAN_INTERACT_COMPONENT_CODEC).build());
 
 	public static final RegistryEntry<EntityAttribute> ATTR_CLICKER_DISTANCE = Registry.registerReference(
-			Registries.ATTRIBUTE, Identifier.of(PlayerCollarsMod.MOD_ID, "clicker_distance"),
+			Registries.ATTRIBUTE, Identifier.of(MOD_ID, "clicker_distance"),
 			new ClampedEntityAttribute("attribute.playercollars.clicker_distance", 4, 0, 32));
 	public static final RegistryEntry<EntityAttribute> ATTR_LEASH_DISTANCE = Registry.registerReference(
-			Registries.ATTRIBUTE, Identifier.of(PlayerCollarsMod.MOD_ID, "leash_distance"),
+			Registries.ATTRIBUTE, Identifier.of(MOD_ID, "leash_distance"),
 			new ClampedEntityAttribute("attribute.playercollars.leash_distance", 4, 2, 16));
 	public static final GameRules.Key<GameRules.BooleanRule> PLAYER_LEASHES_BREAK_RULE = GameRuleRegistry.register(
 			"playerLeashesBreak", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true));
@@ -144,6 +146,7 @@ public class PlayerCollarsMod implements ModInitializer {
                         .entries(((displayContext, entries) -> {
                             entries.add(COLLAR_ITEM);
                             entries.add(CLICKER_ITEM);
+                            entries.add(COLLAR_LOCKER_ITEM);
                             entries.add(PAW_CONFIGURATION_ITEM);
                             for (PawsItem p : PAWS_ITEMS)
                                 entries.add(p);
@@ -247,7 +250,5 @@ public class PlayerCollarsMod implements ModInitializer {
 			}
 			return ActionResult.PASS;
 		});
-
-
 	}
 }
