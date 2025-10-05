@@ -1,7 +1,6 @@
-package org.jlortiz.playercollars.client;
+package org.jlortiz.playercollars.client.screen;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -29,7 +28,7 @@ public class DeedItemScreen extends Screen {
     @Override
     protected void init() {
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("item.playercollars.deed_of_ownership.stamp"), this::stampDeed).dimensions(this.width / 2 - 80, this.height / 2 + 72, 160, 20).build());
-        this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.cancel"), (x) -> MinecraftClient.getInstance().setScreen(null)).dimensions(this.width / 2 - 80, this.height / 2 + 95, 160, 20).build());
+        this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.cancel"), (x) -> close()).dimensions(this.width / 2 - 80, this.height / 2 + 95, 160, 20).build());
     }
 
     @Override
@@ -60,7 +59,7 @@ public class DeedItemScreen extends Screen {
 
     private void stampDeed(ButtonWidget btn) {
         ClientPlayNetworking.send(new PacketStampDeed(ownUUID));
-        MinecraftClient.getInstance().setScreen(null);
+        close();
     }
 }
 

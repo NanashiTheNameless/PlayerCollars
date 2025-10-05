@@ -69,6 +69,7 @@ public class PlayerCollarsMod implements ModInitializer {
             new InvisibleFenceBlock(AbstractBlock.Settings.create().noCollision().breakInstantly().sounds(BlockSoundGroup.STONE)));
     public static final BlockItem INVISIBLE_FENCE_BLOCK_ITEM = Registry.register(Registries.ITEM, InvisibleFenceBlock.ITEM_REGISTRY_KEY, new BlockItem(INVISIBLE_FENCE_BLOCK, new Item.Settings()));
     public static final PawSetupItem PAW_CONFIGURATION_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "paw_configurator"), new PawSetupItem());
+	public static final CollarLockerItem COLLAR_LOCKER_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "collar_locker"), new CollarLockerItem());
 	public static final SpatulaItem SPATULA_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "golden_spatula"), new SpatulaItem());
 
 	public static final SoundEvent CLICKER_ON = Registry.register(Registries.SOUND_EVENT, Identifier.of(MOD_ID, "clicker_on"),
@@ -138,6 +139,7 @@ public class PlayerCollarsMod implements ModInitializer {
 				.entries(((displayContext, entries) -> {
 					entries.add(COLLAR_ITEM);
 					entries.add(CLICKER_ITEM);
+					entries.add(COLLAR_LOCKER_ITEM);
 					entries.add(PAW_CONFIGURATION_ITEM);
 					for (PawsItem p : PAWS_ITEMS)
 						entries.add(p);

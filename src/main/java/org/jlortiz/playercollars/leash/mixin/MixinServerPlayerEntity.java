@@ -13,7 +13,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.leash.LeashImpl;
@@ -54,7 +53,6 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
                         !leashplayers$holder.isAlive()
                                 || !isAlive()
                                 || isDisconnected()
-                                || hasVehicle()
                 )
         ) {
             leashplayers$detach();
@@ -126,7 +124,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
         }
         leashplayers$proxy.attachLeash(leashplayers$holder, true);
 
-        if (hasVehicle()) {
+        if (hasVehicle() && getServerWorld().getGameRules().getBoolean(PlayerCollarsMod.PLAYER_LEASHES_BREAK_RULE)) {
             stopRiding();
         }
 
