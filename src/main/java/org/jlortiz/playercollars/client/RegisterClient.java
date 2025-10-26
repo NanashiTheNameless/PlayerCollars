@@ -6,7 +6,10 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.minecraft.block.Block;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import org.jlortiz.playercollars.PlayerCollarsMod;
+import org.jlortiz.playercollars.client.screen.PawsConfigScreen;
 import org.jlortiz.playercollars.item.FootPawsItem;
 import org.jlortiz.playercollars.network.PacketLookAtLerped;
 
@@ -24,5 +27,6 @@ public class RegisterClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(PacketLookAtLerped.ID, (payload, context) ->
                 context.client().execute(() -> RotationLerpHandler.beginClickTurn(payload.vec())));
         WorldRenderEvents.END.register(RotationLerpHandler::turnTowardsClick);
+        HandledScreens.register(PlayerCollarsMod.PAWS_BLOCK_CONFIG_SCREEN_HANDLER, PawsConfigScreen<Block>::new);
     }
 }

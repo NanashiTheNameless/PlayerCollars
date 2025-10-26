@@ -1,5 +1,6 @@
 package org.jlortiz.playercollars.item;
 
+import com.mojang.datafixers.util.Either;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
@@ -10,6 +11,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -22,7 +24,6 @@ import org.jlortiz.playercollars.PlayerCollarsMod;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public class PawsItem extends FootPawsItem {
     public PawsItem(RegistryKey<Item> key, int color, int pawColor) {
@@ -31,9 +32,13 @@ public class PawsItem extends FootPawsItem {
 
     public static boolean shouldPreventBlockInteraction(ItemStack stack, @NotNull BlockState block) {
         if (block.isIn(PlayerCollarsMod.PAWS_ALLOW_INTERACT)) return false;
-        Set<Identifier> allowed = stack.get(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE);
+        List<Either<TagKey<Block>, RegistryKey<Block>>> allowed = stack.get(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE);
         Optional<RegistryKey<Block>> key = block.getRegistryEntry().getKey();
-        return allowed != null && key.isPresent() && !allowed.contains(key.get().getValue());
+        if (allowed == null || key.isEmpty()) return false;
+        for (Either<TagKey<Block>, RegistryKey<Block>> entry : allowed) {
+            if (entry.map(block::isIn, (y) -> y.equals(key.get()))) return true;
+        }
+        return false;
     }
 
     public static boolean isSlippery(ItemStack stack) {

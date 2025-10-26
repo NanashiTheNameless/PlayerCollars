@@ -18,7 +18,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 
 import java.util.List;
@@ -51,7 +54,7 @@ public class CollarLockerItem extends Item {
         );
 
         for (SlotEntryReference p : ls) {
-            ItemStack is = p.reference().getStack();
+            ItemStack is = p.stack();
             if (!is.hasEnchantments()) {
                 if (shouldLock) {
                     ItemEnchantmentsComponent.Builder ench = new ItemEnchantmentsComponent.Builder(ItemEnchantmentsComponent.DEFAULT);
