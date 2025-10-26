@@ -1,6 +1,9 @@
 package org.jlortiz.playercollars;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.Encoder;
+import com.mojang.serialization.codecs.EitherCodec;
 import com.mojang.serialization.codecs.ListCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.emi.trinkets.api.SlotReference;
@@ -13,6 +16,7 @@ import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -27,9 +31,11 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.decoration.LeashKnotEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
@@ -50,12 +56,10 @@ import org.jlortiz.playercollars.block.DogBowlBlock;
 import org.jlortiz.playercollars.block.InvisibleFenceBlock;
 import org.jlortiz.playercollars.item.*;
 import org.jlortiz.playercollars.leash.LeashImpl;
-import org.jlortiz.playercollars.network.PacketLookAtLerped;
-import org.jlortiz.playercollars.network.PacketStampDeed;
-import org.jlortiz.playercollars.network.PacketUpdateCollar;
+import org.jlortiz.playercollars.network.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 
@@ -88,12 +92,20 @@ public class PlayerCollarsMod implements ModInitializer {
 			Identifier.of(MOD_ID, "owner_component"),
 			ComponentType.<OwnerComponent>builder().codec(OWNER_COMPONENT_CODEC).build());
 
-	private static final Codec<Set<Identifier>> CAN_INTERACT_COMPONENT_CODEC = new ListCodec<>(
-			Identifier.CODEC, 0, 65535).xmap(Set::copyOf, List::copyOf);
-	public static final ComponentType<Set<Identifier>> CAN_INTERACT_COMPONENT_TYPE = Registry.register(
+	private static final Codec<List<Either<TagKey<Block>, RegistryKey<Block>>>> CAN_INTERACT_COMPONENT_CODEC = Codec.withAlternative(
+			new ListCodec<>(new EitherCodec<>(TagKey.codec(RegistryKeys.BLOCK), RegistryKey.createCodec(RegistryKeys.BLOCK)), 0, 1024),
+			Codec.of(Encoder.error("deprecated"), new ListCodec<>(Identifier.CODEC, 0, 65535).map((x) -> {
+				List<Either<TagKey<Block>, RegistryKey<Block>>> ls = new ArrayList<>(x.size());
+				for (Identifier id : x) {
+					ls.add(Either.right(RegistryKey.of(RegistryKeys.BLOCK, id)));
+				}
+				return ls;
+			}))
+	);
+	public static final ComponentType<List<Either<TagKey<Block>, RegistryKey<Block>>>> CAN_INTERACT_COMPONENT_TYPE = Registry.register(
 			Registries.DATA_COMPONENT_TYPE,
 			Identifier.of(MOD_ID, "can_interact_component"),
-			ComponentType.<Set<Identifier>>builder().codec(CAN_INTERACT_COMPONENT_CODEC).build());
+			ComponentType.<List<Either<TagKey<Block>, RegistryKey<Block>>>>builder().codec(CAN_INTERACT_COMPONENT_CODEC).build());
 
 	public static final RegistryEntry<EntityAttribute> ATTR_CLICKER_DISTANCE = Registry.registerReference(
 			Registries.ATTRIBUTE, Identifier.of(MOD_ID, "clicker_distance"),
@@ -120,6 +132,9 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final Item[] DOG_BOWL_ITEMS = new Item[DyeColor.values().length];
 	public static final BlockEntityType<DogBowlBlock.DogBowlBlockEntity> DOG_BOWL_BLOCK_ENTITY;
 	public static final ItemGroup GROUP;
+	public static final ExtendedScreenHandlerType<PawsConfigScreenHandler<Block>, List<Either<TagKey<Block>, RegistryKey<Block>>>> PAWS_BLOCK_CONFIG_SCREEN_HANDLER = new ExtendedScreenHandlerType<>(
+			PawsConfigScreenHandler.PawsBlockConfigScreenHandler::new, PacketCodecs.codec(CAN_INTERACT_COMPONENT_CODEC)
+	);
 
 	static {
 		for (DyeColor c : DyeColor.values()) {
@@ -153,6 +168,8 @@ public class PlayerCollarsMod implements ModInitializer {
 						entries.add(bowl);
 					entries.add(INVISIBLE_FENCE_BLOCK_ITEM);
 				})).build());
+
+		Registry.register(Registries.SCREEN_HANDLER, Identifier.of(MOD_ID, "paws_block_config"), PAWS_BLOCK_CONFIG_SCREEN_HANDLER);
 	}
 
 	public static ItemStack filterStacksByOwner(List<Pair<SlotReference, ItemStack>> stacks, UUID plr, UUID entity) {

@@ -32,7 +32,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.jlortiz.playercollars.OwnerComponent;
 import org.jlortiz.playercollars.PlayerCollarsMod;
-import org.jlortiz.playercollars.client.CollarDyeScreen;
+import org.jlortiz.playercollars.client.screen.CollarDyeScreen;
 
 import java.util.List;
 

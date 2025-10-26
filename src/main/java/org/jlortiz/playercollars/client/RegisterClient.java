@@ -8,11 +8,14 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.block.BedBlock;
+import net.minecraft.block.Block;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.item.BedItem;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import org.jlortiz.playercollars.PlayerCollarsMod;
+import org.jlortiz.playercollars.client.screen.PawsConfigScreen;
 import org.jlortiz.playercollars.item.CollarItem;
 import org.jlortiz.playercollars.item.FootPawsItem;
 import org.jlortiz.playercollars.item.PawsItem;
@@ -49,5 +52,6 @@ public class RegisterClient implements ClientModInitializer {
             TrinketRendererRegistry.registerRenderer(x, fpr);
         ClientPlayNetworking.registerGlobalReceiver(PacketLookAtLerped.ID, (payload, context) -> context.client().execute(() -> RotationLerpHandler.beginClickTurn(payload.vec())));
         WorldRenderEvents.END.register(RotationLerpHandler::turnTowardsClick);
+        HandledScreens.register(PlayerCollarsMod.PAWS_BLOCK_CONFIG_SCREEN_HANDLER, PawsConfigScreen<Block>::new);
     }
 }

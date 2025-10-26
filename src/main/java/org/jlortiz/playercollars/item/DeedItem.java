@@ -12,7 +12,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jlortiz.playercollars.OwnerComponent;
 import org.jlortiz.playercollars.PlayerCollarsMod;
-import org.jlortiz.playercollars.client.DeedItemScreen;
+import org.jlortiz.playercollars.client.screen.DeedItemScreen;
 
 public class DeedItem extends Item {
     public DeedItem() {
