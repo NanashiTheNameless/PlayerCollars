@@ -111,7 +111,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
                 leashplayers$drop();
             } else {
                 // leashplayers$killFireworksOfPlayer(); // Ended up not using this
-                this.setVelocity(0,0,0);
+                this.setVelocity(Vec3d.ZERO);
                 leashplayers$proxy.refreshPositionAndAngles(holder.getPos(), leashplayers$proxy.getYaw(), leashplayers$proxy.getPitch());
                 networkHandler.requestTeleport(holder.getX(), holder.getY(), holder.getZ(), getYaw(), getPitch());
             }
