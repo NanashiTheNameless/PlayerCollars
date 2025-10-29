@@ -58,5 +58,7 @@
   "message.playercollars.no_attack_owner": "Don't attack your owner!",
   "tag.block.playercollars.paws_allow_interact": "Usable with Paws",
   "gamerule.playerLeashesBreak": "Player collar leashes break if stretched too far",
-  "gamerule.leashedPlayersRideEntities": "Leashed players can ride entities"
+  "gamerule.leashedPlayersRideEntities": "Leashed players can ride entities",
+  "sound.playercollars.clicker_on": "Clicker clicks on",
+  "sound.playercollars.clicker_off": "Clicker clicks off"
 }
