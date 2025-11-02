@@ -3,22 +3,15 @@ package org.jlortiz.playercollars.item;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 
@@ -36,20 +29,27 @@ public class PawsItem extends FootPawsItem {
         Optional<RegistryKey<Block>> key = block.getRegistryEntry().getKey();
         if (allowed == null || key.isEmpty()) return false;
         for (Either<TagKey<Block>, RegistryKey<Block>> entry : allowed) {
-            if (entry.map(block::isIn, (y) -> y.equals(key.get()))) return true;
+            if (entry.map(block::isIn, (y) -> y.equals(key.get()))) return false;
         }
-        return false;
+        return true;
     }
 
-    public static boolean isSlippery(ItemStack stack) {
-        Boolean slippery = stack.get(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE);
-        return slippery != null && slippery;
+    public static boolean shouldDrop(ItemStack pawsStack, ItemStack thing) {
+        if (thing.isEmpty()) return false;
+        List<Either<TagKey<Item>, RegistryKey<Item>>> slippery = pawsStack.get(PlayerCollarsMod.HELD_ITEMS_COMPONENT_TYPE);
+        Optional<RegistryKey<Item>> key = thing.getRegistryEntry().getKey();
+        if (slippery == null || key.isEmpty()) return false;
+        for (Either<TagKey<Item>, RegistryKey<Item>> entry : slippery) {
+            if (entry.map(thing::isIn, (y) -> y.equals(key.get()))) return false;
+        }
+        return true;
     }
 
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
-        if (isSlippery(stack)) tooltip.add(Text.translatable("item.playercollars.paws.slippery"));
+        if (stack.get(PlayerCollarsMod.HELD_ITEMS_COMPONENT_TYPE) != null) tooltip.add(Text.translatable("item.playercollars.paws.slippery"));
+        if (stack.get(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE) != null) tooltip.add(Text.translatable("item.playercollars.paws.interaction"));
     }
 
     @Override
@@ -59,24 +59,5 @@ public class PawsItem extends FootPawsItem {
 
     public static RegistryKey<Item> getRegistryKey(DyeColor c) {
         return RegistryKey.of(RegistryKeys.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, c.getName() + "_paws"));
-    }
-
-    @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        if (!user.isSneaking()) return super.use(world, user, hand);
-        if (Boolean.TRUE.equals(user.getStackInHand(hand).get(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE)))
-            return super.use(world, user, hand);
-        Hand otherHand = hand == Hand.MAIN_HAND ? Hand.OFF_HAND : Hand.MAIN_HAND;
-        if (user.getStackInHand(otherHand).getItem() != Items.HONEY_BOTTLE)
-            return super.use(world, user, hand);
-
-        if (world.isClient) {
-            user.playSound(SoundEvents.BLOCK_HONEY_BLOCK_PLACE);
-            return ActionResult.CONSUME;
-        }
-
-        user.getStackInHand(hand).set(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true);
-        if (!user.isCreative()) user.setStackInHand(otherHand, new ItemStack(Items.GLASS_BOTTLE));
-        return ActionResult.CONSUME;
     }
 }

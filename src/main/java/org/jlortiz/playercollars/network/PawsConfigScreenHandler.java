@@ -17,6 +17,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import org.jlortiz.playercollars.PlayerCollarsMod;
@@ -32,8 +33,9 @@ public abstract class PawsConfigScreenHandler<T extends ItemConvertible> extends
     public List<Either<TagKey<T>, RegistryKey<T>>> listToDisplay;
     protected ItemStack[] pawsStacks;
 
-    public PawsConfigScreenHandler(int syncId, PlayerInventory playerInventory, List<Either<TagKey<T>, RegistryKey<T>>> data) {
-        super(PlayerCollarsMod.PAWS_BLOCK_CONFIG_SCREEN_HANDLER, syncId);
+    public PawsConfigScreenHandler(ScreenHandlerType<? extends PawsConfigScreenHandler<T>> id, int syncId,
+                                   PlayerInventory playerInventory, List<Either<TagKey<T>, RegistryKey<T>>> data) {
+        super(id, syncId);
         this.inventory = new SimpleInventory(1) {
             @Override
             public void markDirty() {
@@ -89,7 +91,7 @@ public abstract class PawsConfigScreenHandler<T extends ItemConvertible> extends
 
     @Override
     public void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player) {
-        if (slotIndex == 0 && actionType == SlotActionType.PICKUP) {
+        if (slotIndex == 0) {
             ItemStack is = this.getCursorStack();
             if (is == null) is = ItemStack.EMPTY;
             this.inventory.setStack(0, is.copyWithCount(1));
@@ -133,12 +135,8 @@ public abstract class PawsConfigScreenHandler<T extends ItemConvertible> extends
     public abstract RegistryKey<Registry<T>> getRegistryKey();
 
     public static class PawsBlockConfigScreenHandler extends PawsConfigScreenHandler<Block> {
-        public PawsBlockConfigScreenHandler(int syncId, PlayerInventory playerInventory) {
-            super(syncId, playerInventory, null);
-        }
-
         public PawsBlockConfigScreenHandler(int syncId, PlayerInventory playerInventory, List<Either<TagKey<Block>, RegistryKey<Block>>> data) {
-            super(syncId, playerInventory, data);
+            super(PlayerCollarsMod.PAWS_BLOCK_CONFIG_SCREEN_HANDLER, syncId, playerInventory, data);
         }
 
         protected List<Either<TagKey<Block>, RegistryKey<Block>>> genForItem(Item item) {
@@ -161,17 +159,13 @@ public abstract class PawsConfigScreenHandler<T extends ItemConvertible> extends
             super.onClosed(player);
             if (pawsStacks != null)
                 for (ItemStack ps : pawsStacks)
-                    ps.set(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE, data);
+                    ps.set(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE, data.isEmpty() ? null : data);
         }
     }
 
     public static class PawsItemConfigScreenHandler extends PawsConfigScreenHandler<Item> {
-        public PawsItemConfigScreenHandler(int syncId, PlayerInventory playerInventory) {
-            super(syncId, playerInventory, null);
-        }
-
         public PawsItemConfigScreenHandler(int syncId, PlayerInventory playerInventory, List<Either<TagKey<Item>, RegistryKey<Item>>> data) {
-            super(syncId, playerInventory, data);
+            super(PlayerCollarsMod.PAWS_ITEM_CONFIG_SCREEN_HANDLER, syncId, playerInventory, data);
         }
 
         protected List<Either<TagKey<Item>, RegistryKey<Item>>> genForItem(Item item) {
@@ -186,6 +180,14 @@ public abstract class PawsConfigScreenHandler<T extends ItemConvertible> extends
         @Override
         public RegistryKey<Registry<Item>> getRegistryKey() {
             return RegistryKeys.ITEM;
+        }
+
+        @Override
+        public void onClosed(PlayerEntity player) {
+            super.onClosed(player);
+            if (pawsStacks != null)
+                for (ItemStack ps : pawsStacks)
+                    ps.set(PlayerCollarsMod.HELD_ITEMS_COMPONENT_TYPE, data.isEmpty() ? null : data);
         }
     }
 }

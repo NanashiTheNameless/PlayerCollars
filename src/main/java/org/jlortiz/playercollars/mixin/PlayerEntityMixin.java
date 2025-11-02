@@ -70,12 +70,13 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         AccessoriesCapability cap = AccessoriesCapability.get(this);
         if (cap == null) return;
         for (SlotEntryReference sr : cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.PAWS_TAG))) {
-            if (PawsItem.isSlippery(sr.stack())) {
+            if (PawsItem.shouldDrop(sr.stack(), inventory.getMainHandStack())) {
                 ItemStack stack = inventory.dropSelectedItem(true);
                 if (!stack.isEmpty()) dropItem(stack, true);
-                stack = inventory.removeStack(PlayerInventory.OFF_HAND_SLOT);
+            }
+            if (PawsItem.shouldDrop(sr.stack(), inventory.getStack(PlayerInventory.OFF_HAND_SLOT))){
+                ItemStack stack = inventory.removeStack(PlayerInventory.OFF_HAND_SLOT);
                 if (!stack.isEmpty()) dropItem(stack, true);
-                return;
             }
         }
     }

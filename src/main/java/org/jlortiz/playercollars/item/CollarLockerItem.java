@@ -38,7 +38,7 @@ public class CollarLockerItem extends Item {
         AccessoriesCapability cap = AccessoriesCapability.get(player);
         if (cap == null) return ActionResult.PASS;
 
-        ItemStack collarStack = PlayerCollarsMod.filterStacksByOwner(cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.COLLAR_TAG)), user.getUuid());
+        ItemStack collarStack = PlayerCollarsMod.filterStacksByOwner(cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.COLLAR_TAG)), user.getUuid(), player.getUuid());
         if (collarStack == null) {
             user.sendMessage(Text.translatable("item.playercollars.collar_locker.no_set_non_owner").formatted(Formatting.RED), true);
             return ActionResult.FAIL;

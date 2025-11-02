@@ -59,10 +59,7 @@ import org.jlortiz.playercollars.block.DogBowlBlock;
 import org.jlortiz.playercollars.block.InvisibleFenceBlock;
 import org.jlortiz.playercollars.item.*;
 import org.jlortiz.playercollars.leash.LeashImpl;
-import org.jlortiz.playercollars.network.PacketLookAtLerped;
-import org.jlortiz.playercollars.network.PacketStampDeed;
-import org.jlortiz.playercollars.network.PacketUpdateCollar;
-import org.jlortiz.playercollars.network.PawsConfigScreenHandler;
+import org.jlortiz.playercollars.network.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,6 +111,13 @@ public class PlayerCollarsMod implements ModInitializer {
 			Identifier.of(MOD_ID, "can_interact_component"),
 			ComponentType.<List<Either<TagKey<Block>, RegistryKey<Block>>>>builder().codec(CAN_INTERACT_COMPONENT_CODEC).build());
 
+	private static final Codec<List<Either<TagKey<Item>, RegistryKey<Item>>>> HELD_ITEMS_COMPONENT_CODEC = new ListCodec<>(
+			new EitherCodec<>(TagKey.codec(RegistryKeys.ITEM), RegistryKey.createCodec(RegistryKeys.ITEM)), 0, 65535);
+	public static final ComponentType<List<Either<TagKey<Item>, RegistryKey<Item>>>> HELD_ITEMS_COMPONENT_TYPE = Registry.register(
+			Registries.DATA_COMPONENT_TYPE,
+			Identifier.of(MOD_ID, "held_items_component"),
+			ComponentType.<List<Either<TagKey<Item>, RegistryKey<Item>>>>builder().codec(HELD_ITEMS_COMPONENT_CODEC).build());
+
 	public static final RegistryEntry<EntityAttribute> ATTR_CLICKER_DISTANCE = Registry.registerReference(
 			Registries.ATTRIBUTE, Identifier.of(MOD_ID, "clicker_distance"),
 			new ClampedEntityAttribute("attribute.playercollars.clicker_distance", 4, 0, 32));
@@ -141,6 +145,9 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final ItemGroup GROUP;
 	public static final ExtendedScreenHandlerType<PawsConfigScreenHandler<Block>, List<Either<TagKey<Block>, RegistryKey<Block>>>> PAWS_BLOCK_CONFIG_SCREEN_HANDLER = new ExtendedScreenHandlerType<>(
 			PawsConfigScreenHandler.PawsBlockConfigScreenHandler::new, PacketCodecs.codec(CAN_INTERACT_COMPONENT_CODEC)
+	);
+	public static final ExtendedScreenHandlerType<PawsConfigScreenHandler<Item>, List<Either<TagKey<Item>, RegistryKey<Item>>>> PAWS_ITEM_CONFIG_SCREEN_HANDLER = new ExtendedScreenHandlerType<>(
+			PawsConfigScreenHandler.PawsItemConfigScreenHandler::new, PacketCodecs.codec(HELD_ITEMS_COMPONENT_CODEC)
 	);
 
     static {
@@ -178,14 +185,16 @@ public class PlayerCollarsMod implements ModInitializer {
                             entries.add(INVISIBLE_FENCE_BLOCK_ITEM);
                         })).build());
 
-        Registry.register(Registries.SCREEN_HANDLER, Identifier.of(MOD_ID, "paws_block_config"), PAWS_BLOCK_CONFIG_SCREEN_HANDLER);
-    }
+		Registry.register(Registries.SCREEN_HANDLER, Identifier.of(MOD_ID, "paws_block_config"), PAWS_BLOCK_CONFIG_SCREEN_HANDLER);
+		Registry.register(Registries.SCREEN_HANDLER, Identifier.of(MOD_ID, "paws_item_config"), PAWS_ITEM_CONFIG_SCREEN_HANDLER);
+	}
 
-	public static ItemStack filterStacksByOwner(Iterable<SlotEntryReference> stacks, UUID plr) {
+	public static ItemStack filterStacksByOwner(Iterable<SlotEntryReference> stacks, UUID plr, UUID entity) {
 		for (SlotEntryReference p : stacks) {
 			ItemStack is = p.stack();
 			OwnerComponent owner = is.get(OWNER_COMPONENT_TYPE);
-			if (owner != null && owner.uuid().equals(plr)) {
+			if (owner != null && owner.uuid().equals(plr) &&
+					(owner.owned().isEmpty() || owner.owned().get().equals(entity))) {
 				return is;
 			}
 		}
@@ -212,6 +221,9 @@ public class PlayerCollarsMod implements ModInitializer {
 		ServerPlayNetworking.registerGlobalReceiver(PacketUpdateCollar.ID, PacketUpdateCollar::handle);
 		PayloadTypeRegistry.playC2S().register(PacketStampDeed.ID, PacketStampDeed.CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(PacketStampDeed.ID, PacketStampDeed::handle);
+		PayloadTypeRegistry.playC2S().register(PacketOpenPawsConfig.ID, PacketOpenPawsConfig.CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(PacketOpenPawsConfig.ID, PacketOpenPawsConfig::handle);
+
 		PayloadTypeRegistry.playS2C().register(PacketLookAtLerped.ID, PacketLookAtLerped.CODEC);
 		AccessoryRegistry.register(COLLAR_ITEM, COLLAR_ITEM);
 

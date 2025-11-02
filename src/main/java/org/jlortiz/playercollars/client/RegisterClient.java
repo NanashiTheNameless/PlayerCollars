@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.item.Item;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.client.screen.PawsConfigScreen;
 import org.jlortiz.playercollars.item.FootPawsItem;
@@ -28,5 +29,6 @@ public class RegisterClient implements ClientModInitializer {
                 context.client().execute(() -> RotationLerpHandler.beginClickTurn(payload.vec())));
         WorldRenderEvents.END.register(RotationLerpHandler::turnTowardsClick);
         HandledScreens.register(PlayerCollarsMod.PAWS_BLOCK_CONFIG_SCREEN_HANDLER, PawsConfigScreen<Block>::new);
+        HandledScreens.register(PlayerCollarsMod.PAWS_ITEM_CONFIG_SCREEN_HANDLER, PawsConfigScreen<Item>::new);
     }
 }

@@ -11,17 +11,13 @@ import org.jlortiz.playercollars.OwnerComponent;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.network.PacketStampDeed;
 
-import java.util.UUID;
-
 public class DeedItemScreen extends Screen {
     private final OwnerComponent owner;
-    private final UUID ownUUID;
     private final Text name;
 
     public DeedItemScreen(ItemStack is, Entity plr) {
         super(is.getName());
         this.owner = is.get(PlayerCollarsMod.OWNER_COMPONENT_TYPE);
-        this.ownUUID = plr.getUuid();
         this.name = plr.getName();
     }
 
@@ -60,7 +56,7 @@ public class DeedItemScreen extends Screen {
     }
 
     private void stampDeed(ButtonWidget btn) {
-        ClientPlayNetworking.send(new PacketStampDeed(ownUUID));
+        ClientPlayNetworking.send(PacketStampDeed.INSTANCE);
         close();
     }
 }
