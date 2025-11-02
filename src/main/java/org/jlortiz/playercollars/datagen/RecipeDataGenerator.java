@@ -33,6 +33,11 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                         .input('d', ConventionalItemTags.DYES)
                         .criterion(hasItem(Items.LEATHER), conditionsFromItem(Items.LEATHER))
                         .offerTo(exporter);
+                createShaped(RecipeCategory.MISC, PlayerCollarsMod.TAGLESS_COLLAR_ITEM).pattern(" l ").pattern("ldl")
+                        .input('l', Items.LEATHER)
+                        .input('d', ConventionalItemTags.DYES)
+                        .criterion(hasItem(Items.LEATHER), conditionsFromItem(Items.LEATHER))
+                        .offerTo(exporter);
                 createShaped(RecipeCategory.MISC, PlayerCollarsMod.CLICKER_ITEM).pattern(" b ").pattern("pip").pattern(" p ")
                         .input('b', ItemTags.BUTTONS)
                         .input('i', ConventionalItemTags.IRON_INGOTS)
@@ -41,8 +46,8 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                         .offerTo(exporter);
                 createShapeless(RecipeCategory.TOOLS, PlayerCollarsMod.PAW_CONFIGURATION_ITEM)
                         .input(ConventionalItemTags.REDSTONE_DUSTS)
-                        .input(ConventionalItemTags.IRON_INGOTS)
-                        .input(PlayerCollarsMod.PAWS_TAG)
+                        .input(ConventionalItemTags.COPPER_INGOTS)
+                        .input(PlayerCollarsMod.COLLAR_LOCKER_ITEM)
                         .criterion("has_paws", conditionsFromTag(PlayerCollarsMod.PAWS_TAG))
                         .offerTo(exporter);
                 createShapeless(RecipeCategory.TOOLS, PlayerCollarsMod.COLLAR_LOCKER_ITEM)

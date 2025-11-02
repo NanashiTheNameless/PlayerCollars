@@ -69,8 +69,8 @@ public class DatagenEntrypoint implements DataGeneratorEntrypoint {
 
         @Override
         protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
-            getOrCreateTagBuilder(ItemTags.DYEABLE).add(PlayerCollarsMod.COLLAR_ITEM).add(PlayerCollarsMod.CLICKER_ITEM);
-            getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(Accessories.MODID, "necklace"))).add(PlayerCollarsMod.COLLAR_ITEM);
+            getOrCreateTagBuilder(ItemTags.DYEABLE).add(PlayerCollarsMod.COLLAR_ITEM).add(PlayerCollarsMod.CLICKER_ITEM).add(PlayerCollarsMod.TAGLESS_COLLAR_ITEM);
+            getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(Accessories.MODID, "necklace"))).add(PlayerCollarsMod.COLLAR_ITEM).add(PlayerCollarsMod.TAGLESS_COLLAR_ITEM);
             getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(Accessories.MODID, "hand"))).add(PlayerCollarsMod.PAWS_ITEMS);
             getOrCreateTagBuilder(TagKey.of(RegistryKeys.ITEM, Identifier.of(Accessories.MODID, "shoes"))).addTag(PlayerCollarsMod.FOOT_PAWS_TAG);
             getOrCreateTagBuilder(PlayerCollarsMod.PAWS_TAG).add(PlayerCollarsMod.PAWS_ITEMS);

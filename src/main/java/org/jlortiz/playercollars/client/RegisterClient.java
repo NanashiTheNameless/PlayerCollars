@@ -19,6 +19,7 @@ public class RegisterClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         AccessoriesRendererRegistry.registerRenderer(PlayerCollarsMod.COLLAR_ITEM, CollarRenderer::new);
+        AccessoriesRendererRegistry.registerRenderer(PlayerCollarsMod.TAGLESS_COLLAR_ITEM, CollarRenderer::new);
         PawRenderer renderer = new PawRenderer();
         for (FootPawsItem p : PlayerCollarsMod.PAWS_ITEMS)
             AccessoriesRendererRegistry.registerRenderer(p, () -> renderer);
