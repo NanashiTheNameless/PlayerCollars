@@ -91,7 +91,7 @@ public abstract class PawsConfigScreenHandler<T extends ItemConvertible> extends
 
     @Override
     public void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player) {
-        if (slotIndex == 0 && actionType == SlotActionType.PICKUP) {
+        if (slotIndex == 0) {
             ItemStack is = this.getCursorStack();
             if (is == null) is = ItemStack.EMPTY;
             this.inventory.setStack(0, is.copyWithCount(1));
