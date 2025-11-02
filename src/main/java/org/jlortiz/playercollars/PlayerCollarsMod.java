@@ -66,6 +66,7 @@ import java.util.function.UnaryOperator;
 public class PlayerCollarsMod implements ModInitializer {
 	public static final String MOD_ID = "playercollars";
     public static final CollarItem COLLAR_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "collar"), new CollarItem());
+	public static final CollarItem TAGLESS_COLLAR_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "tagless_collar"), new CollarItem());
     public static final ClickerItem CLICKER_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "clicker"), new ClickerItem());
     public static final DeedItem DEED_OF_OWNERSHIP = Registry.register(Registries.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "deed_of_ownership"), new DeedItem());
     public static final Item DEED_OF_OWNERSHIP_STAMPED = Registry.register(Registries.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "stamped_deed_of_ownership"), new StampedDeedItem());
@@ -163,6 +164,7 @@ public class PlayerCollarsMod implements ModInitializer {
 				.icon(COLLAR_ITEM::getDefaultStack)
 				.entries(((displayContext, entries) -> {
 					entries.add(COLLAR_ITEM);
+					entries.add(TAGLESS_COLLAR_ITEM);
 					entries.add(CLICKER_ITEM);
 					entries.add(COLLAR_LOCKER_ITEM);
 					entries.add(PAW_CONFIGURATION_ITEM);
@@ -220,6 +222,7 @@ public class PlayerCollarsMod implements ModInitializer {
 
 		PayloadTypeRegistry.playS2C().register(PacketLookAtLerped.ID, PacketLookAtLerped.CODEC);
 		TrinketsApi.registerTrinket(PlayerCollarsMod.COLLAR_ITEM, PlayerCollarsMod.COLLAR_ITEM);
+		TrinketsApi.registerTrinket(PlayerCollarsMod.TAGLESS_COLLAR_ITEM, PlayerCollarsMod.COLLAR_ITEM);
 
         for (int i = 0; i < PAWS_DYE_COLORS.length; i++) {
             DyeColor c = PAWS_DYE_COLORS[i];

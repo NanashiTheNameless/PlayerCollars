@@ -51,11 +51,6 @@ public class PawsItem extends FootPawsItem {
         if (stack.get(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE) != null) tooltip.add(Text.translatable("item.playercollars.paws.interaction"));
     }
 
-    @Override
-    public ItemStack getRecipeRemainder(ItemStack stack) {
-        return stack;
-    }
-
     public static Identifier getIdentifier(DyeColor c) {
         return Identifier.of(PlayerCollarsMod.MOD_ID, c.getName() + "_paws");
     }

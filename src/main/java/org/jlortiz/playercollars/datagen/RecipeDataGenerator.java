@@ -14,6 +14,7 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.DyeColor;
 import org.jlortiz.playercollars.PlayerCollarsMod;
+import org.jlortiz.playercollars.item.FootPawsItem;
 import org.jlortiz.playercollars.item.PawsItem;
 
 import java.util.concurrent.CompletableFuture;
@@ -32,6 +33,12 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                 .criterion(FabricRecipeProvider.hasItem(Items.LEATHER),
                         FabricRecipeProvider.conditionsFromItem(Items.LEATHER))
                 .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PlayerCollarsMod.TAGLESS_COLLAR_ITEM).pattern(" l ").pattern("ldl")
+                .input('l', Items.LEATHER)
+                .input('d', ConventionalItemTags.DYES)
+                .criterion(FabricRecipeProvider.hasItem(Items.LEATHER),
+                        FabricRecipeProvider.conditionsFromItem(Items.LEATHER))
+                .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, PlayerCollarsMod.CLICKER_ITEM).pattern(" b ").pattern("pip").pattern(" p ")
                 .input('b', ItemTags.BUTTONS)
                 .input('i', ConventionalItemTags.IRON_INGOTS)
@@ -42,7 +49,7 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
         ShapelessRecipeJsonBuilder.create(RecipeCategory.TOOLS, PlayerCollarsMod.PAW_CONFIGURATION_ITEM)
                 .input(ConventionalItemTags.REDSTONE_DUSTS)
                 .input(ConventionalItemTags.COPPER_INGOTS)
-                .input(PlayerCollarsMod.PAWS_TAG)
+                .input(PlayerCollarsMod.COLLAR_LOCKER_ITEM)
                 .criterion(FabricRecipeProvider.hasItem(PlayerCollarsMod.PAWS_ITEMS[0]),
                         FabricRecipeProvider.conditionsFromTag(PlayerCollarsMod.PAWS_TAG))
                 .offerTo(exporter);
@@ -95,13 +102,13 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, output).pattern(" w ").pattern("wlw").pattern(" w ")
                 .input('w', input)
                 .input('l', Items.LEATHER)
-                .criterion(FabricRecipeProvider.hasItem(Items.LEATHER),
-                        FabricRecipeProvider.conditionsFromItem(Items.LEATHER))
+                .criterion(FabricRecipeProvider.hasItem(input),
+                        FabricRecipeProvider.conditionsFromItem(input))
                 .group("paws")
                 .offerTo(exporter);
     }
 
-    private void generateFootPaws(RecipeExporter exporter, Item output, Item input) {
+    private void generateFootPaws(RecipeExporter exporter, FootPawsItem output, Item input) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, output).pattern(" w ").pattern(" w ").pattern("wlw")
                 .input('w', input)
                 .input('l', Items.LEATHER)

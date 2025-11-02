@@ -45,9 +45,7 @@ public class ClickerItem extends Item {
                 for (ServerPlayerEntity p : plrs) {
                     TrinketsApi.getTrinketComponent(p).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.COLLAR_TAG)))
                             .map((x) -> PlayerCollarsMod.filterStacksByOwner(x, p_41433_.getUuid(), p.getUuid()))
-                            .ifPresent((x) -> {
-                                ServerPlayNetworking.send(p, packet);
-                            });
+                            .ifPresent((x) -> ServerPlayNetworking.send(p, packet));
                 }
             }
             p_41432_.playSoundFromEntity(null, p_41433_, PlayerCollarsMod.CLICKER_ON, SoundCategory.PLAYERS, 1, 1);
@@ -67,7 +65,7 @@ public class ClickerItem extends Item {
         }
     }
 
-    public int getColor(ItemStack itemStack) {
+    public static int getColor(ItemStack itemStack) {
         DyedColorComponent $$1 = itemStack.get(DataComponentTypes.DYED_COLOR);
         return $$1 != null ? $$1.rgb() : -1;
     }

@@ -17,6 +17,7 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.client.screen.PawsConfigScreen;
+import org.jlortiz.playercollars.item.ClickerItem;
 import org.jlortiz.playercollars.item.CollarItem;
 import org.jlortiz.playercollars.item.FootPawsItem;
 import org.jlortiz.playercollars.item.PawsItem;
@@ -31,7 +32,8 @@ public class RegisterClient implements ClientModInitializer {
             case 1 -> CollarItem.getPawColor(stack) | 0xff000000;
             default -> -1;
         }, PlayerCollarsMod.COLLAR_ITEM);
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 0 ? PlayerCollarsMod.CLICKER_ITEM.getColor(stack) | 0xff000000 : -1, PlayerCollarsMod.CLICKER_ITEM);
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 0 ? CollarItem.getColor(stack) | 0xff000000 : -1, PlayerCollarsMod.TAGLESS_COLLAR_ITEM);
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 0 ? ClickerItem.getColor(stack) | 0xff000000 : -1, PlayerCollarsMod.CLICKER_ITEM);
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex == 0 ? ((BedBlock) ((BedItem) stack.getItem()).getBlock()).getColor().getFireworkColor() | 0xff000000 : -1, PlayerCollarsMod.DOG_BED_ITEMS);
 
         ItemConvertible[] paws = new ItemConvertible[PlayerCollarsMod.PAWS_ITEMS.length + PlayerCollarsMod.FOOT_PAWS_ITEMS.length];
@@ -44,7 +46,9 @@ public class RegisterClient implements ClientModInitializer {
         }, paws);
         ModelPredicateProviderRegistry.register(PlayerCollarsMod.CLICKER_ITEM, Identifier.ofVanilla("cast"), (itemStack, clientWorld, livingEntity, seed) -> livingEntity != null && livingEntity.isUsingItem() && livingEntity.getActiveItem() == itemStack ? 1 : 0);
 
-        TrinketRendererRegistry.registerRenderer(PlayerCollarsMod.COLLAR_ITEM, new CollarRenderer());
+        CollarRenderer cr = new CollarRenderer();
+        TrinketRendererRegistry.registerRenderer(PlayerCollarsMod.COLLAR_ITEM, cr);
+        TrinketRendererRegistry.registerRenderer(PlayerCollarsMod.TAGLESS_COLLAR_ITEM, cr);
         PawRenderer pr = new PawRenderer();
         for (PawsItem x : PlayerCollarsMod.PAWS_ITEMS)
             TrinketRendererRegistry.registerRenderer(x, pr);

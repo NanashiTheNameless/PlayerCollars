@@ -9,7 +9,7 @@
       "tag": "c:ingots/copper"
     },
     {
-      "tag": "playercollars:paws"
+      "item": "playercollars:collar_locker"
     }
   ],
   "result": {
