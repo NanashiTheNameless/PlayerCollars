@@ -70,12 +70,13 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         TrinketsApi.getTrinketComponent(this).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.PAWS_TAG)))
                 .ifPresent((ls) -> {
                     for (Pair<SlotReference, ItemStack> p : ls) {
-                        if (PawsItem.isSlippery(p.getRight())) {
+                        if (PawsItem.shouldDrop(p.getRight(), inventory.getMainHandStack())) {
                             ItemStack stack = inventory.dropSelectedItem(true);
                             if (!stack.isEmpty()) dropItem(stack, true);
-                            stack = inventory.removeStack(PlayerInventory.OFF_HAND_SLOT);
+                        }
+                        if (PawsItem.shouldDrop(p.getRight(), inventory.getStack(PlayerInventory.OFF_HAND_SLOT))){
+                            ItemStack stack = inventory.removeStack(PlayerInventory.OFF_HAND_SLOT);
                             if (!stack.isEmpty()) dropItem(stack, true);
-                            return;
                         }
                     }
                 });

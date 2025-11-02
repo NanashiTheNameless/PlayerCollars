@@ -1,24 +1,23 @@
 package org.jlortiz.playercollars.item;
 
-import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.TrinketsApi;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.block.Block;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jlortiz.playercollars.PlayerCollarsMod;
-import org.jlortiz.playercollars.network.PawsConfigScreenHandler;
+import org.jlortiz.playercollars.client.screen.PawsSelectScreen;
 
-import java.util.List;
 import java.util.Optional;
 
 public class PawSetupItem extends Item {
@@ -32,9 +31,10 @@ public class PawSetupItem extends Item {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack is = user.getStackInHand(hand);
-        if (!user.isSneaking() || world.isClient) return TypedActionResult.pass(is);
+        if (!user.isSneaking() || !world.isClient) return TypedActionResult.pass(is);
         return switch (useOnEntity(is, user, user, hand)) {
             case SUCCESS, SUCCESS_NO_ITEM_USED -> TypedActionResult.success(is);
             case CONSUME, CONSUME_PARTIAL -> TypedActionResult.consume(is);
@@ -44,8 +44,9 @@ public class PawSetupItem extends Item {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
-        if (!(entity instanceof PlayerEntity player) || user.getWorld().isClient) return ActionResult.PASS;
+        if (!(entity instanceof PlayerEntity player) || !user.getWorld().isClient) return ActionResult.PASS;
         Optional<TrinketComponent> optComponent = TrinketsApi.getTrinketComponent(player);
         if (optComponent.isEmpty()) return ActionResult.PASS;
         TrinketComponent component = optComponent.get();
@@ -55,33 +56,7 @@ public class PawSetupItem extends Item {
             user.sendMessage(Text.translatable("item.playercollars.paw_configurator.no_set_non_owner").formatted(Formatting.RED), true);
             return ActionResult.FAIL;
         }
-        List<Pair<SlotReference, ItemStack>> pawsStack = component.getEquipped((y) -> y.isIn(PlayerCollarsMod.PAWS_TAG));
-        if (pawsStack.isEmpty()) {
-            user.sendMessage(Text.translatable("item.playercollars.paw_configurator.no_paws").formatted(Formatting.RED), true);
-            return ActionResult.FAIL;
-        }
-
-        player.openHandledScreen(new ExtendedScreenHandlerFactory<>() {
-            @Override
-            public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-                PawsConfigScreenHandler<Block> sc =  new PawsConfigScreenHandler.PawsBlockConfigScreenHandler(syncId, playerInventory);
-                ItemStack[] ps = new ItemStack[pawsStack.size()];
-                for (int i = 0; i < pawsStack.size(); i++)
-                    ps[i] = pawsStack.get(i).getRight();
-                sc.setPawsStack(ps);
-                return sc;
-            }
-
-            @Override
-            public Text getDisplayName() {
-                return Text.translatable("gui.playercollars.paw_block_configurator.title", user.getName());
-            }
-
-            @Override
-            public Object getScreenOpeningData(ServerPlayerEntity player) {
-                return Optional.ofNullable(pawsStack.get(0).getRight().get(PlayerCollarsMod.CAN_INTERACT_COMPONENT_TYPE)).orElse(List.of());
-            }
-        });
+        MinecraftClient.getInstance().setScreen(new PawsSelectScreen(player));
         return ActionResult.SUCCESS;
     }
 }
