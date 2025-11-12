@@ -1,14 +1,15 @@
 package org.jlortiz.playercollars.leash;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Math;
 
@@ -16,6 +17,7 @@ import java.util.Objects;
 
 public final class LeashProxyEntity extends TurtleEntity {
     private final LivingEntity target;
+    private static final Box EMPTY_BOX = new Box(0, 0, 0, 0, 0, 0);
 
     private boolean proxyUpdate() {
         if (proxyIsRemoved()) return false;
@@ -26,9 +28,10 @@ public final class LeashProxyEntity extends TurtleEntity {
         Vec3d posActual = this.getPos();
         Vec3d posTarget = switch (target.getPose()) {
             // No point in making cases for SPIN_ATTACK since leashed players can't use it
-            // TODO make case for FALL_FLYING since a leashed player could use an Elytra
             case CROUCHING: yield new Vec3d(0.0D, 1.1D, -0.15D);
             case SWIMMING: yield Vec3d.fromPolar(0, target.getBodyYaw()).multiply(0.35).add(0, 0.2, -0.1);
+            case FALL_FLYING: yield new Vec3d(0, 1.3, -0.15).rotateX(-Math.toRadians(90 + target.getPitch()))
+                    .rotateY(-Math.toRadians(target.getBodyYaw()));
             case SLEEPING: if (target.getSleepingDirection() != null)
                     yield new Vec3d(target.getSleepingDirection().getUnitVector().mul(-0.2f)).add(0, 0.1, -0.15);
             default: yield new Vec3d(0.0D, 1.3D, -0.15D);
@@ -38,7 +41,7 @@ public final class LeashProxyEntity extends TurtleEntity {
         if (!Objects.equals(posActual, posTarget)) {
             setRotation(0.0F, 0.0F);
             setPos(posTarget.x, posTarget.y, posTarget.z);
-            setBoundingBox(getDimensions(EntityPose.DYING).getBoxAt(posTarget));
+            setBoundingBox(EMPTY_BOX);
         }
 
         return false;
@@ -112,6 +115,12 @@ public final class LeashProxyEntity extends TurtleEntity {
 
     @Override
     protected void pushAway(Entity entity) {
+    }
+
+    @Override
+    public void writeCustomDataToNbt(NbtCompound nbt) {
+        super.writeCustomDataToNbt(nbt);
+        nbt.putString("Team", TEAM_NAME);
     }
 
     @Override
