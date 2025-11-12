@@ -25,7 +25,8 @@ public final class LeashProxyEntity extends TurtleEntity {
 
         Vec3d posActual = this.getPos();
         Vec3d posTarget = switch (target.getPose()) {
-            // No point in making cases for SPIN_ATTACK and FALL_FLYING since the leash will break anyway
+            // No point in making cases for SPIN_ATTACK since leashed players can't use it
+            // TODO make case for FALL_FLYING since a leashed player could use an Elytra
             case CROUCHING: yield new Vec3d(0.0D, 1.1D, -0.15D);
             case SWIMMING: yield Vec3d.fromPolar(0, target.getBodyYaw()).multiply(0.35).add(0, 0.2, -0.1);
             case SLEEPING: if (target.getSleepingDirection() != null)
