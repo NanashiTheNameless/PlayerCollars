@@ -34,12 +34,14 @@ import java.util.List;
 public class CollarItem extends AccessoryItem {
     public static final RegistryKey<Item> REGISTRY_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "collar"));
     public static final RegistryKey<Item> TAGLESS_REGISTRY_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "tagless_collar"));
+    public final boolean tagless;
 
     public CollarItem(boolean tagless) {
         super(new Item.Settings().maxCount(1).registryKey(tagless ? TAGLESS_REGISTRY_KEY : REGISTRY_KEY)
                 .component(DataComponentTypes.ENCHANTABLE, new EnchantableComponent(100))
                 .component(DataComponentTypes.DYED_COLOR, new DyedColorComponent(MapColor.RED.color, false))
                 .component(DataComponentTypes.MAP_COLOR, new MapColorComponent(MapColor.BLUE.color)));
+        this.tagless = tagless;
     }
 
     public static int getColor(ItemStack itemStack) {
@@ -74,7 +76,7 @@ public class CollarItem extends AccessoryItem {
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
-        if (type.isAdvanced()) {
+        if (type.isAdvanced() && !tagless) {
             tooltip.add(Text.translatable("item.playercollars.collar.paw_color", Integer.toHexString(getPawColor(stack))).setStyle(Style.EMPTY.withColor(Colors.GRAY)));
         }
         OwnerComponent owner = stack.get(PlayerCollarsMod.OWNER_COMPONENT_TYPE);
