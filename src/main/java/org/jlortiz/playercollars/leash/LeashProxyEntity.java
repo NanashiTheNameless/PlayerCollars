@@ -1,15 +1,13 @@
 package org.jlortiz.playercollars.leash;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathConstants;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Math;
 
@@ -17,7 +15,7 @@ import java.util.Objects;
 
 public final class LeashProxyEntity extends TurtleEntity {
     private final LivingEntity target;
-    private static final Box EMPTY_BOX = new Box(0, 0, 0, 0, 0, 0);
+    private static final EntityDimensions DIMENSIONS = EntityDimensions.fixed(MathConstants.EPSILON, MathConstants.EPSILON);
 
     private boolean proxyUpdate() {
         if (proxyIsRemoved()) return false;
@@ -41,7 +39,7 @@ public final class LeashProxyEntity extends TurtleEntity {
         if (!Objects.equals(posActual, posTarget)) {
             setRotation(0.0F, 0.0F);
             setPos(posTarget.x, posTarget.y, posTarget.z);
-            setBoundingBox(EMPTY_BOX);
+            setBoundingBox(DIMENSIONS.getBoxAt(target.getPos()));
         }
 
         return false;
@@ -93,6 +91,7 @@ public final class LeashProxyEntity extends TurtleEntity {
 
             scoreboard.addScoreHolderToTeam(getNameForScoreboard(), team);
         }
+        proxyUpdate();
     }
 
     @Override

@@ -5,6 +5,7 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import org.jlortiz.playercollars.leash.LeashProxyEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,9 +26,11 @@ public abstract class MixinTurtleEntity extends AnimalEntity {
         MinecraftServer server = getServer();
         if (server == null) return;
 
-        Team team = server.getScoreboard().getTeam(getNameForScoreboard());
+        Team team = server.getScoreboard().getScoreHolderTeam(getNameForScoreboard());
         if (team != null && Objects.equals(team.getName(), LeashProxyEntity.TEAM_NAME)) {
-            setRemoved(RemovalReason.DISCARDED);
+            detachLeash();
+            setInvulnerable(false);
+            kill((ServerWorld) getWorld());
         }
     }
 }
