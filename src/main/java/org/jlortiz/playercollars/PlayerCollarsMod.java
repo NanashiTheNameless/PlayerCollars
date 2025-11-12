@@ -123,6 +123,8 @@ public class PlayerCollarsMod implements ModInitializer {
 			new ClampedEntityAttribute("attribute.playercollars.leash_distance", 4, 2, 16));
 	public static final GameRules.Key<GameRules.BooleanRule> PLAYER_LEASHES_BREAK_RULE = GameRuleRegistry.register(
 			"playerLeashesBreak", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true));
+    public static final GameRules.Key<GameRules.BooleanRule> LEASHED_PLAYERS_RIDE_ENTITIES = GameRuleRegistry.register(
+            "leashedPlayersRideEntities", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(false));
 
 	public static final DogBedBlock[] DOG_BEDS = new DogBedBlock[DyeColor.values().length];
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
