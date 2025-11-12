@@ -65,12 +65,13 @@ public class CollarLockerItem extends Item {
                 continue;
             }
             EnchantmentHelper.apply(is, (ench) -> {
-                if (shouldLock) ench.add(binding, 0);
+                if (shouldLock) ench.add(binding, 1);
                 else ench.remove((e) -> e.value().effects().contains(EnchantmentEffectComponentTypes.PREVENT_ARMOR_CHANGE));
             });
         }
         player.sendMessage(Text.translatable(shouldLock ? "item.playercollars.collar_locker.locked" : "item.playercollars.collar_locker.unlocked"), true);
-        player.getWorld().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ITEM_ARMOR_UNEQUIP_WOLF, SoundCategory.PLAYERS);
+        user.sendMessage(Text.translatable(shouldLock ? "item.playercollars.collar_locker.locked" : "item.playercollars.collar_locker.unlocked"), true);
+        player.getWorld().playSound(null, entity.getX(), entity.getY(), entity.getZ(), shouldLock ? SoundEvents.ITEM_ARMOR_EQUIP_WOLF.value() : SoundEvents.ITEM_ARMOR_UNEQUIP_WOLF, SoundCategory.PLAYERS);
 
         return ActionResult.SUCCESS;
     }

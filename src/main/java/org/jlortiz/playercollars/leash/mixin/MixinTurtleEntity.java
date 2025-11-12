@@ -25,9 +25,11 @@ public abstract class MixinTurtleEntity extends AnimalEntity {
         MinecraftServer server = getServer();
         if (server == null) return;
 
-        Team team = server.getScoreboard().getTeam(getNameForScoreboard());
+        Team team = server.getScoreboard().getScoreHolderTeam(getNameForScoreboard());
         if (team != null && Objects.equals(team.getName(), LeashProxyEntity.TEAM_NAME)) {
-            setRemoved(RemovalReason.DISCARDED);
+            detachLeash();
+            setInvulnerable(false);
+            kill();
         }
     }
 }

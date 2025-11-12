@@ -143,7 +143,6 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements Le
 
         if (leashplayers$proxy == null) {
             leashplayers$proxy = new LeashProxyEntity(this);
-            leashplayers$proxy.setPos(getX(), getY(), getZ());
             getWorld().spawnEntity(leashplayers$proxy);
         }
         leashplayers$proxy.attachLeash(leashplayers$holder, true);
