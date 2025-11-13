@@ -19,6 +19,7 @@ import java.util.UUID;
 
 public class CollarDyeScreen extends Screen {
     private final ItemStack is;
+    private final boolean shouldPaw;
     private final int initColor, initPaw;
     private final UUID ownUUID;
     private OwnerComponent owner;
@@ -30,6 +31,7 @@ public class CollarDyeScreen extends Screen {
         initColor = CollarItem.getColor(is);
         initPaw = CollarItem.getPawColor(is);
         owner = CollarItem.getOwner(is);
+        shouldPaw = is.getItem() instanceof CollarItem ci && !ci.tagless;
     }
 
     @Override
@@ -37,9 +39,9 @@ public class CollarDyeScreen extends Screen {
         int x = this.width / 2;
         int y = this.height / 2 - 30;
 
-        TextFieldWidget dyeField = new TextFieldWidget(this.textRenderer, x- 30, y, 100, 20, Text.empty());
+        TextFieldWidget dyeField = new TextFieldWidget(this.textRenderer, x - 30, shouldPaw ? y : y + 25, 100, 20, Text.empty());
         dyeField.setMaxLength(6);
-        dyeField.setChangedListener((s) -> updateTextField(0, s));
+        dyeField.setChangedListener((s) -> updateTextField(false, s));
         dyeField.setTextPredicate((s) -> {
             try {
                 Integer.parseInt(s, 16);
@@ -49,22 +51,24 @@ public class CollarDyeScreen extends Screen {
             return true;
         });
         dyeField.setText(Integer.toHexString(initColor));
-
-        TextFieldWidget pawField = new TextFieldWidget(this.textRenderer, x - 30, y + 25, 100, 20, Text.empty());
-        pawField.setMaxLength(6);
-        pawField.setChangedListener((s) -> updateTextField(1, s));
-        pawField.setTextPredicate((s) -> {
-            try {
-                Integer.parseInt(s, 16);
-            } catch (NumberFormatException e) {
-                return s.isEmpty();
-            }
-            return true;
-        });
-        pawField.setText(Integer.toHexString(initPaw));
-
         this.addDrawableChild(dyeField);
-        this.addDrawableChild(pawField);
+
+        if (shouldPaw) {
+            TextFieldWidget pawField = new TextFieldWidget(this.textRenderer, x - 30, y + 25, 100, 20, Text.empty());
+            pawField.setMaxLength(6);
+            pawField.setChangedListener((s) -> updateTextField(true, s));
+            pawField.setTextPredicate((s) -> {
+                try {
+                    Integer.parseInt(s, 16);
+                } catch (NumberFormatException e) {
+                    return s.isEmpty();
+                }
+                return true;
+            });
+            pawField.setText(Integer.toHexString(initPaw));
+            this.addDrawableChild(pawField);
+        }
+
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.done"), (btn) -> {
             PacketUpdateCollar.OwnerState os = owner == null ? PacketUpdateCollar.OwnerState.DEL : (owner.uuid().equals(ownUUID) ? PacketUpdateCollar.OwnerState.ADD : PacketUpdateCollar.OwnerState.NOP);
             ClientPlayNetworking.send(new PacketUpdateCollar(is, os));
@@ -98,17 +102,17 @@ public class CollarDyeScreen extends Screen {
         }
     }
 
-    private void updateTextField(int i, String s) {
+    private void updateTextField(boolean paw, String s) {
         int col;
         try {
             col = Integer.parseInt(s, 16);
         } catch (NumberFormatException e) {
             return;
         }
-        if (i == 0) {
-            is.set(DataComponentTypes.DYED_COLOR, new DyedColorComponent(col, true));
-        } else {
+        if (paw) {
             is.set(DataComponentTypes.MAP_COLOR, new MapColorComponent(col));
+        } else {
+            is.set(DataComponentTypes.DYED_COLOR, new DyedColorComponent(col, true));
         }
     }
 
@@ -116,8 +120,9 @@ public class CollarDyeScreen extends Screen {
     public void render(DrawContext p_281549_, int mouseX, int mouseY, float delta) {
         renderBackground(p_281549_, mouseX, mouseY, delta);
         super.render(p_281549_, mouseX, mouseY, delta);
-        p_281549_.drawText(textRenderer, Text.translatable("item.playercollars.collar"), this.width / 2 - 75, this.height / 2 - 25, -1, true);
-        p_281549_.drawText(textRenderer, Text.translatable("item.playercollars.collar.paw"), this.width / 2 - 75, this.height / 2 + 1, -1, true);
+        p_281549_.drawText(textRenderer, Text.translatable("item.playercollars.collar"), this.width / 2 - 75, this.height / 2 + (shouldPaw ? -25 : 1), -1, true);
+        if (shouldPaw)
+            p_281549_.drawText(textRenderer, Text.translatable("item.playercollars.collar.paw"), this.width / 2 - 75, this.height / 2 + 1, -1, true);
     }
 
     @Override

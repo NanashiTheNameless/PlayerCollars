@@ -37,9 +37,11 @@ import org.jlortiz.playercollars.client.screen.CollarDyeScreen;
 import java.util.List;
 
 public class CollarItem extends Item implements Trinket {
+    public final boolean tagless;
 
-    public CollarItem() {
+    public CollarItem(boolean tagless) {
         super(new Item.Settings().maxCount(1));
+        this.tagless = tagless;
         TrinketsApi.registerTrinket(this, this);
     }
 
@@ -87,7 +89,7 @@ public class CollarItem extends Item implements Trinket {
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         super.appendTooltip(stack, context, tooltip, type);
-        if (type.isAdvanced()) {
+        if (type.isAdvanced() && !tagless) {
             tooltip.add(Text.translatable("item.playercollars.collar.paw_color", Integer.toHexString(getPawColor(stack))).setStyle(Style.EMPTY.withColor(Colors.GRAY)));
         }
         OwnerComponent owner = getOwner(stack);
