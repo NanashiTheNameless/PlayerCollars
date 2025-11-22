@@ -1,9 +1,12 @@
 package org.jlortiz.playercollars.item;
 
+import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.Trinket;
+import dev.emi.trinkets.api.TrinketEnums;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.component.type.MapColorComponent;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DyeColor;
@@ -30,5 +33,10 @@ public class FootPawsItem extends Item implements Trinket {
 
     public static Identifier getIdentifier(DyeColor c) {
         return Identifier.of(PlayerCollarsMod.MOD_ID, c.getName() + "_foot_paws");
+    }
+
+    @Override
+    public TrinketEnums.DropRule getDropRule(ItemStack stack, SlotReference slot, LivingEntity entity) {
+        return TrinketEnums.DropRule.KEEP;
     }
 }
