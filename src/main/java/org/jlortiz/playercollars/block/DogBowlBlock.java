@@ -90,7 +90,7 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
         if (decr > 0) {
             stack.decrement(decr);
             state = state.with(LEVEL, Math.min((be.getCount() + 20) / 21, 3));
-            world.setBlockState(pos, state, 0);
+            world.setBlockState(pos, state, 2);
             return ActionResult.SUCCESS;
         }
         return ActionResult.FAIL;
@@ -109,7 +109,7 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
         ItemStack is = be.take();
         if (is.isEmpty()) return ActionResult.PASS;
         state = state.with(LEVEL, Math.min((be.getCount() + 20) / 21, 3));
-        world.setBlockState(pos, state, 0);
+        world.setBlockState(pos, state, 2);
 
         FoodComponent food = is.get(DataComponentTypes.FOOD);
         if (food != null && player.canConsume(food.canAlwaysEat())) {
