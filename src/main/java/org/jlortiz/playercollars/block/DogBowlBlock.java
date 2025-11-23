@@ -5,7 +5,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.mob.DrownedEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -83,7 +82,7 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
         if (decr > 0) {
             stack.decrement(decr);
             state = state.with(LEVEL, Math.min((be.getCount() + 20) / 21, 3));
-            world.setBlockState(pos, state, 0);
+            world.setBlockState(pos, state, 2);
             return ItemActionResult.SUCCESS;
         }
         return ItemActionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
@@ -102,7 +101,7 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
         ItemStack is = be.take();
         if (is.isEmpty()) return ActionResult.PASS;
         state = state.with(LEVEL, Math.min((be.getCount() + 20) / 21, 3));
-        world.setBlockState(pos, state, 0);
+        world.setBlockState(pos, state, 2);
 
         FoodComponent food = is.get(DataComponentTypes.FOOD);
         if (food != null && player.canConsume(food.canAlwaysEat())) {

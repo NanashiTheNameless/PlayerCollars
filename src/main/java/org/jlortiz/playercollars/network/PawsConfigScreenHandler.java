@@ -2,7 +2,6 @@ package org.jlortiz.playercollars.network;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.block.Block;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -20,6 +19,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.world.World;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 
 import java.util.ArrayList;
@@ -32,6 +32,7 @@ public abstract class PawsConfigScreenHandler<T extends ItemConvertible> extends
     public final List<Either<TagKey<T>, RegistryKey<T>>> data;
     public List<Either<TagKey<T>, RegistryKey<T>>> listToDisplay;
     protected ItemStack[] pawsStacks;
+    protected final World world;
 
     public PawsConfigScreenHandler(ScreenHandlerType<? extends PawsConfigScreenHandler<T>> id, int syncId,
                                    PlayerInventory playerInventory, List<Either<TagKey<T>, RegistryKey<T>>> data) {
@@ -45,6 +46,7 @@ public abstract class PawsConfigScreenHandler<T extends ItemConvertible> extends
         };
         this.data = (data == null) ? new ArrayList<>() : new ArrayList<>(data);
         this.listToDisplay = data;
+        this.world = playerInventory.player.getWorld();
         inventory.onOpen(playerInventory.player);
 
         this.addSlot(new Slot(inventory, 0, 175, 108) {
@@ -141,7 +143,7 @@ public abstract class PawsConfigScreenHandler<T extends ItemConvertible> extends
 
         protected List<Either<TagKey<Block>, RegistryKey<Block>>> genForItem(Item item) {
             if (!(item instanceof BlockItem bi)) return List.of();
-            RegistryEntry<Block> entry = MinecraftClient.getInstance().world.getRegistryManager().get(RegistryKeys.BLOCK).getEntry(bi.getBlock());
+            RegistryEntry<Block> entry = world.getRegistryManager().get(RegistryKeys.BLOCK).getEntry(bi.getBlock());
             Stream<Either<TagKey<Block>, RegistryKey<Block>>> tags = entry.streamTags().map(Either::left);
             if (entry.getKey().isPresent()) {
                 tags = Stream.concat(Stream.of(Either.right(entry.getKey().get())), tags);
@@ -169,7 +171,7 @@ public abstract class PawsConfigScreenHandler<T extends ItemConvertible> extends
         }
 
         protected List<Either<TagKey<Item>, RegistryKey<Item>>> genForItem(Item item) {
-            RegistryEntry<Item> entry = MinecraftClient.getInstance().world.getRegistryManager().get(RegistryKeys.ITEM).getEntry(item);
+            RegistryEntry<Item> entry = world.getRegistryManager().get(RegistryKeys.ITEM).getEntry(item);
             Stream<Either<TagKey<Item>, RegistryKey<Item>>> tags = entry.streamTags().map(Either::left);
             if (entry.getKey().isPresent()) {
                 tags = Stream.concat(Stream.of(Either.right(entry.getKey().get())), tags);

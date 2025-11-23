@@ -88,7 +88,9 @@ public class InvisibleFenceBlock extends HorizontalFacingBlock {
         if (!(entity instanceof ClientPlayerEntity plr)) return;
         BlockPos redstoneQueryPos = pos;
         if (state.get(HALF) == DoubleBlockHalf.UPPER) redstoneQueryPos = redstoneQueryPos.down();
-        if (world.getReceivedRedstonePower(redstoneQueryPos) == 0) return;
+        if (world.getReceivedRedstonePower(redstoneQueryPos) == 0) {
+            if (world.getReceivedRedstonePower(redstoneQueryPos.down()) == 0) return;
+        }
 
         if (TrinketsApi.getTrinketComponent(plr).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.COLLAR_TAG)))
                 .map(List::isEmpty).orElse(true)) return;
