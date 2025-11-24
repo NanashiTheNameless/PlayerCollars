@@ -68,7 +68,7 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                 .input(Items.FEATHER)
                 .criterion(hasItem(Items.PAPER), conditionsFromItem(Items.PAPER))
                 .offerTo(exporter);
-        ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, PlayerCollarsMod.INVISIBLE_FENCE_BLOCK_ITEM).pattern("grg").pattern("srs")
+        ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, PlayerCollarsMod.INVISIBLE_FENCE_BLOCK_ITEM, 3).pattern("grg").pattern("srs")
                 .input('r', Items.REDSTONE)
                 .input('g', Items.GLASS_PANE)
                 .input('s', Items.STONE)
