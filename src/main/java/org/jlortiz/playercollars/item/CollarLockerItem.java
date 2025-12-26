@@ -29,7 +29,7 @@ import java.util.List;
 public class CollarLockerItem extends Item {
     public static final RegistryKey<Item> REGISTRY_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "collar_locker"));
     public CollarLockerItem() {
-        super(new Settings().maxCount(1).registryKey(REGISTRY_KEY));
+        super(new net.minecraft.item.Item.Settings().maxCount(1).registryKey(REGISTRY_KEY));
     }
 
     @Override
@@ -44,7 +44,7 @@ public class CollarLockerItem extends Item {
             return ActionResult.FAIL;
         }
 
-        RegistryEntry<Enchantment> binding = ((ServerPlayerEntity) user).getServerWorld().getRegistryManager()
+        RegistryEntry<Enchantment> binding = ((ServerPlayerEntity) user).getWorld().getRegistryManager()
                 .getOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.BINDING_CURSE);
         boolean shouldLock = !EnchantmentHelper.hasAnyEnchantmentsWith(collarStack, EnchantmentEffectComponentTypes.PREVENT_ARMOR_CHANGE);
         List<SlotEntryReference> ls = cap.getEquipped(

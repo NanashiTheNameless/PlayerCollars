@@ -7,12 +7,15 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 
@@ -63,7 +66,7 @@ public class SpatulaItem extends Item {
 
         if (count == 0) return ActionResult.PASS;
         stack.damage(count, user, LivingEntity.getSlotForHand(hand));
-        entity.playSound(SoundEvents.ITEM_WOLF_ARMOR_BREAK);
+        entity.playSound(SoundEvents.ITEM_WOLF_ARMOR_BREAK.value());
         return ActionResult.SUCCESS;
     }
 }

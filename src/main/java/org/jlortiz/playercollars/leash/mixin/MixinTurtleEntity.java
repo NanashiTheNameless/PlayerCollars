@@ -21,7 +21,7 @@ public abstract class MixinTurtleEntity extends AnimalEntity {
         super(entityType, world);
     }
 
-    @Inject(method = "readCustomDataFromNbt", at = @At("RETURN"))
+    @Inject(method = "readCustomData", at = @At("RETURN"))
     private void leashplayers$onReadCustomDataFromNbt(CallbackInfo info) {
         MinecraftServer server = getServer();
         if (server == null) return;

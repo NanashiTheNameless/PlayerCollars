@@ -1,12 +1,17 @@
 package org.jlortiz.playercollars.leash;
 
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.storage.WriteView;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathConstants;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Math;
@@ -108,6 +113,15 @@ public final class LeashProxyEntity extends TurtleEntity {
     }
 
     @Override
+    public boolean canBeLeashedTo(Entity entity) {
+        if (entity.equals(target)) {
+            if (target instanceof PlayerEntity p) p.sendMessage(Text.translatable("message.playercollars.no_break_fence").formatted(Formatting.RED), true);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public boolean canBeLeashed() {
         return false;
     }
@@ -121,9 +135,9 @@ public final class LeashProxyEntity extends TurtleEntity {
     }
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound nbt) {
-        super.writeCustomDataToNbt(nbt);
-        nbt.putString("Team", TEAM_NAME);
+    public void writeCustomData(WriteView view) {
+        super.writeCustomData(view);
+        view.putString("Team", TEAM_NAME);
     }
 
     @Override

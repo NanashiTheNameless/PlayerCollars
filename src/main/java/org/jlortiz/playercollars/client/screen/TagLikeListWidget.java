@@ -86,7 +86,7 @@ public class TagLikeListWidget<T extends ItemConvertible> extends EntryListWidge
         public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             this.button.setPosition(x, y - 2);
             this.button.render(context, mouseX, mouseY, tickDelta);
-            context.drawText(client.textRenderer, label, x, y - 1, 0xFFFFFF, false);
+            context.drawText(client.textRenderer, label, x, y - 1, -1, false);
         }
 
         @Override
