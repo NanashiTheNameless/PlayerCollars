@@ -3,6 +3,7 @@ package org.jlortiz.playercollars.datagen;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.block.BedBlock;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.enums.BedPart;
 import net.minecraft.data.client.*;
 import net.minecraft.item.Item;
@@ -55,6 +56,11 @@ public class ModelDataGenerator extends FabricModelProvider {
                         TextureMap.particle(DatagenEntrypoint.TERRACOTTAS[bowl.color.ordinal()].getBlock()), blockStateModelGenerator.modelCollector);
             }
         }
+
+        TextureMap glassTexture = TextureMap.all(Blocks.GLASS);
+        Identifier glassPost = Models.FENCE_POST.upload(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK, glassTexture, blockStateModelGenerator.modelCollector);
+        Identifier glassSide = Models.FENCE_SIDE.upload(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK, glassTexture, blockStateModelGenerator.modelCollector);
+        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createFenceBlockState(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK, glassPost, glassSide));
     }
 
     @Override
@@ -81,5 +87,8 @@ public class ModelDataGenerator extends FabricModelProvider {
             Model baseBowl = new Model(Optional.of(Identifier.of(PlayerCollarsMod.MOD_ID, "block/" + c.getName() + "_dog_bowl_3")), Optional.empty());
             itemModelGenerator.register(PlayerCollarsMod.DOG_BOWL_ITEMS[c.ordinal()], baseBowl);
         }
+
+        Models.FENCE_INVENTORY.upload(ModelIds.getItemModelId(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK_ITEM),
+                TextureMap.all(Blocks.GLASS), itemModelGenerator.writer);
     }
 }

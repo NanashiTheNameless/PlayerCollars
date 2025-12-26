@@ -71,7 +71,7 @@ public class PlayerCollarsMod implements ModInitializer {
     public static final DeedItem DEED_OF_OWNERSHIP = Registry.register(Registries.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "deed_of_ownership"), new DeedItem());
     public static final Item DEED_OF_OWNERSHIP_STAMPED = Registry.register(Registries.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "stamped_deed_of_ownership"), new StampedDeedItem());
     public static final InvisibleFenceBlock INVISIBLE_FENCE_BLOCK = Registry.register(Registries.BLOCK, InvisibleFenceBlock.REGISTRY_KEY,
-            new InvisibleFenceBlock(AbstractBlock.Settings.create().noCollision().breakInstantly().sounds(BlockSoundGroup.STONE)));
+            new InvisibleFenceBlock(AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.GLASS)));
     public static final BlockItem INVISIBLE_FENCE_BLOCK_ITEM = Registry.register(Registries.ITEM, InvisibleFenceBlock.ITEM_REGISTRY_KEY, new BlockItem(INVISIBLE_FENCE_BLOCK, new Item.Settings()));
     public static final PawSetupItem PAW_CONFIGURATION_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "paw_configurator"), new PawSetupItem());
 	public static final CollarLockerItem COLLAR_LOCKER_ITEM = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "collar_locker"), new CollarLockerItem());

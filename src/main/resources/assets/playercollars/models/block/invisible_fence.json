@@ -1,6 +1,0 @@
-{
-  "credit": "minecraft:block/cube",
-  "textures": {
-    "particle": "minecraft:block/glass"
-  }
-}
