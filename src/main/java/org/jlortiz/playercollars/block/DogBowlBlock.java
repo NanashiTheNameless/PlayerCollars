@@ -7,9 +7,12 @@ import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
@@ -44,11 +47,13 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
             VoxelShapes.union(SHAPE_BASE, Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 6.0, 14.0))
     };
     public static final IntProperty LEVEL = Properties.AGE_3;
+    public static final BooleanProperty MILK = Properties.SNOWY;
     public final DyeColor color;
 
     public DogBowlBlock(DyeColor c, Settings settings) {
         super(settings);
         color = c;
+        setDefaultState(this.getStateManager().getDefaultState().with(LEVEL, 0).with(MILK, false));
     }
 
     @Nullable
@@ -76,8 +81,18 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
 
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (stack.isEmpty() || stack.get(DataComponentTypes.FOOD) == null) return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (stack.isEmpty()) return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!(world.getBlockEntity(pos) instanceof DogBowlBlockEntity be)) return ItemActionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        if (stack.isOf(Items.MILK_BUCKET) && be.getCount() == 0) {
+            be.insert(stack);
+            state = state.with(MILK, true);
+            world.setBlockState(pos, state, 2);
+            if (!player.isCreative()) player.setStackInHand(hand, new ItemStack(Items.BUCKET));
+            player.playSound(SoundEvents.ITEM_BUCKET_EMPTY);
+            return ItemActionResult.SUCCESS;
+        }
+
+        if (stack.get(DataComponentTypes.FOOD) == null) return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         int decr = be.insert(stack);
         if (decr > 0) {
             stack.decrement(decr);
@@ -100,6 +115,14 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
 
         ItemStack is = be.take();
         if (is.isEmpty()) return ActionResult.PASS;
+        if (is.isOf(Items.MILK_BUCKET)) {
+            state = state.with(MILK, false);
+            world.setBlockState(pos, state, 2);
+            if (!world.isClient()) player.clearStatusEffects();
+            player.playSound(SoundEvents.ENTITY_GENERIC_DRINK);
+            return ActionResult.SUCCESS;
+        }
+
         state = state.with(LEVEL, Math.min((be.getCount() + 20) / 21, 3));
         world.setBlockState(pos, state, 2);
 
@@ -115,7 +138,7 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(LEVEL);
+        builder.add(LEVEL, MILK);
     }
 
     public static class DogBowlBlockEntity extends BlockEntity {
@@ -168,7 +191,7 @@ public class DogBowlBlock extends Block implements BlockEntityProvider {
         }
 
         protected void drop() {
-            if (inBowl.isEmpty() || world == null) return;
+            if (inBowl.isEmpty() || inBowl.isOf(Items.MILK_BUCKET) || world == null) return;
             world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), inBowl));
             inBowl = ItemStack.EMPTY;
         }
