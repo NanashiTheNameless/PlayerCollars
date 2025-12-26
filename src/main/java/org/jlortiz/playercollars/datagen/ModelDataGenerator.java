@@ -16,7 +16,6 @@ import net.minecraft.item.Item;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.Pool;
-import net.minecraft.util.collection.Weighted;
 import net.minecraft.util.math.AxisRotation;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.block.DogBedBlock;
@@ -50,18 +49,22 @@ public class ModelDataGenerator extends FabricModelProvider {
                 baseModel.upload(bed, TextureMap.particle(DatagenEntrypoint.WOOLS[bed.getColor().ordinal()].getBlock()), blockStateModelGenerator.modelCollector);
         }
 
-        Model[] bowlModels = new Model[4];
+        Model[] bowlModels = new Model[5];
         for (int i = 0; i < 4; i++) {
             bowlModels[i] = new Model(Optional.of(Identifier.of(PlayerCollarsMod.MOD_ID, "block/red_dog_bowl_"+i)), Optional.empty(), TextureKey.PARTICLE);
         }
+        bowlModels[4] = new Model(Optional.of(Identifier.of(PlayerCollarsMod.MOD_ID, "block/red_dog_bowl_milk")), Optional.empty(), TextureKey.PARTICLE);
         for (DogBowlBlock bowl : PlayerCollarsMod.DOG_BOWLS) {
             blockStateModelGenerator.blockStateCollector.accept(VariantsBlockModelDefinitionCreator.of(bowl)
-                            .with(BlockStateVariantMap.models(DogBowlBlock.LEVEL).generate((level) -> BlockStateModelGenerator.createWeightedVariant(
-                                    Identifier.of(PlayerCollarsMod.MOD_ID, "block/" + bowl.color.getId() + "_dog_bowl_" + level)))));
-            if (bowl.color != DyeColor.RED)
+                            .with(BlockStateVariantMap.models(DogBowlBlock.MILK, DogBowlBlock.LEVEL).generate((milk, level) -> BlockStateModelGenerator.createWeightedVariant(
+                                    Identifier.of(PlayerCollarsMod.MOD_ID, "block/" + bowl.color.getId() + "_dog_bowl_" + (milk ? "milk" : level))))));
+            if (bowl.color != DyeColor.RED) {
                 for (int i = 0; i < 4; i++)
                     bowlModels[i].upload(Identifier.of(PlayerCollarsMod.MOD_ID, "block/" + bowl.color.getId() + "_dog_bowl_"+i),
                             TextureMap.particle(DatagenEntrypoint.TERRACOTTAS[bowl.color.ordinal()].getBlock()), blockStateModelGenerator.modelCollector);
+                bowlModels[4].upload(Identifier.of(PlayerCollarsMod.MOD_ID, "block/" + bowl.color.getId() + "_dog_bowl_milk"),
+                        TextureMap.particle(DatagenEntrypoint.TERRACOTTAS[bowl.color.ordinal()].getBlock()), blockStateModelGenerator.modelCollector);
+            }
         }
 
         TextureMap glassTexture = TextureMap.all(Blocks.GLASS);
