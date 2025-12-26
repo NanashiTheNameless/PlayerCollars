@@ -17,6 +17,7 @@
   "item.playercollars.paw_configurator.no_paws": "Paws not equipped",
   "item.playercollars.collar_locker": "Collar Lock-inator",
   "item.playercollars.collar_locker.no_set_non_owner": "Must be owner to lock",
+  "item.playercollars.collar_locker.no_set_non_deed": "Collar must be crafted with a Deed of Ownership to lock",
   "item.playercollars.collar_locker.locked": "Collar locked on",
   "item.playercollars.collar_locker.unlocked": "Collar unlocked",
   "item.playercollars.invisible_fence": "Invisible Fence",
