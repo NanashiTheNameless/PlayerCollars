@@ -82,6 +82,7 @@ public class ModelDataGenerator extends FabricModelProvider {
         itemModelGenerator.register(PlayerCollarsMod.DEED_OF_OWNERSHIP_STAMPED, Models.GENERATED);
         itemModelGenerator.register(PlayerCollarsMod.SPATULA_ITEM, Models.HANDHELD);
         itemModelGenerator.register(PlayerCollarsMod.COLLAR_LOCKER_ITEM, Models.GENERATED);
+        itemModelGenerator.output.accept(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK_ITEM, ItemModels.basic(Identifier.of(PlayerCollarsMod.MOD_ID, "block/invisible_fence")));
 
         for (DyeColor c : DyeColor.values()) {
             Model baseBowl = new Model(Optional.of(Identifier.of(PlayerCollarsMod.MOD_ID, "block/" + c.getId() + "_dog_bowl_3")), Optional.empty());
