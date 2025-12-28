@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "playercollars:block/invisible_fence"
+    "model": "playercollars:item/invisible_fence"
   }
 }
