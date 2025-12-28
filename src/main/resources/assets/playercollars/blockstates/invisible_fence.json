@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model": "playercollars:block/invisible_fence" },
-    "facing=east": { "model": "playercollars:block/invisible_fence", "y": 90 },
-    "facing=south": { "model": "playercollars:block/invisible_fence", "y": 180 },
-    "facing=west": { "model": "playercollars:block/invisible_fence", "y": 270 }
-  }
-}

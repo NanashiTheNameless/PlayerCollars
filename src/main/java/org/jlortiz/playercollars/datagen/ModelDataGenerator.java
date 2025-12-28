@@ -3,15 +3,20 @@ package org.jlortiz.playercollars.datagen;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.block.BedBlock;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.enums.BedPart;
 import net.minecraft.client.data.*;
 import net.minecraft.client.render.item.model.ItemModel;
 import net.minecraft.client.render.item.tint.ConstantTintSource;
 import net.minecraft.client.render.item.tint.DyeTintSource;
 import net.minecraft.client.render.item.tint.MapColorTintSource;
+import net.minecraft.client.render.model.json.ModelVariant;
+import net.minecraft.client.render.model.json.WeightedVariant;
 import net.minecraft.item.Item;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.Pool;
+import net.minecraft.util.collection.Weighted;
 import net.minecraft.util.math.AxisRotation;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.jlortiz.playercollars.block.DogBedBlock;
@@ -58,6 +63,14 @@ public class ModelDataGenerator extends FabricModelProvider {
                     bowlModels[i].upload(Identifier.of(PlayerCollarsMod.MOD_ID, "block/" + bowl.color.getId() + "_dog_bowl_"+i),
                             TextureMap.particle(DatagenEntrypoint.TERRACOTTAS[bowl.color.ordinal()].getBlock()), blockStateModelGenerator.modelCollector);
         }
+
+        TextureMap glassTexture = TextureMap.all(Blocks.GLASS);
+        Identifier glassPost = Models.FENCE_POST.upload(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK, glassTexture, blockStateModelGenerator.modelCollector);
+        Identifier glassSide = Models.FENCE_SIDE.upload(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK, glassTexture, blockStateModelGenerator.modelCollector);
+        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createFenceBlockState(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK,
+                new WeightedVariant(Pool.of(new ModelVariant(glassPost))), new WeightedVariant(Pool.of(new ModelVariant(glassSide)))));
+        blockStateModelGenerator.registerParentedItemModel(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK, Models.FENCE_INVENTORY.upload(ModelIds.getItemModelId(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK_ITEM),
+                TextureMap.all(Blocks.GLASS), blockStateModelGenerator.modelCollector));
     }
 
     @Override
@@ -82,7 +95,6 @@ public class ModelDataGenerator extends FabricModelProvider {
         itemModelGenerator.register(PlayerCollarsMod.DEED_OF_OWNERSHIP_STAMPED, Models.GENERATED);
         itemModelGenerator.register(PlayerCollarsMod.SPATULA_ITEM, Models.HANDHELD);
         itemModelGenerator.register(PlayerCollarsMod.COLLAR_LOCKER_ITEM, Models.GENERATED);
-        itemModelGenerator.output.accept(PlayerCollarsMod.INVISIBLE_FENCE_BLOCK_ITEM, ItemModels.basic(Identifier.of(PlayerCollarsMod.MOD_ID, "block/invisible_fence")));
 
         for (DyeColor c : DyeColor.values()) {
             Model baseBowl = new Model(Optional.of(Identifier.of(PlayerCollarsMod.MOD_ID, "block/" + c.getId() + "_dog_bowl_3")), Optional.empty());
