@@ -5,6 +5,7 @@ import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleUtil;
 import net.minecraft.registry.RegistryKey;
@@ -31,7 +32,6 @@ import org.jlortiz.playercollars.PlayerCollarsMod;
 import java.util.List;
 import java.util.Optional;
 
-// TODO need DFU for new fence
 public class InvisibleFenceBlock extends FenceBlock {
     public static final RegistryKey<Block> REGISTRY_KEY = RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(PlayerCollarsMod.MOD_ID, "invisible_fence"));
     public static final RegistryKey<Item> ITEM_REGISTRY_KEY = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(PlayerCollarsMod.MOD_ID, "invisible_fence"));
@@ -39,7 +39,7 @@ public class InvisibleFenceBlock extends FenceBlock {
 
     public InvisibleFenceBlock(AbstractBlock.Settings settings) {
         super(settings.registryKey(REGISTRY_KEY));
-        setDefaultState(this.getStateManager().getDefaultState().with(POWERED, false));
+        setDefaultState(this.getStateManager().getDefaultState().with(POWERED, false).with(WATERLOGGED, false));
     }
 
     @Override
@@ -67,6 +67,27 @@ public class InvisibleFenceBlock extends FenceBlock {
     }
 
     @Override
+    public BlockState getPlacementState(ItemPlacementContext ctx) {
+        BlockState state = super.getPlacementState(ctx);
+        BlockState neighbor = ctx.getWorld().getBlockState(ctx.getBlockPos().north());
+        boolean shouldPower = neighbor.isOf(this) && neighbor.get(POWERED);
+        if (!shouldPower) {
+            neighbor =  ctx.getWorld().getBlockState(ctx.getBlockPos().east());
+            shouldPower = neighbor.isOf(this) && neighbor.get(POWERED);
+        }
+        if (!shouldPower) {
+            neighbor =  ctx.getWorld().getBlockState(ctx.getBlockPos().south());
+            shouldPower = neighbor.isOf(this) && neighbor.get(POWERED);
+        }
+        if (!shouldPower) {
+            neighbor =  ctx.getWorld().getBlockState(ctx.getBlockPos().west());
+            shouldPower = neighbor.isOf(this) && neighbor.get(POWERED);
+        }
+        if (shouldPower) state = state.with(POWERED, true);
+        return state;
+    }
+
+    @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         if (context instanceof EntityShapeContext e) {
             if (state.get(POWERED) && e.getEntity() instanceof LivingEntity livingEntity) {
@@ -79,7 +100,7 @@ public class InvisibleFenceBlock extends FenceBlock {
             // Vertical collision is cached using EntityShapeContext.ABSENT.
             // This will be re-checked if something actually lands on the fence, so this is safe for players.
             // It can cause unusual behaviour if something tries to pathfind through it, so that is left disabled.
-            return e.getEntity() == null ? super.getCollisionShape(state, world, pos, context) : VoxelShapes.empty();
+            if (e.getEntity() == null) return super.getCollisionShape(state, world, pos, context);
         }
         return VoxelShapes.empty();
     }
