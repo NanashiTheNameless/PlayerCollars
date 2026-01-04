@@ -14,7 +14,9 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.*;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Uuids;
 import org.jlortiz.playercollars.PlayerCollarsMod;
 
 import java.util.List;
