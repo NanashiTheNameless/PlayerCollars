@@ -59,11 +59,14 @@
   "tag.item.trinkets.chest.necklace": "Necklace",
   "tag.item.trinkets.hand.glove": "Glove",
   "message.playercollars.no_break_fence": "Can't unleash yourself!",
+  "message.playercollars.no_break_fence_other": "Can't unleash %s!",
   "message.playercollars.no_ride_entity": "Can't ride this entity!",
   "message.playercollars.no_attack_owner": "Don't attack your owner!",
   "tag.block.playercollars.paws_allow_interact": "Usable with Paws",
   "gamerule.playerLeashesBreak": "Player collar leashes break if stretched too far",
   "gamerule.leashedPlayersRideEntities": "Leashed players can ride entities",
+  "gamerule.playerAllowAttackOwner": "Players can attack owners",
+  "gamerule.allowUnleashUnownedPlayer": "Allow unleashing players you don't own",
   "sound.playercollars.clicker_on": "Clicker clicks on",
   "sound.playercollars.clicker_off": "Clicker clicks off"
 }

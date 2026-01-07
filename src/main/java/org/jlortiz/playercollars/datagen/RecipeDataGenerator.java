@@ -58,8 +58,8 @@ public class RecipeDataGenerator extends FabricRecipeProvider {
                 .input(Items.CHAIN)
                 .input(Items.CHAIN)
                 .input(Items.IRON_BARS)
-                .criterion(FabricRecipeProvider.hasItem(PlayerCollarsMod.COLLAR_ITEM),
-                        FabricRecipeProvider.conditionsFromTag(PlayerCollarsMod.COLLAR_TAG))
+                .criterion(FabricRecipeProvider.hasItem(PlayerCollarsMod.DEED_OF_OWNERSHIP_STAMPED),
+                        FabricRecipeProvider.conditionsFromItem(PlayerCollarsMod.DEED_OF_OWNERSHIP_STAMPED))
                 .offerTo(exporter);
         ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, PlayerCollarsMod.DEED_OF_OWNERSHIP)
                 .input(Items.PAPER)
