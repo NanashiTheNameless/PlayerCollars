@@ -121,10 +121,13 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final RegistryEntry<EntityAttribute> ATTR_LEASH_DISTANCE = Registry.registerReference(
 			Registries.ATTRIBUTE, Identifier.of(MOD_ID, "leash_distance"),
 			new ClampedEntityAttribute("attribute.playercollars.leash_distance", 4, 2, 16));
+
 	public static final GameRules.Key<GameRules.BooleanRule> PLAYER_LEASHES_BREAK_RULE = GameRuleRegistry.register(
 			"playerLeashesBreak", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true));
     public static final GameRules.Key<GameRules.BooleanRule> LEASHED_PLAYERS_RIDE_ENTITIES = GameRuleRegistry.register(
             "leashedPlayersRideEntities", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(false));
+	public static final GameRules.Key<GameRules.BooleanRule> ALLOW_ATTACK_OWNER = GameRuleRegistry.register(
+			"playerAllowAttackOwner", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(false));
 
 	public static final DogBedBlock[] DOG_BEDS = new DogBedBlock[DyeColor.values().length];
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
@@ -259,7 +262,7 @@ public class PlayerCollarsMod implements ModInitializer {
 		AttackEntityCallback.EVENT.register((PlayerEntity player, World var2, Hand var3, Entity var4, @Nullable EntityHitResult var5) -> {
 			if (var2.isClient) return ActionResult.PASS;
 			if (player.isSpectator()) return ActionResult.PASS;
-			if (var4 instanceof PlayerEntity &&
+			if (var2.getGameRules().getBoolean(ALLOW_ATTACK_OWNER) && var4 instanceof PlayerEntity &&
 				TrinketsApi.getTrinketComponent(player).map((x) -> x.getEquipped((y) -> y.isIn(PlayerCollarsMod.COLLAR_TAG)))
 						.map((x) -> PlayerCollarsMod.filterStacksByOwner(x, var4.getUuid(), player.getUuid())).isPresent()) {
 					// Collared players are allowed to attack bad owners, but have 75% damage returned to them
