@@ -27,6 +27,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.component.ComponentType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.Leashable;
 import net.minecraft.entity.attribute.ClampedEntityAttribute;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -59,6 +60,7 @@ import org.jlortiz.playercollars.block.DogBowlBlock;
 import org.jlortiz.playercollars.block.InvisibleFenceBlock;
 import org.jlortiz.playercollars.item.*;
 import org.jlortiz.playercollars.leash.LeashImpl;
+import org.jlortiz.playercollars.leash.LeashProxyEntity;
 import org.jlortiz.playercollars.network.*;
 
 import java.util.ArrayList;
@@ -132,6 +134,8 @@ public class PlayerCollarsMod implements ModInitializer {
             "leashedPlayersRideEntities", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(false));
 	public static final GameRules.Key<GameRules.BooleanRule> ALLOW_ATTACK_OWNER = GameRuleRegistry.register(
 			"playerAllowAttackOwner", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(false));
+	public static final GameRules.Key<GameRules.BooleanRule> ALLOW_UNLEASH_OTHER = GameRuleRegistry.register(
+			"allowUnleashUnownedPlayer", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true));
 
 	public static final DogBedBlock[] DOG_BEDS = new DogBedBlock[DyeColor.values().length];
 	public static final BedItem[] DOG_BED_ITEMS = new BedItem[DyeColor.values().length];
@@ -148,7 +152,6 @@ public class PlayerCollarsMod implements ModInitializer {
 	public static final DogBowlBlock[] DOG_BOWLS = new DogBowlBlock[DyeColor.values().length];
 	public static final Item[] DOG_BOWL_ITEMS = new Item[DyeColor.values().length];
 	public static final BlockEntityType<DogBowlBlock.DogBowlBlockEntity> DOG_BOWL_BLOCK_ENTITY;
-	public static final ItemGroup GROUP;
 	public static final ExtendedScreenHandlerType<PawsConfigScreenHandler<Block>, List<Either<TagKey<Block>, RegistryKey<Block>>>> PAWS_BLOCK_CONFIG_SCREEN_HANDLER = new ExtendedScreenHandlerType<>(
 			PawsConfigScreenHandler.PawsBlockConfigScreenHandler::new, PacketCodecs.codec(CAN_INTERACT_COMPONENT_CODEC)
 	);
@@ -170,7 +173,7 @@ public class PlayerCollarsMod implements ModInitializer {
 				FabricBlockEntityTypeBuilder.create(DogBowlBlock.DogBowlBlockEntity::new, DOG_BOWLS).build()
         );
 
-        GROUP = Registry.register(Registries.ITEM_GROUP, Identifier.of(MOD_ID, "group"),
+        Registry.register(Registries.ITEM_GROUP, Identifier.of(MOD_ID, "group"),
                 FabricItemGroup.builder().displayName(Text.translatable("itemGroup.playercollars"))
                         .icon(COLLAR_ITEM::getDefaultStack)
                         .entries(((displayContext, entries) -> {
@@ -220,6 +223,15 @@ public class PlayerCollarsMod implements ModInitializer {
 		return ActionResult.SUCCESS;
 	}
 
+	public static boolean blockLeashKnotBreak(Entity breaker, Entity holder) {
+		List<Leashable> list = Leashable.collectLeashablesHeldBy(holder);
+		for (Leashable l : list) {
+			if (!(l instanceof LeashProxyEntity le)) continue;
+			if (!le.canBeLeashedTo(breaker)) return true;
+		}
+		return false;
+	}
+
 	@Override
 	public void onInitialize() {
 		Registry.register(Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, Identifier.of(MOD_ID, "regeneration_effect"), RegenerationEnchantmentEffect.CODEC);
@@ -264,29 +276,27 @@ public class PlayerCollarsMod implements ModInitializer {
 			return true;
 		});
 
-		AttackEntityCallback.EVENT.register((PlayerEntity player, World var2, Hand var3, Entity var4, @Nullable EntityHitResult var5) -> {
-			if (var2.isClient) return ActionResult.PASS;
+		AttackEntityCallback.EVENT.register((PlayerEntity player, World world, Hand var3, Entity entity, @Nullable EntityHitResult var5) -> {
+			if (world.isClient) return ActionResult.PASS;
 			if (player.isSpectator()) return ActionResult.PASS;
+
+			ServerWorld sworld = (ServerWorld) world;
 			AccessoriesCapability cap = AccessoriesCapability.get(player);
-			if (cap != null && ((ServerWorld) var2).getGameRules().getBoolean(ALLOW_ATTACK_OWNER)) {
+			if (cap != null && sworld.getGameRules().getBoolean(ALLOW_ATTACK_OWNER)) {
 				for (SlotEntryReference sr : cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.COLLAR_TAG))) {
 					OwnerComponent owner = sr.stack().get(OWNER_COMPONENT_TYPE);
-					if (owner != null && owner.uuid().equals(var4.getUuid())) {
+					if (owner != null && owner.uuid().equals(entity.getUuid())) {
 						// Collared players are allowed to attack owners, but have 75% damage returned to them
 						player.sendMessage(Text.translatable("message.playercollars.no_attack_owner").formatted(Formatting.RED), true);
 						double f = player.getAttributeValue(EntityAttributes.ATTACK_DAMAGE);
 						f = (f - 1) * 0.75 + 1;
-						player.damage((ServerWorld) var2, player.getDamageSources().playerAttack(player), (float) Math.ceil(f));
+						player.damage(sworld, player.getDamageSources().playerAttack(player), (float) Math.ceil(f));
 						return ActionResult.PASS;
 					}
 				}
 			}
 
-			Entity leashedEnt = ((LeashImpl) player).leashplayers$getProxyLeashHolder();
-			if (leashedEnt instanceof LeashKnotEntity && leashedEnt.equals(var4)) {
-				player.sendMessage(Text.translatable("message.playercollars.no_break_fence").formatted(Formatting.RED), true);
-				return ActionResult.FAIL;
-			}
+			if (entity instanceof LeashKnotEntity ke && blockLeashKnotBreak(player, ke)) return ActionResult.FAIL;
 			return ActionResult.PASS;
 		});
 	}

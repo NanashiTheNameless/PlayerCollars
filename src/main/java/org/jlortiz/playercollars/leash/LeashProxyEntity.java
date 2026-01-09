@@ -1,5 +1,7 @@
 package org.jlortiz.playercollars.leash;
 
+import io.wispforest.accessories.api.AccessoriesCapability;
+import io.wispforest.accessories.api.slot.SlotEntryReference;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
@@ -9,11 +11,15 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.storage.WriteView;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathConstants;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.NotNull;
+import org.jlortiz.playercollars.OwnerComponent;
+import org.jlortiz.playercollars.PlayerCollarsMod;
 import org.joml.Math;
 
 import java.util.Objects;
@@ -72,7 +78,7 @@ public final class LeashProxyEntity extends TurtleEntity {
 
     public static final String TEAM_NAME = "leashplayersimpl";
 
-    public LeashProxyEntity(LivingEntity target) {
+    public LeashProxyEntity(@NotNull LivingEntity target) {
         super(EntityType.TURTLE, target.getWorld());
         this.target = target;
 
@@ -117,6 +123,19 @@ public final class LeashProxyEntity extends TurtleEntity {
         if (entity.equals(target)) {
             if (target instanceof PlayerEntity p) p.sendMessage(Text.translatable("message.playercollars.no_break_fence").formatted(Formatting.RED), true);
             return false;
+        }
+        if (getWorld() instanceof ServerWorld sw && !sw.getGameRules().getBoolean(PlayerCollarsMod.ALLOW_UNLEASH_OTHER)) {
+            AccessoriesCapability cap = AccessoriesCapability.get(target);
+            if (cap == null) return true;
+            for (SlotEntryReference sr : cap.getEquipped((x) -> x.isIn(PlayerCollarsMod.COLLAR_TAG))) {
+                OwnerComponent oc = sr.stack().get(PlayerCollarsMod.OWNER_COMPONENT_TYPE);
+                if (oc == null || !oc.owned().orElseGet(target::getUuid).equals(target.getUuid())) continue;
+                if (!entity.getUuid().equals(oc.uuid())) {
+                    if (entity instanceof PlayerEntity p)
+                        p.sendMessage(Text.translatable("message.playercollars.no_break_fence_other", target.getName()).formatted(Formatting.RED), true);
+                    return false;
+                }
+            }
         }
         return true;
     }
