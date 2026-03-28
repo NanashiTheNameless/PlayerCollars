@@ -84,10 +84,13 @@ public class OwnershipCraftingRecipe extends SpecialCraftingRecipe {
                 Ingredient.PACKET_CODEC, OwnershipCraftingRecipe::getBase, OwnershipCraftingRecipe::new
         );
 
+        @Override
         public MapCodec<OwnershipCraftingRecipe> codec() {
             return CODEC;
         }
 
+        @Override
+        @SuppressWarnings("deprecation")
         public PacketCodec<RegistryByteBuf, OwnershipCraftingRecipe> packetCodec() {
             return PACKET_CODEC;
         }
